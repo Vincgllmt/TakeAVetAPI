@@ -94,9 +94,20 @@
             "APP_ENV=test php bin/console doctrine:schema:create --quiet",
             "SYMFONY_DEPRECATIONS_HELPER=weak php vendor/bin/codecept run --no-artifacts"
         ],
+        "test:codeception-windows" : [
+            "set APP_ENV=test&php bin/console cache:clear",
+            "set APP_ENV=test&php bin/console doctrine:database:drop --force",
+            "set APP_ENV=test&php bin/console doctrine:database:create",
+            "set APP_ENV=test&php bin/console doctrine:schema:create --quiet",
+            "set SYMFONY_DEPRECATIONS_HELPER=weak&php vendor/bin/codecept run --no-artifacts"
+        ],
         "test": [
             "@test:cs",
             "@test:codeception"
+        ],
+        "test:win": [
+            "@test:cs",
+            "@test:codeception-windows"
         ]
     },
     "conflict": {

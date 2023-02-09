@@ -29,7 +29,7 @@ class ApiPlatform extends REST
      * {@inheritDoc}
      * Override to send HTTP headers.
      */
-    public function sendPatch(string $url, $params = [], array $files = [])
+    public function sendPatch(string $url, $params = [], array $files = []): ?string
     {
         $this->haveHttpHeader('Content-Type', 'application/merge-patch+json');
 
@@ -40,7 +40,7 @@ class ApiPlatform extends REST
      * {@inheritDoc}
      * Override to send HTTP headers.
      */
-    public function sendPost(string $url, $params = [], array $files = [])
+    public function sendPost(string $url, array|\ArrayAccess|\JsonSerializable|string $params = [], array $files = []): ?string
     {
         $this->haveHttpHeader('Content-Type', 'application/json');
 
@@ -51,7 +51,7 @@ class ApiPlatform extends REST
      * {@inheritDoc}
      * Override to send HTTP headers.
      */
-    public function sendPut(string $url, $params = [], array $files = [])
+    public function sendPut(string $url, $params = [], array $files = []): ?string
     {
         $this->haveHttpHeader('Content-Type', 'application/json');
 
