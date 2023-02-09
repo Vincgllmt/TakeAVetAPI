@@ -24,12 +24,12 @@ use Symfony\Component\Validator\Constraints\Length;
         ],
         normalizationContext: ['groups' => ['user:read-me']],
         denormalizationContext: ['groups' => ['user:create']]
-    )
+    ),
 ], normalizationContext: ['groups' => ['user:read', 'user:create', 'user:read-me']])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
-     * @var int|null The id of this user.
+     * @var int|null the id of this user
      */
     #[ORM\Id]
     #[ORM\GeneratedValue]

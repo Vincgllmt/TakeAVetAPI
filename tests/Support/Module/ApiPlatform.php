@@ -6,7 +6,6 @@ namespace App\Tests\Support\Module;
 
 use Codeception\Module\REST;
 use Codeception\Util\JsonType;
-use ReflectionClass;
 
 class ApiPlatform extends REST
 {
@@ -80,7 +79,7 @@ class ApiPlatform extends REST
      */
     protected function getShortClassName(string $className): string
     {
-        return (new ReflectionClass($className))->getShortName();
+        return (new \ReflectionClass($className))->getShortName();
     }
 
     /**
