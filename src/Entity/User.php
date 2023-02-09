@@ -3,33 +3,54 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Post;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Length;
 
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-#[ApiResource]
+#[ApiResource(operations: [
+    new Post(
+        openapiContext: [
+            'summary' => 'Create a new user',
+            'description' => 'Create a new account on the website with a password and an email address and return the newly registered user.',
+        ],
+        normalizationContext: ['groups' => ['user:read-me']],
+        denormalizationContext: ['groups' => ['user:create']]
+    )
+], normalizationContext: ['groups' => ['user:read', 'user:create', 'user:read-me']])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    /**
+     * @var int|null The id of this user.
+     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:read', 'user:read-me'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Email]
+    #[Groups(['user:create', 'user:read-me'])]
     private ?string $email = null;
 
     #[ORM\Column]
     private array $roles = [];
 
     /**
-     * @var string The hashed password
+     * @var string|null The hashed password
      */
     #[ORM\Column]
+    #[Length(min: 6, minMessage: 'Your password should be at least 6 characters long')]
+    #[Groups(['user:create'])]
     private ?string $password = null;
 
     public function getId(): ?int
