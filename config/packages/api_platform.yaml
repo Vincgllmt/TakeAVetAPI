@@ -5,4 +5,15 @@ api_platform:
         json: ['application/merge-patch+json']
     swagger:
         versions: [3]
+        swagger_ui_extra_configuration:
+            displayRequestDuration: true
     metadata_backward_compatibility_layer: false
+    openapi:
+        contact:
+            name: 'Gitlab'
+            url: 'https://iut-info.univ-reims.fr/gitlab/udyc0001/sae4-01-api'
+    description: "API de l'application TakeAVet créer pour la SAE de S4."
+    version: '0.0.1'
+    title: 'TakeAVet API'
+    enable_profiler: true
+    show_webby: false
