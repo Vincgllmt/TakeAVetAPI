@@ -6,6 +6,9 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\DiscriminatorColumn;
+use Doctrine\ORM\Mapping\DiscriminatorMap;
+use Doctrine\ORM\Mapping\InheritanceType;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -16,6 +19,10 @@ use Symfony\Component\Validator\Constraints\Length;
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[InheritanceType('JOINED')]
+#[DiscriminatorColumn(name: 'discriminator', type: 'string')]
+#[DiscriminatorMap(['veto' => Veto::class, 'client' => Client::class])]
+#[UniqueEntity(fields: ['email'], message: 'Il y a déjà un compte avec cette adresse e-mail.')]
 #[ApiResource(operations: [
     new Post(
         openapiContext: [
@@ -52,6 +59,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Length(min: 6, minMessage: 'Your password should be at least 6 characters long')]
     #[Groups(['user:create'])]
     private ?string $password = null;
+
+    #[ORM\Column(length: 50)]
+    #[Groups(['user:create', 'user:read-me'])]
+    protected ?string $lastName = null;
+
+    #[ORM\Column(length: 50)]
+    #[Groups(['user:create', 'user:read-me'])]
+    protected ?string $firstName = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    #[Groups(['user:create', 'user:read-me'])]
+    protected ?string $tel = null;
 
     public function __construct()
     {
