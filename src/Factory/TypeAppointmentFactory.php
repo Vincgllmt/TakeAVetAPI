@@ -37,6 +37,7 @@ final class TypeAppointmentFactory extends ModelFactory
     protected function getDefaults(): array
     {
         $id = self::faker()->unique()->numberBetween(0, 100);
+
         return [
             'libTypeApp' => "Type#{$id}",
             'duration' => 10 * self::faker()->numberBetween(1, 22),

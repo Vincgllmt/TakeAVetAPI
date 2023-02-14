@@ -44,7 +44,10 @@ abstract class UserFactory extends ModelFactory
     {
         return [
             'email' => self::faker()->unique()->email(),
+            'lastName' => self::faker()->lastName(),
+            'firstName' => self::faker()->firstName(),
             'password' => 'test',
+            'tel' => ClientFactory::faker()->boolean() ? self::faker()->phoneNumber() : null,
             'roles' => [],
         ];
     }

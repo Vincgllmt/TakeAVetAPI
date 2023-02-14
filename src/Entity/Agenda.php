@@ -177,6 +177,7 @@ class Agenda
     private static function getDayNumberFromDateTime(\DateTime $dateTime): int
     {
         $dayNumber = (int) $dateTime->format('w');
+
         return 0 == $dayNumber ? 7 : $dayNumber;
     }
 }

@@ -31,6 +31,7 @@ class AnimalRecord
     #[ORM\ManyToOne(inversedBy: 'animalRecords')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Animal $Animal = null;
+
     public function getId(): ?int
     {
         return $this->id;

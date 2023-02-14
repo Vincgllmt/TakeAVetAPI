@@ -2,11 +2,24 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Post;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(operations: [
+    new Post(
+        uriTemplate: '/register',
+        openapiContext: [
+            'summary' => 'Register a new client on the service.',
+            'description' => 'Create a new account with a password and an email address and return the newly registered client.',
+        ],
+        normalizationContext: ['groups' => ['user:read-me']],
+        denormalizationContext: ['groups' => ['user:create']]
+    ),
+], normalizationContext: ['groups' => ['user:read', 'user:create', 'user:read-me']])]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client extends User
 {
@@ -28,6 +41,7 @@ class Client extends User
         $this->animals = new ArrayCollection();
         $this->adresses = new ArrayCollection();
         $this->appointments = new ArrayCollection();
+        $this->isAnHusbandry = false;
     }
 
     public function isIsAnHusbandry(): ?bool
