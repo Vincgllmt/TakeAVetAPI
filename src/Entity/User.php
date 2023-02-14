@@ -56,14 +56,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string|null the last name of this user
      */
     #[ORM\Column(length: 50)]
-    #[Groups(['user:create', 'user:read-me'])]
+    #[Groups(['user:create', 'user:read-me', 'user:read'])]
     protected ?string $lastName = null;
 
     /**
      * @var string|null the first name of this user
      */
     #[ORM\Column(length: 50)]
-    #[Groups(['user:create', 'user:read-me'])]
+    #[Groups(['user:create', 'user:read-me', 'user:read'])]
     protected ?string $firstName = null;
 
     /**
@@ -89,6 +89,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string|null the path to the profile picture of this user
      */
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read-me', 'user:read'])]
     private ?string $profilePicPath = null;
 
     public function __construct()
