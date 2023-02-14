@@ -15,7 +15,7 @@ class ThreadMessageFixtures extends Fixture implements DependentFixtureInterface
     {
         $threadRepo = ThreadFactory::repository();
         foreach ($threadRepo->findAll() as $thread) {
-            # create a random number of messages for each thread (0 to 3) with a random author
+            // create a random number of messages for each thread (0 to 3) with a random author
             ThreadMessageFactory::createMany(ThreadMessageFactory::faker()->numberBetween(0, 3), [
                 'thread' => $thread,
                 'user' => UserFactory::random(),
@@ -24,7 +24,7 @@ class ThreadMessageFixtures extends Fixture implements DependentFixtureInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getDependencies(): array
     {

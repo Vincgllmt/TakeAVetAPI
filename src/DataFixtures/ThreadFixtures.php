@@ -4,7 +4,6 @@ namespace App\DataFixtures;
 
 use App\Factory\ClientFactory;
 use App\Factory\ThreadFactory;
-use App\Factory\ThreadMessageFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -15,7 +14,7 @@ class ThreadFixtures extends Fixture implements DependentFixtureInterface
     {
         $clientRepo = ClientFactory::repository();
         foreach ($clientRepo->findAll() as $client) {
-            # create a random number of threads for each client (0 to 5)
+            // create a random number of threads for each client (0 to 5)
             ThreadFactory::createMany(ThreadFactory::faker()->numberBetween(0, 5), [
                 'author' => $client,
             ]);
@@ -23,7 +22,7 @@ class ThreadFixtures extends Fixture implements DependentFixtureInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getDependencies(): array
     {

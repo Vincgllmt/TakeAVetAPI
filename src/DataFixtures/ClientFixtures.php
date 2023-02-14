@@ -3,8 +3,6 @@
 namespace App\DataFixtures;
 
 use App\Factory\ClientFactory;
-use App\Factory\ThreadFactory;
-use App\Factory\ThreadMessageFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
