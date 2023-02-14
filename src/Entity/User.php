@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
@@ -16,23 +18,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[InheritanceType('JOINED')]
 #[DiscriminatorColumn(name: 'discriminator', type: 'string')]
 #[DiscriminatorMap(['veto' => Veto::class, 'client' => Client::class])]
 #[UniqueEntity(fields: ['email'], message: 'Il y a déjà un compte avec cette adresse e-mail.')]
-#[ApiResource(operations: [
-    new Post(
-        openapiContext: [
-            'summary' => 'Create a new user',
-            'description' => 'Create a new account on the website with a password and an email address and return the newly registered user.',
-        ],
-        normalizationContext: ['groups' => ['user:read-me']],
-        denormalizationContext: ['groups' => ['user:create']]
-    ),
-], normalizationContext: ['groups' => ['user:read', 'user:create', 'user:read-me']])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
@@ -42,15 +33,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['user:read', 'user:read-me'])]
-    private ?int $id = null;
+    protected ?int $id = null;
 
+    /**
+     * @var string|null the email of this user
+     */
     #[ORM\Column(length: 180, unique: true)]
     #[Email]
     #[Groups(['user:create', 'user:read-me'])]
-    private ?string $email = null;
+    protected ?string $email = null;
 
     #[ORM\Column]
-    private array $roles = [];
+    protected array $roles = [];
 
     /**
      * @var string|null The hashed password
@@ -58,22 +52,51 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Length(min: 6, minMessage: 'Your password should be at least 6 characters long')]
     #[Groups(['user:create'])]
-    private ?string $password = null;
+    protected ?string $password = null;
 
+    /**
+     * @var string|null the last name of this user
+     */
     #[ORM\Column(length: 50)]
     #[Groups(['user:create', 'user:read-me'])]
     protected ?string $lastName = null;
 
+    /**
+     * @var string|null the first name of this user
+     */
     #[ORM\Column(length: 50)]
     #[Groups(['user:create', 'user:read-me'])]
     protected ?string $firstName = null;
 
+    /**
+     * @var string|null the phone number of this user
+     */
     #[ORM\Column(length: 20, nullable: true)]
-    #[Groups(['user:create', 'user:read-me'])]
+    #[Groups(['user:read-me'])]
     protected ?string $tel = null;
+
+    /**
+     * @var Collection threads created by this user
+     */
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Thread::class, orphanRemoval: true)]
+    protected Collection $threads;
+
+    /**
+     * @var Collection messages created by this user
+     */
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: ThreadMessage::class)]
+    protected Collection $author;
+
+    /**
+     * @var string|null the path to the profile picture of this user
+     */
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $profilePicPath = null;
 
     public function __construct()
     {
+        $this->threads = new ArrayCollection();
+        $this->author = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -197,6 +220,88 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTel(?string $tel): self
     {
         $this->tel = $tel;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Thread>
+     */
+    public function getThreads(): Collection
+    {
+        return $this->threads;
+    }
+
+    public function addThread(Thread $thread): self
+    {
+        if (!$this->threads->contains($thread)) {
+            $this->threads->add($thread);
+            $thread->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeThread(Thread $thread): self
+    {
+        if ($this->threads->removeElement($thread)) {
+            // set the owning side to null (unless already changed)
+            if ($thread->getAuthor() === $this) {
+                $thread->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ThreadMessage>
+     */
+    public function getAuthor(): Collection
+    {
+        return $this->author;
+    }
+
+    public function addAuthor(ThreadMessage $author): self
+    {
+        if (!$this->author->contains($author)) {
+            $this->author->add($author);
+            $author->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAuthor(ThreadMessage $author): self
+    {
+        if ($this->author->removeElement($author)) {
+            // set the owning side to null (unless already changed)
+            if ($author->getUser() === $this) {
+                $author->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isVeto(): bool
+    {
+        return $this instanceof Veto;
+    }
+
+    public function isClient(): bool
+    {
+        return $this instanceof Client;
+    }
+
+    public function getProfilePicPath(): ?string
+    {
+        return $this->profilePicPath;
+    }
+
+    public function setProfilePicPath(?string $profilePicPath): self
+    {
+        $this->profilePicPath = $profilePicPath;
 
         return $this;
     }
