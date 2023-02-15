@@ -37,7 +37,7 @@ class Address
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['get_address', 'set_address'])]
+    #[Groups(['get_address'])]
     private ?int $id = null;
 
     /**

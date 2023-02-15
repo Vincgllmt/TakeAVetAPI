@@ -39,7 +39,7 @@ class AnimalRecord
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['get_animalRecord', 'set_animalRecord'])]
+    #[Groups(['get_animalRecord'])]
     private ?int $id = null;
 
     /**
