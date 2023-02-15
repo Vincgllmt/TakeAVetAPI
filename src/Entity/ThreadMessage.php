@@ -4,15 +4,22 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Repository\ThreadMessageRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ThreadMessageRepository::class)]
 #[ApiResource(
-    operations: [new Get(
-        normalizationContext: ['groups' => ['get_ThreadMessage']]
+    operations: [
+        new Get(
+        normalizationContext: ['groups' => ['threadMessage:read']]
     ),
+        new GetCollection()
+        //new Post(
+        //    normalizationContext: ['groups' => ['threadMessage:create']]
+        //    ),
         ]
 )]
 class ThreadMessage
@@ -20,15 +27,15 @@ class ThreadMessage
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('get_ThreadMessage')]
+    #[Groups('threadMessage:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 1024)]
-    #[Groups('get_ThreadMessage')]
+    #[Groups('threadMessage:read')]
     private ?string $message = null;
 
     #[ORM\Column]
-    #[Groups('get_ThreadMessage')]
+    #[Groups('threadMessage:read')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'author')]
