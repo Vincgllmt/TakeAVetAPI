@@ -2,11 +2,10 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Repository\ThreadRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -30,6 +29,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ],
         normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
     ),
+    new Post(
+        openapiContext: [
+            'summary' => 'Create a thread',
+        ],
+        normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
+        denormalizationContext: ['groups' => ['thread:create']],
+    )
 ])]
 class Thread
 {
@@ -46,7 +52,7 @@ class Thread
      * @var string|null the title of this thread (question)
      */
     #[ORM\Column(length: 255)]
-    #[Groups(['thread:read'])]
+    #[Groups(['thread:read', 'thread:create'])]
     private ?string $lib = null;
 
     /**
@@ -60,7 +66,7 @@ class Thread
      * @var string|null the message of this thread (explanation)
      */
     #[ORM\Column(length: 1024)]
-    #[Groups(['thread:read'])]
+    #[Groups(['thread:read', 'thread:create'])]
     private ?string $message = null;
 
     /**
@@ -79,7 +85,7 @@ class Thread
     private Collection $replies;
 
     /**
-     * @var bool|null true if the thread is resolved, false if it is not.
+     * @var bool|null true if the thread is resolved, false if it is not
      */
     #[ORM\Column]
     #[Groups(['thread:read'])]
