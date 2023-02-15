@@ -19,15 +19,15 @@ use Symfony\Component\Serializer\Annotation\Ignore;
         new Put(),
         new Patch(),
     ],
-    normalizationContext: ['groups' => ['get_address']]
+    normalizationContext: ['groups' => ['address:read']]
 )]
 #[Get]
 #[Patch(
-    normalizationContext: ['groups' => ['set_address']],
+    normalizationContext: ['groups' => ['address:write']],
     security: 'object.owner == user'
 )]
 #[Put(
-    normalizationContext: ['groups' => ['set_address']],
+    normalizationContext: ['groups' => ['address:write']],
     security: 'object.owner == user'
 )]
 class Address
@@ -38,42 +38,42 @@ class Address
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['get_address'])]
+    #[Groups(['address:read'])]
     private ?int $id = null;
 
     /**
      * @var string|null The address' name
      */
     #[ORM\Column(length: 50, nullable: true)]
-    #[Groups(['get_address', 'set_address'])]
+    #[Groups(['address:read', 'address:write'])]
     private ?string $name = null;
 
     /**
      * @var string|null The entire address
      */
     #[ORM\Column(length: 255)]
-    #[Groups(['get_address', 'set_address'])]
+    #[Groups(['address:read', 'address:write'])]
     private ?string $ad = null;
 
     /**
      * @var string|null The postal code
      */
     #[ORM\Column(length: 5)]
-    #[Groups(['get_address', 'set_address'])]
+    #[Groups(['address:read', 'address:write'])]
     private ?string $pc = null;
 
     /**
      * @var string|null The city of the address
      */
     #[ORM\Column(length: 50)]
-    #[Groups(['get_address', 'set_address'])]
+    #[Groups(['address:read', 'address:write'])]
     private ?string $city = null;
 
     /**
      * @var Client|null The client using this address
      */
     #[ORM\ManyToOne(inversedBy: 'adresses')]
-    #[Groups(['get_address', 'set_address'])]
+    #[Groups(['address:read', 'address:write'])]
     private ?Client $client = null;
 
     public function getId(): ?int
