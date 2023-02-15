@@ -2,30 +2,78 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Put;
 use App\Repository\AddressRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
+#[ORM\Table(name: '`address`')]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Put(),
+        new Patch(),
+    ],
+    normalizationContext: ['groups' => ['address:read']]
+)]
+#[Get]
+#[Patch(
+    normalizationContext: ['groups' => ['address:write']],
+    security: 'object.owner == user'
+)]
+#[Put(
+    normalizationContext: ['groups' => ['address:write']],
+    security: 'object.owner == user'
+)]
 class Address
 {
+    /**
+     * @var int|null The address' ID
+     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['address:read'])]
     private ?int $id = null;
 
+    /**
+     * @var string|null The address' name
+     */
     #[ORM\Column(length: 50, nullable: true)]
+    #[Groups(['address:read', 'address:write'])]
     private ?string $name = null;
 
+    /**
+     * @var string|null The entire address
+     */
     #[ORM\Column(length: 255)]
+    #[Groups(['address:read', 'address:write'])]
     private ?string $ad = null;
 
+    /**
+     * @var string|null The postal code
+     */
     #[ORM\Column(length: 5)]
+    #[Groups(['address:read', 'address:write'])]
     private ?string $pc = null;
 
+    /**
+     * @var string|null The city of the address
+     */
     #[ORM\Column(length: 50)]
+    #[Groups(['address:read', 'address:write'])]
     private ?string $city = null;
 
+    /**
+     * @var Client|null The client using this address
+     */
     #[ORM\ManyToOne(inversedBy: 'adresses')]
+    #[Groups(['address:read', 'address:write'])]
     private ?Client $client = null;
 
     public function getId(): ?int
@@ -93,6 +141,7 @@ class Address
         return $this;
     }
 
+    #[Ignore]
     public function getDisplayName(): string
     {
         return "$this->ad, $this->city, $this->pc ($this->name)";

@@ -2,34 +2,87 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Put;
 use App\Repository\AnimalRecordRepository;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: AnimalRecordRepository::class)]
+#[ORM\Table(name: '`animalRecord`')]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Put(),
+        new Patch(),
+    ],
+    normalizationContext: ['groups' => ['animalRecord:read']]
+)]
+#[Get]
+#[Patch(
+    normalizationContext: ['groups' => ['animalRecord:write']],
+    security: 'object.owner == user'
+)]
+#[Put(
+    normalizationContext: ['groups' => ['animalRecord:write']],
+    security: 'object.owner == user'
+)]
 class AnimalRecord
 {
+    /**
+     * @var int|null The record's ID
+     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['animalRecord:read'])]
     private ?int $id = null;
 
+    /**
+     * @var float|null The animal's weight
+     */
     #[ORM\Column]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
     private ?float $weight = null;
 
+    /**
+     * @var float|null The animal's height
+     */
     #[ORM\Column]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
     private ?float $height = null;
 
+    /**
+     * @var string|null Other information concerning the animal
+     */
     #[ORM\Column(length: 1024, nullable: true)]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
     private ?string $otherInfos = null;
 
+    /**
+     * @var string|null Health information concerning the animal
+     */
     #[ORM\Column(length: 1024, nullable: true)]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
     private ?string $healthInfos = null;
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $dateRecord = null;
 
+    /**
+     * @var DateTimeInterface|null The date at which the record was modified last
+     */
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
+    private ?DateTimeInterface $dateRecord = null;
+
+    /**
+     * @var Animal|null The Animal defined in the record
+     */
     #[ORM\ManyToOne(inversedBy: 'animalRecords')]
     #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
     private ?Animal $Animal = null;
 
     public function getId(): ?int
@@ -85,12 +138,12 @@ class AnimalRecord
         return $this;
     }
 
-    public function getDateRecord(): ?\DateTimeInterface
+    public function getDateRecord(): ?DateTimeInterface
     {
         return $this->dateRecord;
     }
 
-    public function setDateRecord(\DateTimeInterface $dateRecord): self
+    public function setDateRecord(DateTimeInterface $dateRecord): self
     {
         $this->dateRecord = $dateRecord;
 
