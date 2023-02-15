@@ -2,21 +2,33 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use App\Repository\ThreadMessageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ThreadMessageRepository::class)]
+#[ApiResource(
+    operations: [new Get(
+        normalizationContext: ['groups' => ['get_ThreadMessage']]
+    ),
+        ]
+)]
 class ThreadMessage
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('get_ThreadMessage')]
     private ?int $id = null;
 
     #[ORM\Column(length: 1024)]
+    #[Groups('get_ThreadMessage')]
     private ?string $message = null;
 
     #[ORM\Column]
+    #[Groups('get_ThreadMessage')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'author')]
