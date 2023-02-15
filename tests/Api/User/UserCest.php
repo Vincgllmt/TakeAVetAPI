@@ -8,15 +8,22 @@ class UserCest
     {
         return [
             'id' => 'integer',
+            'isAnHusbandry' => 'boolean',
             'email' => 'string',
+            'lastName' => 'string',
+            'firstName' => 'string',
+            'tel' => 'string|null',
+            'profilePicPath' => 'string|null',
         ];
     }
 
     public function testCreateUser(ApiTester $I): void
     {
-        $I->sendPost('/api/users', [
+        $I->sendPost('/api/register', [
             'email' => 'test@test.test',
             'password' => 'password',
+            'lastName' => 'Doe',
+            'firstName' => 'John',
         ]);
 
         $I->seeResponseCodeIsSuccessful();

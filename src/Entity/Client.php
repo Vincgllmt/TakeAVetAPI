@@ -8,6 +8,7 @@ use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(operations: [
     new Post(
@@ -24,6 +25,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Client extends User
 {
     #[ORM\Column]
+    #[Groups(['user:read-me', 'user:read'])]
     private ?bool $isAnHusbandry = null;
 
     #[ORM\OneToMany(mappedBy: 'ClientAnimal', targetEntity: Animal::class, cascade: ['remove'])]
