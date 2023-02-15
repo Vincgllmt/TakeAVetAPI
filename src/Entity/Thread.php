@@ -5,7 +5,9 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\ThreadRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -35,7 +37,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ],
         normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
         denormalizationContext: ['groups' => ['thread:create']],
-    )
+    ),
+    new Patch(
+        openapiContext: [
+            'summary' => 'Update a thread',
+        ],
+        normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
+        denormalizationContext: ['groups' => ['thread:write']],
+    ),
+    new Put(
+        openapiContext: [
+            'summary' => 'Replace a thread',
+        ],
+        normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
+        denormalizationContext: ['groups' => ['thread:create', 'thread:write']],
+    ),
 ])]
 class Thread
 {
@@ -52,7 +68,7 @@ class Thread
      * @var string|null the title of this thread (question)
      */
     #[ORM\Column(length: 255)]
-    #[Groups(['thread:read', 'thread:create'])]
+    #[Groups(['thread:read', 'thread:create', 'thread:write'])]
     private ?string $lib = null;
 
     /**
@@ -66,7 +82,7 @@ class Thread
      * @var string|null the message of this thread (explanation)
      */
     #[ORM\Column(length: 1024)]
-    #[Groups(['thread:read', 'thread:create'])]
+    #[Groups(['thread:read', 'thread:create', 'thread:write'])]
     private ?string $message = null;
 
     /**
@@ -88,7 +104,7 @@ class Thread
      * @var bool|null true if the thread is resolved, false if it is not
      */
     #[ORM\Column]
-    #[Groups(['thread:read'])]
+    #[Groups(['thread:read', 'thread:write'])]
     private ?bool $resolved = null;
 
     public function __construct()
