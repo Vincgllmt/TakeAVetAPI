@@ -31,28 +31,46 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Address
 {
+    /**
+     * @var int|null The address' ID
+     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['get_address', 'set_address'])]
     private ?int $id = null;
 
+    /**
+     * @var string|null The address' name
+     */
     #[ORM\Column(length: 50, nullable: true)]
     #[Groups(['get_address', 'set_address'])]
     private ?string $name = null;
 
+    /**
+     * @var string|null The entire address
+     */
     #[ORM\Column(length: 255)]
     #[Groups(['get_address', 'set_address'])]
     private ?string $ad = null;
 
+    /**
+     * @var string|null The postal code
+     */
     #[ORM\Column(length: 5)]
     #[Groups(['get_address', 'set_address'])]
     private ?string $pc = null;
 
+    /**
+     * @var string|null The city of the address
+     */
     #[ORM\Column(length: 50)]
     #[Groups(['get_address', 'set_address'])]
     private ?string $city = null;
 
+    /**
+     * @var Client|null The client using this address
+     */
     #[ORM\ManyToOne(inversedBy: 'adresses')]
     #[Groups(['get_address', 'set_address'])]
     private ?Client $client = null;
