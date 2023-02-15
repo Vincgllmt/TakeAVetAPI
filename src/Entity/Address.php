@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\Put;
 use App\Repository\AddressRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
 #[ORM\Table(name: '`address`')]
@@ -140,6 +141,7 @@ class Address
         return $this;
     }
 
+    #[Ignore]
     public function getDisplayName(): string
     {
         return "$this->ad, $this->city, $this->pc ($this->name)";
