@@ -20,15 +20,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Put(),
         new Patch(),
     ],
-    normalizationContext: ['groups' => ['get_animalRecord']]
+    normalizationContext: ['groups' => ['animalRecord:read']]
 )]
 #[Get]
 #[Patch(
-    normalizationContext: ['groups' => ['set_animalRecord']],
+    normalizationContext: ['groups' => ['animalRecord:write']],
     security: 'object.owner == user'
 )]
 #[Put(
-    normalizationContext: ['groups' => ['set_animalRecord']],
+    normalizationContext: ['groups' => ['animalRecord:write']],
     security: 'object.owner == user'
 )]
 class AnimalRecord
@@ -39,42 +39,42 @@ class AnimalRecord
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['get_animalRecord'])]
+    #[Groups(['animalRecord:read'])]
     private ?int $id = null;
 
     /**
      * @var float|null The animal's weight
      */
     #[ORM\Column]
-    #[Groups(['get_animalRecord', 'set_animalRecord'])]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
     private ?float $weight = null;
 
     /**
      * @var float|null The animal's height
      */
     #[ORM\Column]
-    #[Groups(['get_animalRecord', 'set_animalRecord'])]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
     private ?float $height = null;
 
     /**
      * @var string|null Other information concerning the animal
      */
     #[ORM\Column(length: 1024, nullable: true)]
-    #[Groups(['get_animalRecord', 'set_animalRecord'])]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
     private ?string $otherInfos = null;
 
     /**
      * @var string|null Health information concerning the animal
      */
     #[ORM\Column(length: 1024, nullable: true)]
-    #[Groups(['get_animalRecord', 'set_animalRecord'])]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
     private ?string $healthInfos = null;
 
     /**
      * @var DateTimeInterface|null The date at which the record was modified last
      */
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(['get_animalRecord', 'set_animalRecord'])]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
     private ?DateTimeInterface $dateRecord = null;
 
     /**
@@ -82,7 +82,7 @@ class AnimalRecord
      */
     #[ORM\ManyToOne(inversedBy: 'animalRecords')]
     #[ORM\JoinColumn(nullable: true)]
-    #[Groups(['get_animalRecord', 'set_animalRecord'])]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
     private ?Animal $Animal = null;
 
     public function getId(): ?int
