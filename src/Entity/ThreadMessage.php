@@ -3,9 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\ThreadMessageRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -16,7 +19,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(
         normalizationContext: ['groups' => ['threadMessage:read']]
     ),
-        new GetCollection()
+        new GetCollection(),
+        new Patch(
+            normalizationContext: ['groups' => ['threadMessage:update']],
+            security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
+        ),
+        new Delete(
+            security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
+        )
         //new Post(
         //    normalizationContext: ['groups' => ['threadMessage:create']]
         //    ),
@@ -31,7 +41,7 @@ class ThreadMessage
     private ?int $id = null;
 
     #[ORM\Column(length: 1024)]
-    #[Groups('threadMessage:read')]
+    #[Groups(['threadMessage:read','threadMessage:update'])]
     private ?string $message = null;
 
     #[ORM\Column]
