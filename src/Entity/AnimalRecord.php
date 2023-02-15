@@ -2,34 +2,64 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Put;
 use App\Repository\AnimalRecordRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: AnimalRecordRepository::class)]
+#[ORM\Table(name: '`animalRecord`')]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Put(),
+        new Patch(),
+    ],
+    normalizationContext: ['groups' => ['get_animalRecord']]
+)]
+#[Get]
+#[Patch(
+    normalizationContext: ['groups' => ['set_animalRecord']],
+    security: 'object.owner == user'
+)]
+#[Put(
+    normalizationContext: ['groups' => ['set_animalRecord']],
+    security: 'object.owner == user'
+)]
 class AnimalRecord
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['get_animalRecord', 'set_animalRecord'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['get_animalRecord', 'set_animalRecord'])]
     private ?float $weight = null;
 
     #[ORM\Column]
+    #[Groups(['get_animalRecord', 'set_animalRecord'])]
     private ?float $height = null;
 
     #[ORM\Column(length: 1024, nullable: true)]
+    #[Groups(['get_animalRecord', 'set_animalRecord'])]
     private ?string $otherInfos = null;
 
     #[ORM\Column(length: 1024, nullable: true)]
+    #[Groups(['get_animalRecord', 'set_animalRecord'])]
     private ?string $healthInfos = null;
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['get_animalRecord', 'set_animalRecord'])]
     private ?\DateTimeInterface $dateRecord = null;
 
     #[ORM\ManyToOne(inversedBy: 'animalRecords')]
     #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['get_animalRecord', 'set_animalRecord'])]
     private ?Animal $Animal = null;
 
     public function getId(): ?int
