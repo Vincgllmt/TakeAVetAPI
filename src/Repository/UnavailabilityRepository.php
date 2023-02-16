@@ -126,7 +126,7 @@ class UnavailabilityRepository extends ServiceEntityRepository
     }
 
     /**
-     * Get all Unavailability of a datetime week.
+     * Get all Unavailability of a startDatetime week.
      *
      * @return Unavailability[]
      */

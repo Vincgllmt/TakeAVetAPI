@@ -2,13 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\AgendaDayRepository;
 use App\Repository\AgendaRepository;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\NonUniqueResultException;
 
 #[ORM\Entity(repositoryClass: AgendaRepository::class)]
 class Agenda
@@ -24,11 +22,17 @@ class Agenda
     #[ORM\OneToMany(mappedBy: 'agenda', targetEntity: Vacation::class, cascade: ['persist', 'remove'])]
     private Collection $vacations;
 
-    #[ORM\OneToMany(mappedBy: 'agenda', targetEntity: AgendaDay::class, cascade: ['persist', 'remove'])]
-    private Collection $days;
+//    #[ORM\OneToMany(mappedBy: 'agenda', targetEntity: AgendaDay::class, cascade: ['persist', 'remove'])]
+//    private Collection $days;
 
     #[ORM\OneToOne(mappedBy: 'agenda')]
     private ?Veto $veto = null;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTimeInterface $startHour = null;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTimeInterface $endHour = null;
 
     public function __construct()
     {
@@ -102,35 +106,35 @@ class Agenda
         return $this;
     }
 
-    /**
-     * @return Collection<int, AgendaDay>
-     */
-    public function getDays(): Collection
-    {
-        return $this->days;
-    }
-
-    public function addDay(AgendaDay $day): self
-    {
-        if (!$this->days->contains($day)) {
-            $this->days->add($day);
-            $day->setAgenda($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDay(AgendaDay $day): self
-    {
-        if ($this->days->removeElement($day)) {
-            // set the owning side to null (unless already changed)
-            if ($day->getAgenda() === $this) {
-                $day->setAgenda(null);
-            }
-        }
-
-        return $this;
-    }
+//    /**
+//     * @return Collection<int, AgendaDay>
+//     */
+//    public function getDays(): Collection
+//    {
+//        return $this->days;
+//    }
+//
+//    public function addDay(AgendaDay $day): self
+//    {
+//        if (!$this->days->contains($day)) {
+//            $this->days->add($day);
+//            $day->setAgenda($this);
+//        }
+//
+//        return $this;
+//    }
+//
+//    public function removeDay(AgendaDay $day): self
+//    {
+//        if ($this->days->removeElement($day)) {
+//            // set the owning side to null (unless already changed)
+//            if ($day->getAgenda() === $this) {
+//                $day->setAgenda(null);
+//            }
+//        }
+//
+//        return $this;
+//    }
 
     public function getVeto(): ?Veto
     {
@@ -153,31 +157,55 @@ class Agenda
 
         return $this;
     }
+//
+//    /**
+//     * @throws NonUniqueResultException
+//     */
+//    public function canTakeAt(\DateTime $dateTime, AgendaDayRepository $agendaDayRepository, TypeAppointment $appointmentType): bool
+//    {
+//        // to convert this $dateTime to a number from 1 to 7.
+//        $dayNumber = self::getDayNumberFromDateTime($dateTime);
+//
+//        // null: Vet is not working this day or $dateTime is not valid, not null: OK
+//        $agendaDay = $agendaDayRepository->findAndCheckAt($dayNumber, $this, $dateTime, $appointmentType->getDuration());
+//
+//        // the appointment can be taken on this day at this time for this vet (with no verification on the already existing appointments)
+//        return null !== $agendaDay;
+//    }
+//
+//    /**
+//     * For php sunday is 0, so this convert from 1 for Monday to 7 for sunday.
+//     *
+//     * @param \DateTime $dateTime the startDatetime
+//     */
+//    private static function getDayNumberFromDateTime(\DateTime $dateTime): int
+//    {
+//        $dayNumber = (int) $dateTime->format('w');
+//
+//        return 0 == $dayNumber ? 7 : $dayNumber;
+//    }
 
-    /**
-     * @throws NonUniqueResultException
-     */
-    public function canTakeAt(\DateTime $dateTime, AgendaDayRepository $agendaDayRepository, TypeAppointment $appointmentType): bool
-    {
-        // to convert this $dateTime to a number from 1 to 7.
-        $dayNumber = self::getDayNumberFromDateTime($dateTime);
+public function getStartHour(): ?\DateTimeInterface
+{
+    return $this->startHour;
+}
 
-        // null: Vet is not working this day or $dateTime is not valid, not null: OK
-        $agendaDay = $agendaDayRepository->findAndCheckAt($dayNumber, $this, $dateTime, $appointmentType->getDuration());
+public function setStartHour(\DateTimeInterface $startHour): self
+{
+    $this->startHour = $startHour;
 
-        // the appointment can be taken on this day at this time for this vet (with no verification on the already existing appointments)
-        return null !== $agendaDay;
-    }
+    return $this;
+}
 
-    /**
-     * For php sunday is 0, so this convert from 1 for Monday to 7 for sunday.
-     *
-     * @param \DateTime $dateTime the datetime
-     */
-    private static function getDayNumberFromDateTime(\DateTime $dateTime): int
-    {
-        $dayNumber = (int) $dateTime->format('w');
+public function getEndHour(): ?\DateTimeInterface
+{
+    return $this->endHour;
+}
 
-        return 0 == $dayNumber ? 7 : $dayNumber;
-    }
+public function setEndHour(\DateTimeInterface $endHour): self
+{
+    $this->endHour = $endHour;
+
+    return $this;
+}
 }
