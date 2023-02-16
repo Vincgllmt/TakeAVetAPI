@@ -153,6 +153,18 @@ class Thread
         return $this;
     }
 
+    public function isResolved(): ?bool
+    {
+        return $this->resolved;
+    }
+
+    public function setResolved(bool $resolved): self
+    {
+        $this->resolved = $resolved;
+
+        return $this;
+    }
+
     public function getAuthor(): ?User
     {
         return $this->author;
@@ -191,18 +203,6 @@ class Thread
                 $reply->setThread(null);
             }
         }
-
-        return $this;
-    }
-
-    public function isResolved(): ?bool
-    {
-        return $this->resolved;
-    }
-
-    public function setResolved(bool $resolved): self
-    {
-        $this->resolved = $resolved;
 
         return $this;
     }

@@ -119,18 +119,6 @@ class AnimalRecord
         return $this;
     }
 
-    public function getAnimal(): ?Animal
-    {
-        return $this->Animal;
-    }
-
-    public function setAnimal(?Animal $Animal): self
-    {
-        $this->Animal = $Animal;
-
-        return $this;
-    }
-
     public function getOtherInfos(): ?string
     {
         return $this->otherInfos;
@@ -151,6 +139,18 @@ class AnimalRecord
     public function setHealthInfos(string $healthInfos): self
     {
         $this->healthInfos = $healthInfos;
+
+        return $this;
+    }
+
+    public function getAnimal(): ?Animal
+    {
+        return $this->Animal;
+    }
+
+    public function setAnimal(?Animal $Animal): self
+    {
+        $this->Animal = $Animal;
 
         return $this;
     }

@@ -277,4 +277,26 @@ class Animal
 
         return $this;
     }
+
+    public function addRecord(AnimalRecord $record): self
+    {
+        if (!$this->records->contains($record)) {
+            $this->records->add($record);
+            $record->setAnimal($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecord(AnimalRecord $record): self
+    {
+        if ($this->records->removeElement($record)) {
+            // set the owning side to null (unless already changed)
+            if ($record->getAnimal() === $this) {
+                $record->setAnimal(null);
+            }
+        }
+
+        return $this;
+    }
 }

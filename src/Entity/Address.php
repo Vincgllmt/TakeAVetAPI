@@ -86,6 +86,12 @@ class Address
         $this->appointments = new ArrayCollection();
     }
 
+    #[Ignore]
+    public function getDisplayName(): string
+    {
+        return "$this->ad, $this->city, $this->pc ($this->name)";
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -149,12 +155,6 @@ class Address
         $this->client = $client;
 
         return $this;
-    }
-
-    #[Ignore]
-    public function getDisplayName(): string
-    {
-        return "$this->ad, $this->city, $this->pc ($this->name)";
     }
 
     /**
