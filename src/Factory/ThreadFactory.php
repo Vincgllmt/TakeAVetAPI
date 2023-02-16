@@ -37,9 +37,9 @@ final class ThreadFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'lib' => self::faker()->realTextBetween(50, 254).'?',
+            'subject' => self::faker()->realTextBetween(50, 254).'?',
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
-            'message' => self::faker()->text(1024),
+            'description' => self::faker()->text(1024),
             'resolved' => self::faker()->boolean(),
         ];
     }

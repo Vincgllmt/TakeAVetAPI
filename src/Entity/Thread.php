@@ -16,7 +16,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ThreadRepository::class)]
-#[UniqueEntity(fields: ['lib'], message: 'Il y a déjà un sujet avec ce titre.')]
+#[UniqueEntity(fields: ['subject'], message: 'Il y a déjà un sujet avec ce titre.')]
 #[UniqueEntity(fields: ['id'], message: 'Il y a déjà un sujet avec cet identifiant.')]
 #[ApiResource(operations: [
     new GetCollection(
@@ -69,7 +69,7 @@ class Thread
      */
     #[ORM\Column(length: 255)]
     #[Groups(['thread:read', 'thread:create', 'thread:write'])]
-    private ?string $lib = null;
+    private ?string $subject = null;
 
     /**
      * @var \DateTimeImmutable|null the date of creation of this thread
@@ -79,11 +79,11 @@ class Thread
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
-     * @var string|null the message of this thread (explanation)
+     * @var string|null the description of this thread (explanation)
      */
     #[ORM\Column(length: 1024)]
     #[Groups(['thread:read', 'thread:create', 'thread:write'])]
-    private ?string $message = null;
+    private ?string $description = null;
 
     /**
      * @var User|null the author of this thread
@@ -94,9 +94,9 @@ class Thread
     private ?User $author = null;
 
     /**
-     * @var Collection<int, ThreadMessage> the replies to this thread
+     * @var Collection<int, ThreadReply> the replies to this thread
      */
-    #[ORM\OneToMany(mappedBy: 'thread', targetEntity: ThreadMessage::class)]
+    #[ORM\OneToMany(mappedBy: 'thread', targetEntity: ThreadReply::class)]
     #[Groups(['thread:read-all'])]
     private Collection $replies;
 
@@ -117,14 +117,14 @@ class Thread
         return $this->id;
     }
 
-    public function getLib(): ?string
+    public function getSubject(): ?string
     {
-        return $this->lib;
+        return $this->subject;
     }
 
-    public function setLib(string $lib): self
+    public function setSubject(string $subject): self
     {
-        $this->lib = $lib;
+        $this->subject = $subject;
 
         return $this;
     }
@@ -141,14 +141,14 @@ class Thread
         return $this;
     }
 
-    public function getMessage(): ?string
+    public function getDescription(): ?string
     {
-        return $this->message;
+        return $this->description;
     }
 
-    public function setMessage(string $message): self
+    public function setDescription(string $description): self
     {
-        $this->message = $message;
+        $this->description = $description;
 
         return $this;
     }
@@ -166,14 +166,14 @@ class Thread
     }
 
     /**
-     * @return Collection<int, ThreadMessage>
+     * @return Collection<int, ThreadReply>
      */
     public function getReplies(): Collection
     {
         return $this->replies;
     }
 
-    public function addReply(ThreadMessage $reply): self
+    public function addReply(ThreadReply $reply): self
     {
         if (!$this->replies->contains($reply)) {
             $this->replies->add($reply);
@@ -183,7 +183,7 @@ class Thread
         return $this;
     }
 
-    public function removeReply(ThreadMessage $reply): self
+    public function removeReply(ThreadReply $reply): self
     {
         if ($this->replies->removeElement($reply)) {
             // set the owning side to null (unless already changed)
