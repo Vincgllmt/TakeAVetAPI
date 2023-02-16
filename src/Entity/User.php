@@ -71,7 +71,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(length: 20, nullable: true)]
     #[Groups(['user:read-me'])]
-    protected ?string $tel = null;
+    protected ?string $phone = null;
 
     /**
      * @var Collection threads created by this user
@@ -82,7 +82,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection messages created by this user
      */
-    #[ORM\OneToMany(mappedBy: 'User', targetEntity: ThreadMessage::class)]
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: ThreadReply::class)]
     protected Collection $author;
 
     /**
@@ -90,7 +90,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['user:read-me', 'user:read'])]
-    private ?string $profilePicPath = null;
+    private ?string $avatarPath = null;
 
     public function __construct()
     {
@@ -211,14 +211,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTel(): ?string
+    public function getPhone(): ?string
     {
-        return $this->tel;
+        return $this->phone;
     }
 
-    public function setTel(?string $tel): self
+    public function setPhone(?string $phone): self
     {
-        $this->tel = $tel;
+        $this->phone = $phone;
 
         return $this;
     }
@@ -254,14 +254,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, ThreadMessage>
+     * @return Collection<int, ThreadReply>
      */
     public function getAuthor(): Collection
     {
         return $this->author;
     }
 
-    public function addAuthor(ThreadMessage $author): self
+    public function addAuthor(ThreadReply $author): self
     {
         if (!$this->author->contains($author)) {
             $this->author->add($author);
@@ -271,7 +271,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeAuthor(ThreadMessage $author): self
+    public function removeAuthor(ThreadReply $author): self
     {
         if ($this->author->removeElement($author)) {
             // set the owning side to null (unless already changed)
@@ -293,14 +293,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this instanceof Client;
     }
 
-    public function getProfilePicPath(): ?string
+    public function getAvatarPath(): ?string
     {
-        return $this->profilePicPath;
+        return $this->avatarPath;
     }
 
-    public function setProfilePicPath(?string $profilePicPath): self
+    public function setAvatarPath(?string $avatarPath): self
     {
-        $this->profilePicPath = $profilePicPath;
+        $this->avatarPath = $avatarPath;
 
         return $this;
     }
