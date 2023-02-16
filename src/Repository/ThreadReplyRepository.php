@@ -3,26 +3,26 @@
 namespace App\Repository;
 
 use App\Entity\Thread;
-use App\Entity\ThreadMessage;
+use App\Entity\ThreadReply;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ThreadMessage>
+ * @extends ServiceEntityRepository<ThreadReply>
  *
- * @method ThreadMessage|null find($id, $lockMode = null, $lockVersion = null)
- * @method ThreadMessage|null findOneBy(array $criteria, array $orderBy = null)
- * @method ThreadMessage[]    findAll()
- * @method ThreadMessage[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method ThreadReply|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ThreadReply|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ThreadReply[]    findAll()
+ * @method ThreadReply[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ThreadMessageRepository extends ServiceEntityRepository
+class ThreadReplyRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ThreadMessage::class);
+        parent::__construct($registry, ThreadReply::class);
     }
 
-    public function save(ThreadMessage $entity, bool $flush = false): void
+    public function save(ThreadReply $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -31,7 +31,7 @@ class ThreadMessageRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(ThreadMessage $entity, bool $flush = false): void
+    public function remove(ThreadReply $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -45,11 +45,11 @@ class ThreadMessageRepository extends ServiceEntityRepository
      *
      * @param Thread $thread Le thread
      *
-     * @return ThreadMessage[] Les messages du thread
+     * @return ThreadReply[] Les messages du thread
      */
     public function findSortByVeto(Thread $thread): array
     {
-        $messages = $this->findBy(['thread' => $thread], ['createdAt' => 'DESC']);
+        $messages = $this->findBy(['thread' => $thread], ['updatedAt' => 'DESC']);
 
         foreach ($messages as $key => $element) {
             if ($element->getUser()->isVeto()) {
@@ -58,7 +58,7 @@ class ThreadMessageRepository extends ServiceEntityRepository
             }
         }
 
-        /*usort($messages, function (ThreadMessage $first) {
+        /*usort($messages, function (ThreadReply $first) {
             return !$first->getUser()->isVeto();
         });*/
 
@@ -66,7 +66,7 @@ class ThreadMessageRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return ThreadMessage[] Returns an array of ThreadMessage objects
+//     * @return ThreadReply[] Returns an array of ThreadReply objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -80,7 +80,7 @@ class ThreadMessageRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?ThreadMessage
+//    public function findOneBySomeField($value): ?ThreadReply
 //    {
 //        return $this->createQueryBuilder('t')
 //            ->andWhere('t.exampleField = :val')
