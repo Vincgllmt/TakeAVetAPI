@@ -2,52 +2,51 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Api\ThreadMessage;
+namespace App\Tests\Api\ThreadReply;
 
-use App\Entity\ThreadMessage;
+use App\Entity\ThreadReply;
 use App\Factory\ClientFactory;
 use App\Factory\ThreadFactory;
-use App\Factory\ThreadMessageFactory;
-use App\Factory\UserFactory;
+use App\Factory\ThreadReplyFactory;
 use App\Tests\Support\ApiTester;
 
-class MessageGetCest
+class ReplyGetCest
 {
     public function getMessage(ApiTester $I): void
     {
         $thread = ThreadFactory::createOne();
         $user = ClientFactory::createOne();
-        ThreadMessageFactory::createOne([
+        ThreadReplyFactory::createOne([
             'user' => $user,
-            'thread' => $thread
+            'thread' => $thread,
         ]);
-        $I->sendGet('/api/thread_messages/1');
+        $I->sendGet('/api/thread_replies/1');
         $I->seeResponseCodeIsSuccessful();
         $I->seeResponseIsJson();
-        $I->seeResponseIsAnEntity(ThreadMessage::class, '/api/thread_messages/1');
+        $I->seeResponseIsAnEntity(ThreadReply::class, '/api/thread_replies/1');
     }
+
     public function getAllMessage(ApiTester $I): void
     {
         $thread = ThreadFactory::createOne();
         $user = ClientFactory::createOne();
-        ThreadMessageFactory::createOne([
+        ThreadReplyFactory::createOne([
             'user' => $user,
-            'thread' => $thread
+            'thread' => $thread,
         ]);
-        ThreadMessageFactory::createOne([
+        ThreadReplyFactory::createOne([
             'user' => $user,
-            'thread' => $thread
+            'thread' => $thread,
         ]);
-        $I->sendGet('/api/thread_messages');
+        $I->sendGet('/api/thread_replies');
         $I->seeResponseCodeIsSuccessful();
         $I->seeResponseIsJson();
-        $I->seeResponseIsACollection(ThreadMessage::class, '/api/thread_messages', [
+        $I->seeResponseIsACollection(ThreadReply::class, '/api/thread_replies', [
             'hydra:member' => 'array',
             'hydra:totalItems' => 'integer',
         ]);
         $jsonResponse = $I->grabJsonResponse();
         $I->assertSame(2, $jsonResponse['hydra:totalItems']);
         $I->assertCount(2, $jsonResponse['hydra:member']);
-
     }
 }
