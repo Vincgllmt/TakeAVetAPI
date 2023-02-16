@@ -18,13 +18,13 @@ class Vaccine
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateNext = null;
+    private ?\DateTimeInterface $next = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateCurrent = null;
+    private ?\DateTimeInterface $last = null;
 
     #[ORM\ManyToOne]
-    private ?Animal $Animal = null;
+    private ?Animal $animal = null;
 
     public function getId(): ?int
     {
@@ -43,38 +43,38 @@ class Vaccine
         return $this;
     }
 
-    public function getDateNext(): ?\DateTimeInterface
+    public function getNext(): ?\DateTimeInterface
     {
-        return $this->dateNext;
+        return $this->next;
     }
 
-    public function setDateNext(?\DateTimeInterface $dateNext): self
+    public function setNext(?\DateTimeInterface $next): self
     {
-        $this->dateNext = $dateNext;
+        $this->next = $next;
 
         return $this;
     }
 
-    public function getDateCurrent(): ?\DateTimeInterface
+    public function getLast(): ?\DateTimeInterface
     {
-        return $this->dateCurrent;
+        return $this->last;
     }
 
-    public function setDateCurrent(?\DateTimeInterface $dateCurrent): self
+    public function setLast(?\DateTimeInterface $last): self
     {
-        $this->dateCurrent = $dateCurrent;
+        $this->last = $last;
 
         return $this;
     }
 
     public function getAnimal(): ?Animal
     {
-        return $this->Animal;
+        return $this->animal;
     }
 
-    public function setAnimal(?Animal $Animal): self
+    public function setAnimal(?Animal $animal): self
     {
-        $this->Animal = $Animal;
+        $this->animal = $animal;
 
         return $this;
     }

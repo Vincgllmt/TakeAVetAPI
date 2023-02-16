@@ -15,13 +15,13 @@ class Receipt
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?float $totalCost = null;
+    private ?float $total = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $receiptAt = null;
 
     #[ORM\Column]
-    private ?float $VAT = null;
+    private ?float $vat = null;
 
     #[ORM\OneToOne(mappedBy: 'receipt', cascade: ['persist', 'remove'])]
     private ?Appointment $appointment = null;
@@ -31,14 +31,14 @@ class Receipt
         return $this->id;
     }
 
-    public function getTotalCost(): ?float
+    public function getTotal(): ?float
     {
-        return $this->totalCost;
+        return $this->total;
     }
 
-    public function setTotalCost(float $totalCost): self
+    public function setTotal(float $total): self
     {
-        $this->totalCost = $totalCost;
+        $this->total = $total;
 
         return $this;
     }
@@ -55,14 +55,14 @@ class Receipt
         return $this;
     }
 
-    public function getVAT(): ?float
+    public function getVat(): ?float
     {
-        return $this->VAT;
+        return $this->vat;
     }
 
-    public function setVAT(float $VAT): self
+    public function setVat(float $vat): self
     {
-        $this->VAT = $VAT;
+        $this->vat = $vat;
 
         return $this;
     }
