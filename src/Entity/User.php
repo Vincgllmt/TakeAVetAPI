@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use App\Controller\GetAvatarController;
 use App\Controller\GetMeController;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -32,8 +33,8 @@ use Symfony\Component\Validator\Constraints\Length;
             uriTemplate: '/me',
             controller: GetMeController::class,
             openapiContext: [
-                'summary' => 'Get the current client.',
-                'description' => 'Return the client that is currently logged in.',
+                'summary' => 'Get the current user.',
+                'description' => 'Return the user that is currently logged in.',
                 'responses' => [
                     '200' => [
                         'description' => 'The user (client or vet) that is currently logged in.',
@@ -46,6 +47,29 @@ use Symfony\Component\Validator\Constraints\Length;
             paginationEnabled: false,
             normalizationContext: ['groups' => ['user:read-me']],
             security: "is_granted('IS_AUTHENTICATED_FULLY')"),
+        new Get(
+            uriTemplate: '/users/{id}/avatar',
+            formats: [
+                'png' => 'image/png',
+            ],
+            controller: GetAvatarController::class,
+            openapiContext: [
+                'summary' => 'Retrieve a user avatar from a given user.',
+                'responses' => [
+                    '200' => [
+                        'description' => 'Return the given user avatar.',
+                        'content' => [
+                            'image/png' => [
+                                'schema' => [
+                                    'type' => 'string',
+                                    'format' => 'binary',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        ),
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
