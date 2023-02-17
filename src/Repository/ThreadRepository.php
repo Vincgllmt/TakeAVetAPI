@@ -40,7 +40,7 @@ class ThreadRepository extends ServiceEntityRepository
     }
 
     /**
-     * Return all thread (id, lib, createdAt) with author in 'name' in one SQL request, this adds a search and pagination param.
+     * Return all thread (id, subject, updatedAt) with author in 'name' in one SQL request, this adds a search and pagination param.
      *
      * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/tutorials/pagination.html
      */
@@ -48,16 +48,16 @@ class ThreadRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
             ->select('t.id as id')
-            ->addSelect('t.lib as lib')
-            ->addSelect('t.createdAt as createdAt')
-            ->addSelect('t.message as message')
+            ->addSelect('t.subject as subject')
+            ->addSelect('t.updatedAt as updatedAt')
+            ->addSelect('t.description as description')
             ->addSelect('t.resolved as resolved')
             ->addSelect('COUNT(replies.id) as count')
             ->addSelect("CONCAT(author.lastName, ' ',author.firstName) as name")
             ->innerJoin('t.author', 'author')
             ->leftJoin('t.replies', 'replies')
-            ->where('t.lib LIKE :search OR t.message LIKE :search')
-            ->orderBy('t.createdAt', 'DESC')
+            ->where('t.subject LIKE :search OR t.description LIKE :search')
+            ->orderBy('t.updatedAt', 'DESC')
             ->groupBy('t.id')
             ->setParameter('search', "%$search%")
             ->getQuery()

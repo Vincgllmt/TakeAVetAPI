@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\CategoryAnimal;
+use App\Entity\TypeAnimal;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CategoryAnimal>
+ * @extends ServiceEntityRepository<TypeAnimal>
  *
- * @method CategoryAnimal|null find($id, $lockMode = null, $lockVersion = null)
- * @method CategoryAnimal|null findOneBy(array $criteria, array $orderBy = null)
- * @method CategoryAnimal[]    findAll()
- * @method CategoryAnimal[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method TypeAnimal|null find($id, $lockMode = null, $lockVersion = null)
+ * @method TypeAnimal|null findOneBy(array $criteria, array $orderBy = null)
+ * @method TypeAnimal[]    findAll()
+ * @method TypeAnimal[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CategoryAnimalRepository extends ServiceEntityRepository
+class TypeAnimalRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CategoryAnimal::class);
+        parent::__construct($registry, TypeAnimal::class);
     }
 
-    public function save(CategoryAnimal $entity, bool $flush = false): void
+    public function save(TypeAnimal $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class CategoryAnimalRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(CategoryAnimal $entity, bool $flush = false): void
+    public function remove(TypeAnimal $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class CategoryAnimalRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return CategoryAnimal[] Returns an array of CategoryAnimal objects
+//     * @return type[] Returns an array of type objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class CategoryAnimalRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?CategoryAnimal
+//    public function findOneBySomeField($value): ?type
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

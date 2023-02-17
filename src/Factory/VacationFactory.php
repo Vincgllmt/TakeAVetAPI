@@ -41,9 +41,9 @@ final class VacationFactory extends ModelFactory
         date_modify($endDate, '+2 months'); // 2 months from $startDate
 
         return [
-            'libVacation' => self::faker()->word(),
-            'dateStart' => $startDate,
-            'dateEnd' => $endDate,
+            'lib' => self::faker()->word(),
+            'startDate' => $startDate,
+            'endDate' => $endDate,
         ];
     }
 

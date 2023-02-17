@@ -26,9 +26,9 @@ class Client extends User
 {
     #[ORM\Column]
     #[Groups(['user:read-me', 'user:read'])]
-    private ?bool $isAnHusbandry = null;
+    private ?bool $isHusbandry = null;
 
-    #[ORM\OneToMany(mappedBy: 'ClientAnimal', targetEntity: Animal::class, cascade: ['remove'])]
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Animal::class, cascade: ['remove'])]
     private Collection $animals;
 
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Address::class)]
@@ -43,17 +43,17 @@ class Client extends User
         $this->animals = new ArrayCollection();
         $this->adresses = new ArrayCollection();
         $this->appointments = new ArrayCollection();
-        $this->isAnHusbandry = false;
+        $this->isHusbandry = false;
     }
 
-    public function isIsAnHusbandry(): ?bool
+    public function isIsHusbandry(): ?bool
     {
-        return $this->isAnHusbandry;
+        return $this->isHusbandry;
     }
 
-    public function setIsAnHusbandry(bool $isAnHusbandry): self
+    public function setIsHusbandry(bool $isHusbandry): self
     {
-        $this->isAnHusbandry = $isAnHusbandry;
+        $this->isHusbandry = $isHusbandry;
 
         return $this;
     }
@@ -70,7 +70,7 @@ class Client extends User
     {
         if (!$this->animals->contains($animal)) {
             $this->animals->add($animal);
-            $animal->setClientAnimal($this);
+            $animal->setOwner($this);
         }
 
         return $this;
@@ -80,8 +80,8 @@ class Client extends User
     {
         if ($this->animals->removeElement($animal)) {
             // set the owning side to null (unless already changed)
-            if ($animal->getClientAnimal() === $this) {
-                $animal->setClientAnimal(null);
+            if ($animal->getOwner() === $this) {
+                $animal->setOwner(null);
             }
         }
 

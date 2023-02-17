@@ -19,43 +19,46 @@ class Animal
     #[ORM\Column(length: 50)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 1024, nullable: true)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $note = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $race = null;
-
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $birthday = null;
+    private ?string $specificRace = null;
 
     #[ORM\Column(length: 50)]
     private ?string $gender = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $birthday = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imagePath = null;
+
     #[ORM\Column]
-    private ?bool $isDomestic = null;
+    private ?bool $inFarm = null;
+
+    #[ORM\Column]
+    private ?bool $isGroup = null;
+
+    #[ORM\OneToMany(mappedBy: 'animal', targetEntity: AnimalRecord::class)]
+    private Collection $records;
+
+    #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Appointment::class)]
+    private Collection $appointments;
 
     #[ORM\ManyToMany(targetEntity: Vaccine::class)]
     private Collection $vaccines;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
-    private ?CategoryAnimal $CategoryAnimal = null;
+    private ?TypeAnimal $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
-    private ?Client $ClientAnimal = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $photoPath = null;
-
-    #[ORM\OneToMany(mappedBy: 'Animal', targetEntity: AnimalRecord::class)]
-    private Collection $animalRecords;
-
-    #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Appointment::class)]
-    private Collection $appointments;
+    private ?Client $owner = null;
 
     public function __construct()
     {
         $this->vaccines = new ArrayCollection();
-        $this->animalRecords = new ArrayCollection();
+        $this->records = new ArrayCollection();
         $this->appointments = new ArrayCollection();
     }
 
@@ -76,26 +79,14 @@ class Animal
         return $this;
     }
 
-    public function getNote(): ?string
+    public function getSpecificRace(): ?string
     {
-        return $this->note;
+        return $this->specificRace;
     }
 
-    public function setNote(?string $note): self
+    public function setSpecificRace(?string $specificRace): self
     {
-        $this->note = $note;
-
-        return $this;
-    }
-
-    public function getRace(): ?string
-    {
-        return $this->race;
-    }
-
-    public function setRace(?string $race): self
-    {
-        $this->race = $race;
+        $this->specificRace = $specificRace;
 
         return $this;
     }
@@ -124,18 +115,6 @@ class Animal
         return $this;
     }
 
-    public function isIsDomestic(): ?bool
-    {
-        return $this->isDomestic;
-    }
-
-    public function setIsDomestic(bool $isDomestic): self
-    {
-        $this->isDomestic = $isDomestic;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Vaccine>
      */
@@ -160,45 +139,45 @@ class Animal
         return $this;
     }
 
-    public function getCategoryAnimal(): ?CategoryAnimal
+    public function getType(): ?TypeAnimal
     {
-        return $this->CategoryAnimal;
+        return $this->type;
     }
 
-    public function setCategoryAnimal(?CategoryAnimal $CategoryAnimal): self
+    public function setType(?TypeAnimal $type): self
     {
-        $this->CategoryAnimal = $CategoryAnimal;
+        $this->type = $type;
 
         return $this;
     }
 
-    public function getClientAnimal(): ?Client
+    public function getOwner(): ?Client
     {
-        return $this->ClientAnimal;
+        return $this->owner;
     }
 
-    public function setClientAnimal(?Client $ClientAnimal): self
+    public function setOwner(?Client $owner): self
     {
-        $this->ClientAnimal = $ClientAnimal;
+        $this->owner = $owner;
 
         return $this;
     }
 
-    public function getPhotoPath(): ?string
+    public function getImagePath(): ?string
     {
-        return $this->photoPath;
+        return $this->imagePath;
     }
 
-    public function setPhotoPath(?string $photoPath): self
+    public function setImagePath(?string $imagePath): self
     {
-        $this->photoPath = $photoPath;
+        $this->imagePath = $imagePath;
 
         return $this;
     }
 
     public function getDisplayName(): string
     {
-        $category = $this->CategoryAnimal?->getName();
+        $category = $this->type?->getName();
 
         return "$this->name".' '."$category";
     }
@@ -206,15 +185,15 @@ class Animal
     /**
      * @return Collection<int, AnimalRecord>
      */
-    public function getAnimalRecords(): Collection
+    public function getRecords(): Collection
     {
-        return $this->animalRecords;
+        return $this->records;
     }
 
     public function addAnimalRecord(AnimalRecord $animalRecord): self
     {
-        if (!$this->animalRecords->contains($animalRecord)) {
-            $this->animalRecords->add($animalRecord);
+        if (!$this->records->contains($animalRecord)) {
+            $this->records->add($animalRecord);
             $animalRecord->setAnimal($this);
         }
 
@@ -223,7 +202,7 @@ class Animal
 
     public function removeAnimalRecord(AnimalRecord $animalRecord): self
     {
-        if ($this->animalRecords->removeElement($animalRecord)) {
+        if ($this->records->removeElement($animalRecord)) {
             // set the owning side to null (unless already changed)
             if ($animalRecord->getAnimal() === $this) {
                 $animalRecord->setAnimal(null);
@@ -257,6 +236,64 @@ class Animal
             // set the owning side to null (unless already changed)
             if ($appointment->getAnimal() === $this) {
                 $appointment->setAnimal(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isInFarm(): ?bool
+    {
+        return $this->inFarm;
+    }
+
+    public function setInFarm(bool $inFarm): self
+    {
+        $this->inFarm = $inFarm;
+
+        return $this;
+    }
+
+    public function isIsGroup(): ?bool
+    {
+        return $this->isGroup;
+    }
+
+    public function setIsGroup(bool $isGroup): self
+    {
+        $this->isGroup = $isGroup;
+
+        return $this;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(string $note): self
+    {
+        $this->note = $note;
+
+        return $this;
+    }
+
+    public function addRecord(AnimalRecord $record): self
+    {
+        if (!$this->records->contains($record)) {
+            $this->records->add($record);
+            $record->setAnimal($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecord(AnimalRecord $record): self
+    {
+        if ($this->records->removeElement($record)) {
+            // set the owning side to null (unless already changed)
+            if ($record->getAnimal() === $this) {
+                $record->setAnimal(null);
             }
         }
 

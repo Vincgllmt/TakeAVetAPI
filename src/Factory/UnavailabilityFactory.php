@@ -45,10 +45,9 @@ final class UnavailabilityFactory extends ModelFactory
         $dateEnd = (clone $dateStart)->modify("+$hours hours");
 
         return [
-            'lib' => $lib = self::faker()->word(),
-            'dateDeb' => $dateStart,
-            'dateEnd' => $dateEnd,
-            'isRepeated' => false,
+            'lib' => self::faker()->word(),
+            'startDate' => $dateStart,
+            'endDate' => $dateEnd,
         ];
     }
 

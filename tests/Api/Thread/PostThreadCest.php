@@ -13,8 +13,8 @@ class PostThreadCest
         $client = ClientFactory::createOne();
 
         $I->sendPost('/api/threads', [
-            'lib' => 'test',
-            'message' => 'test',
+            'subject' => 'test',
+            'description' => 'test',
             'author' => "/api/users/{$client->getId()}",
         ]);
 

@@ -4,8 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Animal;
 use App\Entity\Appointment;
-use App\Entity\CategoryAnimal;
 use App\Entity\Client;
+use App\Entity\TypeAnimal;
 use App\Entity\TypeAppointment;
 use App\Entity\Veto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -51,13 +51,13 @@ class AppointmentRepository extends ServiceEntityRepository
      */
     public function getAppointmentAt(\DateTime $datetimeStart, TypeAppointment $type, Veto $veto): Appointment|null
     {
-        // add $duration minutes to the start datetime
+        // add $duration minutes to the start startDatetime
         $datetimeEnd = (clone $datetimeStart)->add(new \DateInterval("PT{$type->getDuration()}M"));
 
         // get the appointment if it exists.
         return $this->createQueryBuilder('a')
             ->where('a.veto = :veto')
-            ->andWhere('(:dtStart BETWEEN a.dateApp AND a.dateEnd) OR (:dtEnd BETWEEN a.dateApp AND a.dateEnd)')
+            ->andWhere('(:dtStart BETWEEN a.startDatetime AND a.dateEnd) OR (:dtEnd BETWEEN a.startDatetime AND a.dateEnd)')
             ->getQuery()
             ->setParameter('veto', $veto)
             ->setParameter('dtStart', $datetimeStart) // define start time.
@@ -72,8 +72,8 @@ class AppointmentRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder('a')
             ->where('a.veto = :veto')
-            ->andWhere('a.dateApp >= :start')
-            ->andWhere('a.dateApp <= :end')
+            ->andWhere('a.startDatetime >= :start')
+            ->andWhere('a.startDatetime <= :end')
             ->getQuery()
             ->setParameter('veto', $veto)
             ->setParameter('start', $start_week)
@@ -89,19 +89,19 @@ class AppointmentRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('a')
             ->select('a as appointment')
             ->addSelect('ctg.name as animal_type')
-            ->addSelect('ta.libTypeApp as appointment_type')
+            ->addSelect('ta.name as appointment_type')
             ->addSelect('an.id as animal_id')
             ->addSelect('cli.id as client_id')
             ->innerJoin(Animal::class, 'an')
-            ->innerJoin(CategoryAnimal::class, 'ctg')
+            ->innerJoin(TypeAnimal::class, 'ctg')
             ->innerJoin(Client::class, 'cli')
             ->innerJoin(TypeAppointment::class, 'ta')
             ->where('a.veto = :veto')
-            ->andWhere('ctg = an.CategoryAnimal')
+            ->andWhere('ctg = an.type')
             ->andWhere('an = a.animal')
             ->andWhere('cli = a.client')
             ->andWhere('ta = a.type')
-            ->andWhere('DATE(a.dateApp) = :date');
+            ->andWhere('DATE(a.startDatetime) = :date');
 
         if ($getCompleted) {
             $queryBuilder->andWhere('a.isCompleted = TRUE');

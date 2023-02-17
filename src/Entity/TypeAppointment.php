@@ -15,24 +15,27 @@ class TypeAppointment
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    private ?string $libTypeApp = null;
+    private ?string $name = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $duration = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $description = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getLibTypeApp(): ?string
+    public function getName(): ?string
     {
-        return $this->libTypeApp;
+        return $this->name;
     }
 
-    public function setLibTypeApp(string $libTypeApp): self
+    public function setName(string $name): self
     {
-        $this->libTypeApp = $libTypeApp;
+        $this->name = $name;
 
         return $this;
     }
@@ -45,6 +48,18 @@ class TypeAppointment
     public function setDuration(int $duration): self
     {
         $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

@@ -2,17 +2,17 @@
 
 namespace App\DataFixtures;
 
-use App\Factory\CategoryAnimalFactory;
+use App\Factory\TypeAnimalFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class CategoryFixtures extends Fixture
+class TypeAnimalFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
         $file = json_decode(file_get_contents(__DIR__.'/data/animals.json'), flags: JSON_OBJECT_AS_ARRAY);
         foreach ($file as $category) {
-            CategoryAnimalFactory::createOne(['name' => $category]);
+            TypeAnimalFactory::createOne(['name' => $category]);
         }
     }
 }

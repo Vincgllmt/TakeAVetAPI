@@ -14,8 +14,8 @@ class Unavailability
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?bool $isRepeated = null;
+//    #[ORM\Column]
+//    private ?bool $isRepeated = null;
 
     #[ORM\ManyToOne(inversedBy: 'unavailabilities')]
     private ?Agenda $agenda = null;
@@ -24,27 +24,27 @@ class Unavailability
     private ?string $lib = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateDeb = null;
+    private ?\DateTimeInterface $startDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateEnd = null;
+    private ?\DateTimeInterface $endDate = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function isIsRepeated(): ?bool
-    {
-        return $this->isRepeated;
-    }
-
-    public function setIsRepeated(bool $isRepeated): self
-    {
-        $this->isRepeated = $isRepeated;
-
-        return $this;
-    }
+//    public function isIsRepeated(): ?bool
+//    {
+//        return $this->isRepeated;
+//    }
+//
+//    public function setIsRepeated(bool $isRepeated): self
+//    {
+//        $this->isRepeated = $isRepeated;
+//
+//        return $this;
+//    }
 
     public function getAgenda(): ?Agenda
     {
@@ -70,26 +70,26 @@ class Unavailability
         return $this;
     }
 
-    public function getDateDeb(): ?\DateTimeInterface
+    public function getStartDate(): ?\DateTimeInterface
     {
-        return $this->dateDeb;
+        return $this->startDate;
     }
 
-    public function setDateDeb(\DateTimeInterface $dateDeb): self
+    public function setStartDate(\DateTimeInterface $startDate): self
     {
-        $this->dateDeb = $dateDeb;
+        $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getDateEnd(): ?\DateTimeInterface
+    public function getEndDate(): ?\DateTimeInterface
     {
-        return $this->dateEnd;
+        return $this->endDate;
     }
 
-    public function setDateEnd(\DateTimeInterface $dateEnd): self
+    public function setEndDate(\DateTimeInterface $endDate): self
     {
-        $this->dateEnd = $dateEnd;
+        $this->endDate = $endDate;
 
         return $this;
     }

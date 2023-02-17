@@ -16,10 +16,14 @@ class Veto extends User
     #[ORM\OneToOne(inversedBy: 'veto', cascade: ['persist', 'remove'])]
     private ?Agenda $agenda = null;
 
+    #[ORM\ManyToMany(targetEntity: TypeAnimal::class, inversedBy: 'vetos')]
+    private Collection $accepting;
+
     public function __construct()
     {
         parent::__construct();
         $this->appointments = new ArrayCollection();
+        $this->accepting = new ArrayCollection();
     }
 
     /**
@@ -67,5 +71,29 @@ class Veto extends User
     public function getDisplayName(): string
     {
         return sprintf("Dr %s $this->firstName", strtoupper($this->lastName));
+    }
+
+    /**
+     * @return Collection<int, TypeAnimal>
+     */
+    public function getAccepting(): Collection
+    {
+        return $this->accepting;
+    }
+
+    public function addAccepting(TypeAnimal $accepting): self
+    {
+        if (!$this->accepting->contains($accepting)) {
+            $this->accepting->add($accepting);
+        }
+
+        return $this;
+    }
+
+    public function removeAccepting(TypeAnimal $accepting): self
+    {
+        $this->accepting->removeElement($accepting);
+
+        return $this;
     }
 }
