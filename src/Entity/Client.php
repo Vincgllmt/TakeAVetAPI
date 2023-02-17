@@ -30,7 +30,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
         normalizationContext: ['groups' => ['user:read-me']],
         denormalizationContext: ['groups' => ['user:create']]
     ),
-    new Get(normalizationContext: ['groups' => ['user:read']]),
 ], normalizationContext: ['groups' => ['user:read', 'user:create', 'user:read-me']])]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client extends User
