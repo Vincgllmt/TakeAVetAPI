@@ -2,7 +2,7 @@
 
 use App\Tests\Support\ApiTester;
 
-class UserCest
+class PostUserCest
 {
     protected static function expectedPropertiesResultPost(): array
     {
