@@ -27,10 +27,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Delete(
             security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
         ),
-        new Put(
-            normalizationContext: ['groups' => ['threadReply:replace']],
-            security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
-        ),
         // new Post(
         //    normalizationContext: ['groups' => ['threadReply:create']]
         //    ),
