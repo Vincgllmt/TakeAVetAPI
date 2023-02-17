@@ -70,6 +70,7 @@ use Symfony\Component\Validator\Constraints\Length;
                 ],
             ]
         ),
+        new Get(normalizationContext: ['groups' => ['user:read']]),
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
