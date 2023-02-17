@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\ThreadReplyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -24,6 +25,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
             security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
         ),
         new Delete(
+            security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
+        ),
+        new Put(
+            normalizationContext: ['groups' => ['threadReply:replace']],
             security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
         ),
         // new Post(
