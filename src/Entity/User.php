@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use App\Controller\GetMeController;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -22,6 +26,28 @@ use Symfony\Component\Validator\Constraints\Length;
 #[DiscriminatorColumn(name: 'discriminator', type: 'string')]
 #[DiscriminatorMap(['veto' => Veto::class, 'client' => Client::class])]
 #[UniqueEntity(fields: ['email'], message: 'Il y a déjà un compte avec cette adresse e-mail.')]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/me',
+            controller: GetMeController::class,
+            openapiContext: [
+                'summary' => 'Get the current client.',
+                'description' => 'Return the client that is currently logged in.',
+                'responses' => [
+                    '200' => [
+                        'description' => 'The user (client or vet) that is currently logged in.',
+                    ],
+                    '401' => [
+                        'description' => 'No user is currently logged in.',
+                    ],
+                ],
+            ],
+            paginationEnabled: false,
+            normalizationContext: ['groups' => ['user:read-me']],
+            security: "is_granted('IS_AUTHENTICATED_FULLY')"),
+    ]
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
