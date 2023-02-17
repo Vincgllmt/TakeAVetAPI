@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
@@ -70,6 +69,7 @@ class Animal
     private ?string $race = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
     private ?\DateTimeInterface $birthday = null;
 
     #[ORM\Column(length: 50)]
@@ -77,7 +77,7 @@ class Animal
     private ?string $gender = null;
 
     #[ORM\Column]
-    #[Groups(['animal:read'])]
+    #[Groups(['animal:read', 'animal:create'])]
     private ?bool $isDomestic = null;
 
     #[ORM\ManyToMany(targetEntity: Vaccine::class)]
