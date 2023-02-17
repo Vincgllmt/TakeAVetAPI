@@ -50,7 +50,7 @@ class ThreadReply
 
     #[ORM\ManyToOne(inversedBy: 'author')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $User = null;
+    public ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'replies')]
     #[ORM\JoinColumn(nullable: true)]
@@ -87,12 +87,12 @@ class ThreadReply
 
     public function getUser(): ?User
     {
-        return $this->User;
+        return $this->user;
     }
 
-    public function setUser(?User $User): self
+    public function setUser(?User $user): self
     {
-        $this->User = $User;
+        $this->user = $user;
 
         return $this;
     }
