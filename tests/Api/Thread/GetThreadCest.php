@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Tests\Api\Thread;
+
 use App\Factory\ThreadFactory;
 use App\Tests\Support\ApiTester;
 

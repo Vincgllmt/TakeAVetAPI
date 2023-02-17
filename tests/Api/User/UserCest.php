@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Tests\Api\User;
+
 use App\Tests\Support\ApiTester;
 
 class UserCest
