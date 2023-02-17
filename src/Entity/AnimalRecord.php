@@ -7,7 +7,6 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Put;
 use App\Repository\AnimalRecordRepository;
-use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -57,33 +56,27 @@ class AnimalRecord
     private ?float $height = null;
 
     /**
-     * @var string|null Other information concerning the animal
-     */
-    #[ORM\Column(length: 1024, nullable: true)]
-    #[Groups(['animalRecord:read', 'animalRecord:write'])]
-    private ?string $otherInfos = null;
-
-    /**
-     * @var string|null Health information concerning the animal
-     */
-    #[ORM\Column(length: 1024, nullable: true)]
-    #[Groups(['animalRecord:read', 'animalRecord:write'])]
-    private ?string $healthInfos = null;
-
-    /**
-     * @var DateTimeInterface|null The date at which the record was modified last
+     * @var \DateTimeInterface|null The date at which the record was modified last
      */
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Groups(['animalRecord:read', 'animalRecord:write'])]
-    private ?DateTimeInterface $dateRecord = null;
+    private ?\DateTimeInterface $updatedAt = null;
 
     /**
-     * @var Animal|null The Animal defined in the record
+     * @var Animal|null The animal defined in the record
      */
-    #[ORM\ManyToOne(inversedBy: 'animalRecords')]
+    #[ORM\ManyToOne(inversedBy: 'records')]
     #[ORM\JoinColumn(nullable: true)]
     #[Groups(['animalRecord:read', 'animalRecord:write'])]
     private ?Animal $Animal = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
+    private ?string $otherInfos = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['animalRecord:read', 'animalRecord:write'])]
+    private ?string $healthInfos = null;
 
     public function getId(): ?int
     {
@@ -114,12 +107,24 @@ class AnimalRecord
         return $this;
     }
 
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
     public function getOtherInfos(): ?string
     {
         return $this->otherInfos;
     }
 
-    public function setOtherInfos(?string $otherInfos): self
+    public function setOtherInfos(string $otherInfos): self
     {
         $this->otherInfos = $otherInfos;
 
@@ -131,21 +136,9 @@ class AnimalRecord
         return $this->healthInfos;
     }
 
-    public function setHealthInfos(?string $healthInfos): self
+    public function setHealthInfos(string $healthInfos): self
     {
         $this->healthInfos = $healthInfos;
-
-        return $this;
-    }
-
-    public function getDateRecord(): ?DateTimeInterface
-    {
-        return $this->dateRecord;
-    }
-
-    public function setDateRecord(DateTimeInterface $dateRecord): self
-    {
-        $this->dateRecord = $dateRecord;
 
         return $this;
     }

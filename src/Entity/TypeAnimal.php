@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\CategoryAnimalRepository;
+use App\Repository\TypeAnimalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CategoryAnimalRepository::class)]
-class CategoryAnimal
+#[ORM\Entity(repositoryClass: TypeAnimalRepository::class)]
+class TypeAnimal
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,12 +18,19 @@ class CategoryAnimal
     #[ORM\Column(length: 50)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'CategoryAnimal', targetEntity: Animal::class)]
+    #[ORM\OneToMany(mappedBy: 'type', targetEntity: Animal::class)]
     private Collection $animals;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $icon = null;
+
+    #[ORM\ManyToMany(targetEntity: Veto::class, mappedBy: 'accepting')]
+    private Collection $vetos;
 
     public function __construct()
     {
         $this->animals = new ArrayCollection();
+        $this->vetos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -55,7 +62,7 @@ class CategoryAnimal
     {
         if (!$this->animals->contains($animal)) {
             $this->animals->add($animal);
-            $animal->setCategoryAnimal($this);
+            $animal->setType($this);
         }
 
         return $this;
@@ -65,9 +72,48 @@ class CategoryAnimal
     {
         if ($this->animals->removeElement($animal)) {
             // set the owning side to null (unless already changed)
-            if ($animal->getCategoryAnimal() === $this) {
-                $animal->setCategoryAnimal(null);
+            if ($animal->getType() === $this) {
+                $animal->setType(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?string $icon): self
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Veto>
+     */
+    public function getVetos(): Collection
+    {
+        return $this->vetos;
+    }
+
+    public function addVeto(Veto $veto): self
+    {
+        if (!$this->vetos->contains($veto)) {
+            $this->vetos->add($veto);
+            $veto->addAccepting($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVeto(Veto $veto): self
+    {
+        if ($this->vetos->removeElement($veto)) {
+            $veto->removeAccepting($this);
         }
 
         return $this;

@@ -32,14 +32,13 @@ final class AgendaFactory extends ModelFactory
     public function __construct()
     {
         parent::__construct();
-
-        // TODO inject services if required (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services)
     }
 
     protected function getDefaults(): array
     {
         return [
-            // TODO add your default values here (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories)
+            'startHour' => new \DateTime('6:00'),
+            'endHour' => new \DateTime('20:00'),
         ];
     }
 

@@ -41,7 +41,7 @@ final class ClientFactory extends UserFactory
     protected function getDefaults(): array
     {
         return array_merge(parent::getDefaults(), [
-            'isAnHusbandry' => self::faker()->boolean(),
+            'isHusbandry' => self::faker()->boolean(),
         ]);
     }
 

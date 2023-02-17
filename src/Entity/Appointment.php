@@ -14,8 +14,11 @@ class Appointment
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateApp = null;
+    #[ORM\Column(length: 1024, nullable: true)]
+    private ?string $note = null;
+
+    #[ORM\Column]
+    private ?bool $isValidated = null;
 
     #[ORM\Column]
     private ?bool $isUrgent = null;
@@ -23,19 +26,12 @@ class Appointment
     #[ORM\Column]
     private ?bool $isCompleted = null;
 
-    #[ORM\Column(length: 1024, nullable: true)]
-    private ?string $note = null;
-
     #[ORM\OneToOne(inversedBy: 'appointment', cascade: ['persist', 'remove'])]
     private ?Receipt $receipt = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?TypeAppointment $type = null;
-
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Address $address = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
@@ -45,28 +41,25 @@ class Appointment
     #[ORM\JoinColumn(nullable: false)]
     private ?Veto $veto = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateEnd = null;
-
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Animal $animal = null;
 
+    #[ORM\ManyToOne(inversedBy: 'appointments')]
+    private ?Address $location = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $date = null;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTimeInterface $startHour = null;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTimeInterface $endHour = null;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getDateApp(): ?\DateTimeInterface
-    {
-        return $this->dateApp;
-    }
-
-    public function setDateApp(\DateTimeInterface $dateApp): self
-    {
-        $this->dateApp = $dateApp;
-
-        return $this;
     }
 
     public function isIsUrgent(): ?bool
@@ -129,18 +122,6 @@ class Appointment
         return $this;
     }
 
-    public function getAddress(): ?Address
-    {
-        return $this->address;
-    }
-
-    public function setAddress(?Address $address): self
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
     public function getClient(): ?Client
     {
         return $this->client;
@@ -165,18 +146,6 @@ class Appointment
         return $this;
     }
 
-    public function getDateEnd(): ?\DateTimeInterface
-    {
-        return $this->dateEnd;
-    }
-
-    public function setDateEnd(?\DateTimeInterface $dateEnd): self
-    {
-        $this->dateEnd = $dateEnd;
-
-        return $this;
-    }
-
     public function getAnimal(): ?Animal
     {
         return $this->animal;
@@ -185,6 +154,66 @@ class Appointment
     public function setAnimal(?Animal $animal): self
     {
         $this->animal = $animal;
+
+        return $this;
+    }
+
+    public function isIsValidated(): ?bool
+    {
+        return $this->isValidated;
+    }
+
+    public function setIsValidated(bool $isValidated): self
+    {
+        $this->isValidated = $isValidated;
+
+        return $this;
+    }
+
+    public function getLocation(): ?Address
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?Address $location): self
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTimeInterface $date): self
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    public function getStartHour(): ?\DateTimeInterface
+    {
+        return $this->startHour;
+    }
+
+    public function setStartHour(\DateTimeInterface $startHour): self
+    {
+        $this->startHour = $startHour;
+
+        return $this;
+    }
+
+    public function getEndHour(): ?\DateTimeInterface
+    {
+        return $this->endHour;
+    }
+
+    public function setEndHour(\DateTimeInterface $endHour): self
+    {
+        $this->endHour = $endHour;
 
         return $this;
     }

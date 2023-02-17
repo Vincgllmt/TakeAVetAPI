@@ -9,48 +9,48 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
-use App\Repository\ThreadMessageRepository;
+use App\Repository\ThreadReplyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: ThreadMessageRepository::class)]
+#[ORM\Entity(repositoryClass: ThreadReplyRepository::class)]
 #[ApiResource(
     operations: [
         new Get(
-        normalizationContext: ['groups' => ['threadMessage:read']]
-    ),
+            normalizationContext: ['groups' => ['threadReply:read']]
+        ),
         new GetCollection(),
         new Patch(
-            normalizationContext: ['groups' => ['threadMessage:update']],
+            normalizationContext: ['groups' => ['threadReply:update']],
             security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
         ),
         new Delete(
             security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
-        )
-        //new Post(
-        //    normalizationContext: ['groups' => ['threadMessage:create']]
+        ),
+        // new Post(
+        //    normalizationContext: ['groups' => ['threadReply:create']]
         //    ),
         ]
 )]
-class ThreadMessage
+class ThreadReply
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('threadMessage:read')]
+    #[Groups('threadReply:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 1024)]
-    #[Groups(['threadMessage:read','threadMessage:update'])]
-    private ?string $message = null;
+    #[Groups(['threadReply:read', 'threadReply:update'])]
+    private ?string $description = null;
 
     #[ORM\Column]
-    #[Groups('threadMessage:read')]
+    #[Groups('threadReply:read')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'author')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $User = null;
+    public ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'replies')]
     #[ORM\JoinColumn(nullable: true)]
@@ -61,14 +61,14 @@ class ThreadMessage
         return $this->id;
     }
 
-    public function getMessage(): ?string
+    public function getDescription(): ?string
     {
-        return $this->message;
+        return $this->description;
     }
 
-    public function setMessage(string $message): self
+    public function setDescription(string $description): self
     {
-        $this->message = $message;
+        $this->description = $description;
 
         return $this;
     }
@@ -87,12 +87,12 @@ class ThreadMessage
 
     public function getUser(): ?User
     {
-        return $this->User;
+        return $this->user;
     }
 
-    public function setUser(?User $User): self
+    public function setUser(?User $user): self
     {
-        $this->User = $User;
+        $this->user = $user;
 
         return $this;
     }

@@ -45,7 +45,7 @@ class AnimalRepository extends ServiceEntityRepository
     public function newFindAll(): array
     {
         $qb = $this->createQueryBuilder('animal')
-            ->leftJoin('animal.CategoryAnimal', 'category')
+            ->leftJoin('animal.type', 'category')
             ->addSelect('category')
             ->orderBy('animal.name', 'ASC');
         $query = $qb->getQuery();
@@ -56,8 +56,8 @@ class AnimalRepository extends ServiceEntityRepository
     public function findAllWithUser(int $clientId)
     {
         $qb = $this->createQueryBuilder('animal')
-            ->leftJoin('animal.CategoryAnimal', 'category')
-            ->leftJoin('animal.ClientAnimal', 'client')
+            ->leftJoin('animal.type', 'category')
+            ->leftJoin('animal.owner', 'client')
             ->addSelect('category')
             ->where('client.id = :client_id')
             ->setParameter(':client_id', $clientId)
@@ -70,8 +70,8 @@ class AnimalRepository extends ServiceEntityRepository
     public function findById(int $clientId, int $id)
     {
         $qb = $this->createQueryBuilder('animal')
-            ->leftJoin('animal.CategoryAnimal', 'category')
-            ->leftJoin('animal.ClientAnimal', 'client')
+            ->leftJoin('animal.type', 'category')
+            ->leftJoin('animal.owner', 'client')
             ->addSelect('category')
             ->where('client.id = :client_id')
             ->andWhere('animal.id = :id')
@@ -83,7 +83,7 @@ class AnimalRepository extends ServiceEntityRepository
         return $query->execute();
     }
 //    /**
-//     * @return Animal[] Returns an array of Animal objects
+//     * @return animal[] Returns an array of animal objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -97,7 +97,7 @@ class AnimalRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Animal
+//    public function findOneBySomeField($value): ?animal
 //    {
 //        return $this->createQueryBuilder('a')
 //            ->andWhere('a.exampleField = :val')

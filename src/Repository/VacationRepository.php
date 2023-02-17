@@ -80,10 +80,10 @@ class VacationRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('v')
             ->where('v.agenda = :agenda')
-            ->andWhere(':datetime BETWEEN v.dateStart AND v.dateEnd')
+            ->andWhere(':startDatetime BETWEEN v.dateStart AND v.dateEnd')
             ->getQuery()
             ->setParameter('agenda', $agenda)
-            ->setParameter('datetime', $appointmentDate)
+            ->setParameter('startDatetime', $appointmentDate)
             ->getOneOrNullResult();
     }
 }

@@ -15,13 +15,13 @@ class Vacation
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $libVacation = null;
+    private ?string $lib = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $dateStart = null;
+    private ?\DateTimeInterface $startDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $dateEnd = null;
+    private ?\DateTimeInterface $endDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'vacations')]
     private ?Agenda $agenda = null;
@@ -31,38 +31,38 @@ class Vacation
         return $this->id;
     }
 
-    public function getLibVacation(): ?string
+    public function getLib(): ?string
     {
-        return $this->libVacation;
+        return $this->lib;
     }
 
-    public function setLibVacation(string $libVacation): self
+    public function setLib(string $lib): self
     {
-        $this->libVacation = $libVacation;
+        $this->lib = $lib;
 
         return $this;
     }
 
-    public function getDateStart(): ?\DateTimeInterface
+    public function getStartDate(): ?\DateTimeInterface
     {
-        return $this->dateStart;
+        return $this->startDate;
     }
 
-    public function setDateStart(\DateTimeInterface $dateStart): self
+    public function setStartDate(\DateTimeInterface $startDate): self
     {
-        $this->dateStart = $dateStart;
+        $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getDateEnd(): ?\DateTimeInterface
+    public function getEndDate(): ?\DateTimeInterface
     {
-        return $this->dateEnd;
+        return $this->endDate;
     }
 
-    public function setDateEnd(\DateTimeInterface $dateEnd): self
+    public function setEndDate(\DateTimeInterface $endDate): self
     {
-        $this->dateEnd = $dateEnd;
+        $this->endDate = $endDate;
 
         return $this;
     }

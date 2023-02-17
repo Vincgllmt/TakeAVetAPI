@@ -5,34 +5,34 @@ Ce projet est une amélioration de [Take A Vet](https://iut-info.univ-reims.fr/g
 
 ---
 
-**TakeAVet** est une application web qui permet principalement de gérer les rendez-vous des vétérinaires avec leurs clients avec bien d'autres fonctionnalités (Cf. [Fonctionnalités](#Fonctionnalités)).
+**Take A Vet** est une application web qui permet principalement de gérer les rendez-vous des vétérinaires avec leurs clients, et propose bien d'autres fonctionnalités (Cf. [Fonctionnalités](#Fonctionnalités)).
 
 ## Contributeurs
-- Alexis Udycz
-- Vincent Guillemot
-- Clement Perrot
-- Romain Leroy
-- Souliere Benoit
+- Alexis UDYCZ
+- Vincent GUILLEMOT
+- Clement PERROT
+- Romain LEROY
+- Benoît SOULIERE
 
 ## Installation
 
-Etape 1: Cloner le projet
+Étape 1 : Cloner le projet
 ```bash
 git clone https://iut-info.univ-reims.fr/gitlab/udyc0001/sae3-01-api.git
 ```
 
-Etape 2: Installer les dépendances
+Étape 2 : Installer les dépendances
 ```bash
 composer install
 ```
 
-Etape 3: Créer la base de données fixtures (dev)
+Étape 3 : Créer la base de données fixtures (dev)
 ```bash
 composer migrate
 composer db
 ```
 
-Etape 4: Lancer le serveur
+Étape 4 : Lancer le serveur
 ```bash
 composer start
 ```

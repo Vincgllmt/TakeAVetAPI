@@ -2,6 +2,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use App\Controller\GetAvatarController;
+use App\Controller\GetMeController;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -22,6 +27,51 @@ use Symfony\Component\Validator\Constraints\Length;
 #[DiscriminatorColumn(name: 'discriminator', type: 'string')]
 #[DiscriminatorMap(['veto' => Veto::class, 'client' => Client::class])]
 #[UniqueEntity(fields: ['email'], message: 'Il y a déjà un compte avec cette adresse e-mail.')]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/me',
+            controller: GetMeController::class,
+            openapiContext: [
+                'summary' => 'Get the current user.',
+                'description' => 'Return the user that is currently logged in.',
+                'responses' => [
+                    '200' => [
+                        'description' => 'The user (client or vet) that is currently logged in.',
+                    ],
+                    '401' => [
+                        'description' => 'No user is currently logged in.',
+                    ],
+                ],
+            ],
+            paginationEnabled: false,
+            normalizationContext: ['groups' => ['user:read-me']],
+            security: "is_granted('IS_AUTHENTICATED_FULLY')"),
+        new Get(
+            uriTemplate: '/users/{id}/avatar',
+            formats: [
+                'png' => 'image/png',
+            ],
+            controller: GetAvatarController::class,
+            openapiContext: [
+                'summary' => 'Retrieve a user avatar from a given user.',
+                'responses' => [
+                    '200' => [
+                        'description' => 'Return the given user avatar.',
+                        'content' => [
+                            'image/png' => [
+                                'schema' => [
+                                    'type' => 'string',
+                                    'format' => 'binary',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        ),
+    ]
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
@@ -71,7 +121,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(length: 20, nullable: true)]
     #[Groups(['user:read-me'])]
-    protected ?string $tel = null;
+    protected ?string $phone = null;
 
     /**
      * @var Collection threads created by this user
@@ -82,7 +132,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection messages created by this user
      */
-    #[ORM\OneToMany(mappedBy: 'User', targetEntity: ThreadMessage::class)]
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: ThreadReply::class)]
     protected Collection $author;
 
     /**
@@ -90,7 +140,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['user:read-me', 'user:read'])]
-    private ?string $profilePicPath = null;
+    private ?string $avatarPath = null;
 
     public function __construct()
     {
@@ -211,14 +261,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTel(): ?string
+    public function getPhone(): ?string
     {
-        return $this->tel;
+        return $this->phone;
     }
 
-    public function setTel(?string $tel): self
+    public function setPhone(?string $phone): self
     {
-        $this->tel = $tel;
+        $this->phone = $phone;
 
         return $this;
     }
@@ -254,14 +304,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, ThreadMessage>
+     * @return Collection<int, ThreadReply>
      */
     public function getAuthor(): Collection
     {
         return $this->author;
     }
 
-    public function addAuthor(ThreadMessage $author): self
+    public function addAuthor(ThreadReply $author): self
     {
         if (!$this->author->contains($author)) {
             $this->author->add($author);
@@ -271,7 +321,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeAuthor(ThreadMessage $author): self
+    public function removeAuthor(ThreadReply $author): self
     {
         if ($this->author->removeElement($author)) {
             // set the owning side to null (unless already changed)
@@ -293,14 +343,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this instanceof Client;
     }
 
-    public function getProfilePicPath(): ?string
+    public function getAvatarPath(): ?string
     {
-        return $this->profilePicPath;
+        return $this->avatarPath;
     }
 
-    public function setProfilePicPath(?string $profilePicPath): self
+    public function setAvatarPath(?string $avatarPath): self
     {
-        $this->profilePicPath = $profilePicPath;
+        $this->avatarPath = $avatarPath;
 
         return $this;
     }

@@ -8,12 +8,12 @@ class UserCest
     {
         return [
             'id' => 'integer',
-            'isAnHusbandry' => 'boolean',
+            'isHusbandry' => 'boolean',
             'email' => 'string',
             'lastName' => 'string',
             'firstName' => 'string',
-            'tel' => 'string|null',
-            'profilePicPath' => 'string|null',
+            'phone' => 'string|null',
+            'avatarPath' => 'string|null',
         ];
     }
 

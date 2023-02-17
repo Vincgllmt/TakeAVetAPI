@@ -40,9 +40,11 @@ final class AnimalFactory extends ModelFactory
     {
         return [
             'name' => self::faker()->firstName(),
-            'birthday' => self::faker()->dateTime(),
+            'note' => self::faker()->paragraph(1),
+            'birthday' => self::faker()->dateTimeBetween('-10 years', '-1 year'),
+            'inFarm' => self::faker()->boolean(30),
+            'isGroup' => self::faker()->boolean(30),
             'gender' => self::faker()->randomElement(['M', 'F', 'N']),
-            'isDomestic' => self::faker()->boolean(80),
         ];
     }
 
@@ -50,7 +52,7 @@ final class AnimalFactory extends ModelFactory
     {
         // see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization
         return $this
-            // ->afterInstantiate(function(Animal $animal): void {})
+            // ->afterInstantiate(function(animal $animal): void {})
         ;
     }
 

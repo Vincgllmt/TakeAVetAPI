@@ -39,7 +39,8 @@ final class TypeAppointmentFactory extends ModelFactory
         $id = self::faker()->unique()->numberBetween(0, 100);
 
         return [
-            'libTypeApp' => "Type#{$id}",
+            'name' => "Type#{$id}",
+            'description' => self::faker()->realTextBetween(10, 255),
             'duration' => 10 * self::faker()->numberBetween(1, 22),
         ];
     }

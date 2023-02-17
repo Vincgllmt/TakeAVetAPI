@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use App\Controller\GetMeController;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,24 +18,45 @@ use Symfony\Component\Serializer\Annotation\Groups;
         openapiContext: [
             'summary' => 'Register a new client on the service.',
             'description' => 'Create a new account with a password and an email address and return the newly registered client.',
+            'responses' => [
+                '201' => [
+                    'description' => 'The newly registered client.',
+                ],
+                '400' => [
+                    'description' => 'The email address is already used by another account.',
+                ],
+            ],
         ],
         normalizationContext: ['groups' => ['user:read-me']],
         denormalizationContext: ['groups' => ['user:create']]
     ),
+    new Get(normalizationContext: ['groups' => ['user:read']]),
 ], normalizationContext: ['groups' => ['user:read', 'user:create', 'user:read-me']])]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client extends User
 {
+    /**
+     * @var bool|null if the client is a husbandry or not
+     */
     #[ORM\Column]
     #[Groups(['user:read-me', 'user:read'])]
-    private ?bool $isAnHusbandry = null;
+    private ?bool $isHusbandry = null;
 
-    #[ORM\OneToMany(mappedBy: 'ClientAnimal', targetEntity: Animal::class, cascade: ['remove'])]
+    /**
+     * @var Collection the animals owned by the client
+     */
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Animal::class, cascade: ['remove'])]
     private Collection $animals;
 
+    /**
+     * @var Collection the adresses of the client
+     */
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Address::class)]
     private Collection $adresses;
 
+    /**
+     * @var Collection the appointments of the client
+     */
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Appointment::class)]
     private Collection $appointments;
 
@@ -43,17 +66,17 @@ class Client extends User
         $this->animals = new ArrayCollection();
         $this->adresses = new ArrayCollection();
         $this->appointments = new ArrayCollection();
-        $this->isAnHusbandry = false;
+        $this->isHusbandry = false;
     }
 
-    public function isIsAnHusbandry(): ?bool
+    public function isIsHusbandry(): ?bool
     {
-        return $this->isAnHusbandry;
+        return $this->isHusbandry;
     }
 
-    public function setIsAnHusbandry(bool $isAnHusbandry): self
+    public function setIsHusbandry(bool $isHusbandry): self
     {
-        $this->isAnHusbandry = $isAnHusbandry;
+        $this->isHusbandry = $isHusbandry;
 
         return $this;
     }
@@ -70,7 +93,7 @@ class Client extends User
     {
         if (!$this->animals->contains($animal)) {
             $this->animals->add($animal);
-            $animal->setClientAnimal($this);
+            $animal->setOwner($this);
         }
 
         return $this;
@@ -80,8 +103,8 @@ class Client extends User
     {
         if ($this->animals->removeElement($animal)) {
             // set the owning side to null (unless already changed)
-            if ($animal->getClientAnimal() === $this) {
-                $animal->setClientAnimal(null);
+            if ($animal->getOwner() === $this) {
+                $animal->setOwner(null);
             }
         }
 
