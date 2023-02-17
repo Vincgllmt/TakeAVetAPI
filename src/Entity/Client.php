@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use App\Controller\GetMeController;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,20 +22,33 @@ use Symfony\Component\Serializer\Annotation\Groups;
         normalizationContext: ['groups' => ['user:read-me']],
         denormalizationContext: ['groups' => ['user:create']]
     ),
+    new Get(normalizationContext: ['groups' => ['user:read']]),
 ], normalizationContext: ['groups' => ['user:read', 'user:create', 'user:read-me']])]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client extends User
 {
+    /**
+     * @var bool|null if the client is a husbandry or not
+     */
     #[ORM\Column]
     #[Groups(['user:read-me', 'user:read'])]
     private ?bool $isHusbandry = null;
 
+    /**
+     * @var Collection the animals owned by the client
+     */
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Animal::class, cascade: ['remove'])]
     private Collection $animals;
 
+    /**
+     * @var Collection the adresses of the client
+     */
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Address::class)]
     private Collection $adresses;
 
+    /**
+     * @var Collection the appointments of the client
+     */
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Appointment::class)]
     private Collection $appointments;
 
