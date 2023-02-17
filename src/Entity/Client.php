@@ -18,6 +18,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
         openapiContext: [
             'summary' => 'Register a new client on the service.',
             'description' => 'Create a new account with a password and an email address and return the newly registered client.',
+            'responses' => [
+                '201' => [
+                    'description' => 'The newly registered client.',
+                ],
+                '400' => [
+                    'description' => 'The email address is already used by another account.',
+                ],
+            ],
         ],
         normalizationContext: ['groups' => ['user:read-me']],
         denormalizationContext: ['groups' => ['user:create']]
