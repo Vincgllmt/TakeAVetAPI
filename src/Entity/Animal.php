@@ -2,36 +2,82 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\AnimalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: AnimalRepository::class)]
+#[ApiResource(
+    operations: [
+        new Get(
+            openapiContext: [
+                'summary' => 'Get one animal',
+            ],
+            normalizationContext: ['groups' => ['animal:read']],
+            security: 'object.owner == user'
+        ),
+        new Post(
+            openapiContext: [
+                'summary' => 'Create a new animal',
+            ],
+            denormalizationContext: ['groups' => ['animal:create']]
+        ),
+        new Patch(
+            openapiContext: [
+                'summary' => 'Update an animal',
+            ],
+            denormalizationContext: ['groups' => ['animal:write']],
+            security: 'object.owner == user'
+        ),
+        new Put(
+            openapiContext: [
+                'summary' => 'Replace an animal',
+            ],
+            denormalizationContext: ['groups' => ['animal:create', 'animal:write']],
+            security: 'object.owner == user'
+        ),
+    ]
+)]
+#[UniqueEntity(fields: ['id'], message: 'An animal with this id already exists.')]
 class Animal
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['animal:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 1024, nullable: true)]
+    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
     private ?string $note = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
     private ?string $race = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $birthday = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
     private ?string $gender = null;
 
     #[ORM\Column]
+    #[Groups(['animal:read'])]
     private ?bool $isDomestic = null;
 
     #[ORM\ManyToMany(targetEntity: Vaccine::class)]
