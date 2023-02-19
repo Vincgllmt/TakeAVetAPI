@@ -10,6 +10,13 @@ class VetoFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        VetoFactory::createMany(15);
+        VetoFactory::createOne([
+            'lastName' => 'Doe',
+            'firstName' => 'John',
+            'email' => 'veto@takea.vet',
+            'password' => 'test',
+        ]);
+
+        VetoFactory::createMany(5);
     }
 }
