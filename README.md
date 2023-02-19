@@ -53,7 +53,14 @@ Autres tests :
 TODO
 
 ## Informations
-TODO
+
+| Type de compte | Email              | Mot de passe |
+|----------------|--------------------|--------------|
+| Vétérinaire    | `veto@takea.vet`   | `test`       |
+| Client         | `client@takea.vet` | `test`       |
+| ... (Fixtures) | ...                | `test`       |
+
+
 ### Fonctionnalités
 TODO
 ## Utilisation

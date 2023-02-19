@@ -91,20 +91,20 @@ class Animal
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Appointment::class)]
     private Collection $appointments;
 
-    #[ORM\ManyToMany(targetEntity: Vaccine::class)]
-    private Collection $vaccines;
-
     #[ORM\ManyToOne(inversedBy: 'animals')]
     private ?TypeAnimal $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
     private ?Client $owner = null;
 
+    #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Vaccine::class)]
+    private Collection $vaccines;
+
     public function __construct()
     {
-        $this->vaccines = new ArrayCollection();
         $this->records = new ArrayCollection();
         $this->appointments = new ArrayCollection();
+        $this->vaccines = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -156,30 +156,6 @@ class Animal
     public function setGender(string $gender): self
     {
         $this->gender = $gender;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Vaccine>
-     */
-    public function getVaccines(): Collection
-    {
-        return $this->vaccines;
-    }
-
-    public function addVaccine(Vaccine $vaccine): self
-    {
-        if (!$this->vaccines->contains($vaccine)) {
-            $this->vaccines->add($vaccine);
-        }
-
-        return $this;
-    }
-
-    public function removeVaccine(Vaccine $vaccine): self
-    {
-        $this->vaccines->removeElement($vaccine);
 
         return $this;
     }
@@ -339,6 +315,36 @@ class Animal
             // set the owning side to null (unless already changed)
             if ($record->getAnimal() === $this) {
                 $record->setAnimal(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Vaccine>
+     */
+    public function getVaccines(): Collection
+    {
+        return $this->vaccines;
+    }
+
+    public function addVaccine(Vaccine $vaccine): self
+    {
+        if (!$this->vaccines->contains($vaccine)) {
+            $this->vaccines->add($vaccine);
+            $vaccine->setAnimal($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVaccine(Vaccine $vaccine): self
+    {
+        if ($this->vaccines->removeElement($vaccine)) {
+            // set the owning side to null (unless already changed)
+            if ($vaccine->getAnimal() === $this) {
+                $vaccine->setAnimal(null);
             }
         }
 

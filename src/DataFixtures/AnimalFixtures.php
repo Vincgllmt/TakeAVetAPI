@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Factory\AnimalFactory;
+use App\Factory\ClientFactory;
 use App\Factory\TypeAnimalFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -13,9 +14,11 @@ class AnimalFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         AnimalFactory::createMany(25, function () {
-            return ['type' => TypeAnimalFactory::random()];
+            return [
+                'type' => TypeAnimalFactory::random(),
+                'owner' => ClientFactory::random(),
+            ];
         });
-        $manager->flush();
     }
 
     public function getDependencies(): array
