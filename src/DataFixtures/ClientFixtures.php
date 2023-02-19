@@ -14,6 +14,7 @@ class ClientFixtures extends Fixture
             'lastName' => 'Doe',
             'firstName' => 'John',
             'email' => 'client@takea.vet',
+            'password' => 'test',
         ]);
 
         ClientFactory::createMany(5);
