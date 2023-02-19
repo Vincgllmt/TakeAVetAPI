@@ -23,7 +23,8 @@ class Vaccine
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $last = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'vaccines')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Animal $animal = null;
 
     public function getId(): ?int
