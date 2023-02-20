@@ -2,7 +2,6 @@
 
 namespace App\Factory;
 
-use App\Entity\Animal;
 use App\Entity\Appointment;
 use App\Entity\Client;
 use App\Entity\Veto;
@@ -71,14 +70,16 @@ final class AppointmentFactory extends ModelFactory
     /**
      *  Create appointments for a week.
      *
-     * @param Veto|Proxy $veto    the veto to create the appointments for
-     * @param int        $perDays the number of appointments per day
+     * @param Veto|Proxy $veto           the veto to create the appointments for
+     * @param int        $minPerDays     the minimum number of appointments per day
+     * @param int        $maxPerDays     the maximum number of appointments per day
+     * @param int        $daysFromMonday the number of days from monday to create appointments for
      *
      * @return Appointment[]|Proxy[] the created appointments
      *
      * @throws \Exception
      */
-    public static function createOnWeek(Veto|Proxy $veto, int $perDays, \DateTime $week): array
+    public static function createOnWeek(Veto|Proxy $veto, int $minPerDays, int $maxPerDays, int $daysFromMonday, \DateTime $week): array
     {
         $output = new ConsoleOutput();
         $output->setDecorated(true);
@@ -89,8 +90,9 @@ final class AppointmentFactory extends ModelFactory
 
         $appointments = [];
 
+        $output->writeln("<info>Creating appointments for <fg=red>{$veto->getEmail()}</> (between [{$minPerDays} and {$maxPerDays}] events per days for {$daysFromMonday} days from {$week->format('d/m/Y')})</info>");
         // for each day of the week
-        for ($i = 0; $i < 7; ++$i) {
+        for ($i = 0; $i < $daysFromMonday; ++$i) {
             $agenda = $veto->getAgenda();
             /* @var \DateTime $hourInDay */
             $hourInDay = $agenda->getStartHour();
@@ -98,8 +100,8 @@ final class AppointmentFactory extends ModelFactory
             // clone the current day of the week and set the hour of the day to the start hour of the agenda.
             $currentHourAndDay = (clone $currentDayOfWeek)->setTime($hourInDay->format('H'), $hourInDay->format('i'), $hourInDay->format('s'));
 
-            // for each hour of the day (perDays)
-            for ($j = 0; $j < $perDays; ++$j) {
+            // for each hour of the day (random between min and max)
+            for ($j = 0; $j < self::faker()->numberBetween($minPerDays, $maxPerDays); ++$j) {
                 // get all the relations for the appointment on a random client.
                 $client = ClientFactory::random();
                 $addressOfClient = self::faker()->randomElement($client->getAdresses());
