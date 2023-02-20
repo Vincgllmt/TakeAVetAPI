@@ -5,9 +5,10 @@ namespace App\DataFixtures;
 use App\Factory\AnimalFactory;
 use App\Factory\AnimalRecordFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class AnimalRecordFixtures extends Fixture
+class AnimalRecordFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
