@@ -10,7 +10,7 @@ Ce projet est une amélioration de [Take A Vet](https://iut-info.univ-reims.fr/g
 ## Contributeurs
 - Alexis UDYCZ
 - Vincent GUILLEMOT
-- Clement PERROT
+- Clément PERROT
 - Romain LEROY
 - Benoît SOULIERE
 
