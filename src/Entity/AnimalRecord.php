@@ -14,7 +14,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: AnimalRecordRepository::class)]
 #[ORM\Table(name: '`animalRecord`')]
 #[ApiResource(
-    uriTemplate: '/animals/records/{id}',
     operations: [
         new Get(
             normalizationContext: ['groups' => ['animalRecord:read']],
