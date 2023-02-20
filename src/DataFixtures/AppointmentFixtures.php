@@ -11,10 +11,13 @@ use Doctrine\Persistence\ObjectManager;
 
 class AppointmentFixtures extends Fixture implements DependentFixtureInterface
 {
+    /**
+     * @throws \Exception
+     */
     public function load(ObjectManager $manager): void
     {
         foreach (VetoFactory::repository()->findAll() as $veto) {
-            AppointmentFactory::createOnWeek($veto, 2, new \DateTime('now'));
+            AppointmentFactory::createOnWeek($veto, 2, 4, 7, new \DateTime('now'));
         }
     }
 
