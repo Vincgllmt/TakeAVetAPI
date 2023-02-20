@@ -37,8 +37,8 @@ final class AnimalRecordFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'weight' => self::faker()->randomFloat(min: 30, max: 140),
-            'height' => self::faker()->randomFloat(min: 30, max: 140),
+            'weight' => self::faker()->randomFloat(2, 30, 140),
+            'height' => self::faker()->randomFloat(2, 30, 140),
             'otherInfos' => self::faker()->paragraph(1),
             'healthInfos' => self::faker()->paragraph(1),
             'updatedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-2 years', 'now')),
