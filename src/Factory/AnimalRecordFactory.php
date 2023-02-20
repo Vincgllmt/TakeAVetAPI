@@ -41,7 +41,7 @@ final class AnimalRecordFactory extends ModelFactory
             'height' => self::faker()->randomFloat(min: 30, max: 140),
             'otherInfos' => self::faker()->paragraph(1),
             'healthInfos' => self::faker()->paragraph(1),
-            'updatedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
+            'updatedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-2 years', 'now')),
         ];
     }
 
