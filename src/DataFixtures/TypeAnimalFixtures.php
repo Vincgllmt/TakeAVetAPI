@@ -3,7 +3,6 @@
 namespace App\DataFixtures;
 
 use App\Factory\TypeAnimalFactory;
-use App\Factory\VetoFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 

@@ -37,6 +37,7 @@ class ReplyDeleteCest
         $I->sendDelete("/api/thread_replies/{$reply->getId()}");
         $I->seeResponseCodeIs(httpCode::FORBIDDEN);
     }
+
     public function UserCanDeleteOwnReply(ApiTester $I): void
     {
         $user = ClientFactory::createOne();
