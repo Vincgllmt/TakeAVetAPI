@@ -2,34 +2,15 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Put;
 use App\Repository\AppointmentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(normalizationContext: ['groups' => ['appointment:read']])]
 #[ORM\Entity(repositoryClass: AppointmentRepository::class)]
-#[ORM\Table(name: '`appointment`')]
-#[ApiResource(
-    operations: [
-        new Get(),
-        new Put(),
-        new Patch(),
-    ],
-    normalizationContext: ['groups' => ['appointment:read']]
-)]
-#[Get]
-#[Patch(
-    normalizationContext: ['groups' => ['appointment:veto:write', 'appointment:client:write']],
-    security: 'object.owner == user || veto'
-)]
-#[Put(
-    normalizationContext: ['groups' => ['appointment:veto:write', 'appointment:client:write']],
-    security: 'object.owner == user || veto'
-)]
 class Appointment
 {
     #[ORM\Id]
@@ -39,26 +20,24 @@ class Appointment
     private ?int $id = null;
 
     #[ORM\Column(length: 1024, nullable: true)]
-    #[Groups(['appointment:read', 'appointment:write'])]
     private ?string $note = null;
 
     #[ORM\Column]
-    #[Groups(['appointment:read', 'appointment:veto:write'])]
     private ?bool $isValidated = null;
 
     #[ORM\Column]
-    #[Groups(['appointment:read', 'appointment:client:write'])]
     private ?bool $isUrgent = null;
 
     #[ORM\Column]
-    #[Groups(['appointment:read', 'appointment:veto:write'])]
     private ?bool $isCompleted = null;
 
-    #[ORM\OneToOne(inversedBy: 'appointments', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'appointment', cascade: ['persist', 'remove'])]
     private ?Receipt $receipt = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['appointment:read'])]
+    #[ApiProperty(readableLink: true)]
     private ?TypeAppointment $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
@@ -67,22 +46,28 @@ class Appointment
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['appointment:read-all'])]
     private ?Veto $veto = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['appointment:read-all'])]
     private ?Animal $animal = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
+    #[Groups(['appointment:read-all'])]
     private ?Address $location = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['appointment:read'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[Groups(['appointment:read'])]
     private ?\DateTimeInterface $startHour = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[Groups(['appointment:read'])]
     private ?\DateTimeInterface $endHour = null;
 
     public function getId(): ?int

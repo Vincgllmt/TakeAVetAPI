@@ -47,6 +47,7 @@ use Symfony\Component\Validator\Constraints\Length;
             paginationEnabled: false,
             normalizationContext: ['groups' => ['user:read-me']],
             security: "is_granted('IS_AUTHENTICATED_FULLY')"),
+        new Get(normalizationContext: ['groups' => ['user:read']]),
         new Get(
             uriTemplate: '/users/{id}/avatar',
             formats: [
@@ -70,7 +71,6 @@ use Symfony\Component\Validator\Constraints\Length;
                 ],
             ]
         ),
-        new Get(normalizationContext: ['groups' => ['user:read']]),
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface

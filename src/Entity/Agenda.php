@@ -2,36 +2,72 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use App\Controller\AgendaUpcomingAppointmentController;
 use App\Repository\AgendaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(operations: [
+    new GetCollection(
+        uriTemplate: '/agendas/{id}/upcoming',
+        controller: AgendaUpcomingAppointmentController::class,
+        openapiContext: [
+            'summary' => 'Get all upcoming appointments events of a given agenda',
+            'description' => 'Return all upcoming appointments events of a given agenda.',
+            'responses' => [
+                '200' => [
+                    'description' => 'All upcoming appointments events of a given agenda.',
+                ],
+                '404' => [
+                    'description' => 'The agenda does not exist.',
+                ],
+            ],
+        ],
+        paginationEnabled: false,
+    ),
+    new GetCollection(
+        normalizationContext: ['groups' => ['agenda:read']],
+    ),
+    new Get(
+        normalizationContext: ['groups' => ['agenda:read']],
+    ),
+])]
 #[ORM\Entity(repositoryClass: AgendaRepository::class)]
 class Agenda
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['agenda:read'])]
     private ?int $id = null;
 
     #[ORM\OneToMany(mappedBy: 'agenda', targetEntity: Unavailability::class, cascade: ['persist', 'remove'])]
+//    #[Groups(['agenda:read'])]
     private Collection $unavailabilities;
 
     #[ORM\OneToMany(mappedBy: 'agenda', targetEntity: Vacation::class, cascade: ['persist', 'remove'])]
+//    #[Groups(['agenda:read'])]
     private Collection $vacations;
 
 //    #[ORM\OneToMany(mappedBy: 'agenda', targetEntity: AgendaDay::class, cascade: ['persist', 'remove'])]
 //    private Collection $days;
 
     #[ORM\OneToOne(mappedBy: 'agenda')]
+    #[Groups(['agenda:read'])]
     private ?Veto $veto = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[Groups(['agenda:read'])]
     private ?\DateTimeInterface $startHour = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[Groups(['agenda:read'])]
     private ?\DateTimeInterface $endHour = null;
 
     public function __construct()

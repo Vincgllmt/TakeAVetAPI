@@ -36,7 +36,7 @@ class GetUserCest
         $I->seeResponseIsAnItem(self::expectedPropertiesResultGet());
     }
 
-    public function testGetMe(ApiTester $I) : void
+    public function testGetMe(ApiTester $I): void
     {
         $client = ClientFactory::createOne();
         $I->amLoggedInAs($client->object());

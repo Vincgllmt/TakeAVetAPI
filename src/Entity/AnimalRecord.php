@@ -15,20 +15,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Table(name: '`animalRecord`')]
 #[ApiResource(
     operations: [
-        new Get(),
-        new Put(),
-        new Patch(),
-    ],
-    normalizationContext: ['groups' => ['animalRecord:read']]
-)]
-#[Get]
-#[Patch(
-    normalizationContext: ['groups' => ['animalRecord:write']],
-    security: 'object.owner == user'
-)]
-#[Put(
-    normalizationContext: ['groups' => ['animalRecord:write']],
-    security: 'object.owner == user'
+        new Get(
+            normalizationContext: ['groups' => ['animalRecord:read']],
+        ),
+        new Put(
+            normalizationContext: ['groups' => ['animalRecord:write']],
+            security: 'object.owner == user'
+        ),
+        new Patch(
+            normalizationContext: ['groups' => ['animalRecord:write']],
+            security: 'object.owner == user'
+        ),
+    ], normalizationContext: ['groups' => ['animalRecord:read']],
 )]
 class AnimalRecord
 {

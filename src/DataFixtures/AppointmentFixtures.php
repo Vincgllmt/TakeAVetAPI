@@ -3,7 +3,6 @@
 namespace App\DataFixtures;
 
 use App\Factory\AppointmentFactory;
-use App\Factory\TypeAppointmentFactory;
 use App\Factory\VetoFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
