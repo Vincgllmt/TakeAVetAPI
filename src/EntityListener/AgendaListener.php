@@ -12,6 +12,10 @@ use Symfony\Component\Security\Core\Security;
     event: Events::prePersist,
     entity: Agenda::class
 )]
+#[AsEntityListener(
+    event: Events::preRemove,
+    entity: Agenda::class
+)]
 class AgendaListener
 {
     private Security $security;
@@ -28,5 +32,10 @@ class AgendaListener
         if ($user instanceof Veto) {
             $agenda->setVeto($user);
         }
+    }
+
+    public function preRemove(Agenda $agenda): void
+    {
+        $agenda->setVeto(null);
     }
 }
