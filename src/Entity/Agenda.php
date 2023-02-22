@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Controller\AgendaUpcomingAppointmentController;
 use App\Repository\AgendaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -45,6 +46,11 @@ use Symfony\Component\Validator\Constraints\LessThan;
         normalizationContext: ['groups' => ['agenda:read']],
         denormalizationContext: ['groups' => ['agenda:write']],
         security: 'is_granted("IS_AUTHENTICATED_FULLY")',
+    ),
+    new Put(
+        normalizationContext: ['groups' => ['agenda:read']],
+        denormalizationContext: ['groups' => ['agenda:write']],
+        security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.veto == user',
     ),
     new Delete(
         security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.veto == user',
