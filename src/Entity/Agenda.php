@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
@@ -45,6 +46,9 @@ use Symfony\Component\Validator\Constraints\LessThan;
         denormalizationContext: ['groups' => ['agenda:write']],
         security: 'is_granted("IS_AUTHENTICATED_FULLY")',
     ),
+    new Delete(
+        security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.veto == user',
+    ),
 ])]
 #[ORM\Entity(repositoryClass: AgendaRepository::class)]
 class Agenda
@@ -68,7 +72,7 @@ class Agenda
 
     #[ORM\OneToOne(mappedBy: 'agenda')]
     #[Groups(['agenda:read'])]
-    private ?Veto $veto = null;
+    public ?Veto $veto = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     #[Groups(['agenda:read', 'agenda:write'])]
