@@ -23,7 +23,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
             security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
         ),
          new Post(
-             normalizationContext: ['groups' => ['threadReply:create']]
+             normalizationContext: ['groups' => ['threadReply:read']],
+             denormalizationContext: ['groups' => ['threadReply:create']],
+             security: "is_granted('IS_AUTHENTICATED_FULLY')"
          ),
     ],
 )]
