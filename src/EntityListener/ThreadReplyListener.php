@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\EntityListener;
 
-use App\Entity\Thread;
 use App\Entity\ThreadReply;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
