@@ -2,28 +2,41 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use App\Repository\VacationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => ['vacation:read']]),
+    ]
+)]
 #[ORM\Entity(repositoryClass: VacationRepository::class)]
 class Vacation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['vacation:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['vacation:read'])]
     private ?string $lib = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['vacation:read'])]
     private ?\DateTimeInterface $startDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['vacation:read'])]
     private ?\DateTimeInterface $endDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'vacations')]
+    #[Groups(['vacation:read'])]
     private ?Agenda $agenda = null;
 
     public function getId(): ?int
