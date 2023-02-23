@@ -2,31 +2,44 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use App\Repository\UnavailabilityRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => ['unavailability:read']]),
+    ]
+)]
 #[ORM\Entity(repositoryClass: UnavailabilityRepository::class)]
 class Unavailability
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['unavailability:read'])]
     private ?int $id = null;
 
 //    #[ORM\Column]
 //    private ?bool $isRepeated = null;
 
     #[ORM\ManyToOne(inversedBy: 'unavailabilities')]
+    #[Groups(['unavailability:read'])]
     private ?Agenda $agenda = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(['unavailability:read'])]
     private ?string $lib = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['unavailability:read'])]
     private ?\DateTimeInterface $startDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['unavailability:read'])]
     private ?\DateTimeInterface $endDate = null;
 
     public function getId(): ?int
