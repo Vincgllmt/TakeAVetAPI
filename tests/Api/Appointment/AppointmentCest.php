@@ -21,7 +21,7 @@ class AppointmentCest
             'animal' => 'Animal',
             'address' => 'Address',
             'startHour' => 'DateTimeInterface',
-            'endHour' => 'DateTimeInterface'
+            'endHour' => 'DateTimeInterface',
         ];
     }
 

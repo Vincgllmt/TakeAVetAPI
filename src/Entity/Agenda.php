@@ -3,8 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Controller\AgendaUpcomingAppointmentController;
 use App\Repository\AgendaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -12,6 +16,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\LessThan;
 
 #[ApiResource(operations: [
     new GetCollection(
@@ -37,6 +43,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
     new Get(
         normalizationContext: ['groups' => ['agenda:read']],
     ),
+    new Post(
+        normalizationContext: ['groups' => ['agenda:read']],
+        denormalizationContext: ['groups' => ['agenda:write']],
+        security: 'is_granted("IS_AUTHENTICATED_FULLY")',
+    ),
+    new Put(
+        normalizationContext: ['groups' => ['agenda:read']],
+        denormalizationContext: ['groups' => ['agenda:write']],
+        security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.veto == user',
+    ),
+    new Patch(
+        normalizationContext: ['groups' => ['agenda:read']],
+        denormalizationContext: ['groups' => ['agenda:write']],
+        security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.veto == user',
+    ),
+    new Delete(
+        security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.veto == user',
+    ),
 ])]
 #[ORM\Entity(repositoryClass: AgendaRepository::class)]
 class Agenda
@@ -60,14 +84,16 @@ class Agenda
 
     #[ORM\OneToOne(mappedBy: 'agenda')]
     #[Groups(['agenda:read'])]
-    private ?Veto $veto = null;
+    public ?Veto $veto = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    #[Groups(['agenda:read'])]
+    #[Groups(['agenda:read', 'agenda:write'])]
+    #[LessThan(propertyPath: 'endHour', message: 'The start hour must be before the end hour.')]
     private ?\DateTimeInterface $startHour = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    #[Groups(['agenda:read'])]
+    #[Groups(['agenda:read', 'agenda:write'])]
+    #[GreaterThan(propertyPath: 'startHour', message: 'The end hour must be after the start hour.')]
     private ?\DateTimeInterface $endHour = null;
 
     public function __construct()

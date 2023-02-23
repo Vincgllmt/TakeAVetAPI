@@ -6,8 +6,9 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\ThreadReplyRepository;
+use App\Validator\IsAuthenticatedUser;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -18,16 +19,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
             normalizationContext: ['groups' => ['threadReply:read']]
         ),
         new GetCollection(),
-        new Patch(
-            normalizationContext: ['groups' => ['threadReply:update']],
-            security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
-        ),
         new Delete(
             security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
         ),
-        // new Post(
-        //    normalizationContext: ['groups' => ['threadReply:create']]
-        //    ),
+         new Post(
+             normalizationContext: ['groups' => ['threadReply:read']],
+             denormalizationContext: ['groups' => ['threadReply:create']],
+             security: "is_granted('IS_AUTHENTICATED_FULLY')"
+         ),
     ],
 )]
 class ThreadReply
@@ -39,7 +38,7 @@ class ThreadReply
     private ?int $id = null;
 
     #[ORM\Column(length: 1024)]
-    #[Groups(['threadReply:read', 'threadReply:update'])]
+    #[Groups(['threadReply:read', 'threadReply:create'])]
     private ?string $description = null;
 
     #[ORM\Column]
@@ -48,10 +47,12 @@ class ThreadReply
 
     #[ORM\ManyToOne(inversedBy: 'author')]
     #[ORM\JoinColumn(nullable: false)]
+    #[IsAuthenticatedUser]
     public ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'replies')]
     #[ORM\JoinColumn(nullable: true)]
+    #[Groups('threadReply:create')]
     private ?Thread $thread = null;
 
     public function getId(): ?int
