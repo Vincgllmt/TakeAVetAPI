@@ -3,6 +3,8 @@
 namespace App\Tests\Api\Agenda;
 
 use App\Entity\Agenda;
+use App\Factory\UnavailabilityFactory;
+use App\Factory\VacationFactory;
 use App\Factory\VetoFactory;
 use App\Tests\Support\ApiTester;
 use Codeception\Util\HttpCode;
@@ -16,6 +18,8 @@ class PostAgendaCest
             'startHour' => 'string',
             'endHour' => 'string',
             'veto' => 'string',
+            'appointments' => 'array',
+            'unavailabilities' => 'array',
         ];
     }
 
@@ -59,5 +63,28 @@ class PostAgendaCest
 
         $I->seeResponseCodeIs(HttpCode::UNAUTHORIZED);
         $I->seeResponseIsJson();
+    }
+
+    public function createWithVacationsAndUnavailabilities(ApiTester $I): void
+    {
+        $veto = VetoFactory::createOne();
+        $vacation = VacationFactory::createOne();
+        $unavailability = UnavailabilityFactory::createOne();
+        $I->amLoggedInAs($veto->object());
+
+        $I->sendPost('/api/agendas', [
+            'startHour' => '08:00',
+            'endHour' => '18:00',
+            'vacations' => [
+                "/api/vacations/{$vacation->getId()}",
+            ],
+            'unavailabilities' => [
+                "/api/unavailabilities/{$unavailability->getId()}",
+            ],
+        ]);
+
+        $I->seeResponseCodeIs(HttpCode::CREATED);
+        $I->seeResponseIsJson();
+        $I->seeResponseIsAnEntity(Agenda::class, '/api/agendas/1', self::expectedPropertiesResultPost());
     }
 }
