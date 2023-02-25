@@ -14,7 +14,7 @@ class Veto extends User
     private Collection $appointments;
 
     #[ORM\OneToOne(inversedBy: 'veto', cascade: ['persist', 'remove'])]
-    private ?Agenda $agenda = null;
+    public ?Agenda $agenda = null;
 
     #[ORM\ManyToMany(targetEntity: TypeAnimal::class, inversedBy: 'vetos')]
     private Collection $accepting;
