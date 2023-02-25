@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -46,7 +47,8 @@ use Symfony\Component\Validator\Constraints\LessThan;
     new Post(
         normalizationContext: ['groups' => ['agenda:read']],
         denormalizationContext: ['groups' => ['agenda:write']],
-        security: 'is_granted("IS_AUTHENTICATED_FULLY")',
+        security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto() and user.agenda == null',
+        securityMessage: 'You must be a vet to create an agenda, and if so you need to not already have an agenda.',
     ),
     new Put(
         normalizationContext: ['groups' => ['agenda:read']],
@@ -72,11 +74,13 @@ class Agenda
     private ?int $id = null;
 
     #[ORM\OneToMany(mappedBy: 'agenda', targetEntity: Unavailability::class, cascade: ['persist', 'remove'])]
-//    #[Groups(['agenda:read'])]
+    #[Groups(['agenda:read', 'agenda:write'])]
+    #[ApiProperty(readableLink: true)]
     private Collection $unavailabilities;
 
     #[ORM\OneToMany(mappedBy: 'agenda', targetEntity: Vacation::class, cascade: ['persist', 'remove'])]
-//    #[Groups(['agenda:read'])]
+    #[Groups(['agenda:read', 'agenda:write'])]
+    #[ApiProperty(readableLink: true)]
     private Collection $vacations;
 
 //    #[ORM\OneToMany(mappedBy: 'agenda', targetEntity: AgendaDay::class, cascade: ['persist', 'remove'])]
@@ -89,11 +93,13 @@ class Agenda
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     #[Groups(['agenda:read', 'agenda:write'])]
     #[LessThan(propertyPath: 'endHour', message: 'The start hour must be before the end hour.')]
+    #[ApiProperty(description: 'the start hour of a vet\'s work day', example: '08:00')]
     private ?\DateTimeInterface $startHour = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     #[Groups(['agenda:read', 'agenda:write'])]
     #[GreaterThan(propertyPath: 'startHour', message: 'The end hour must be after the start hour.')]
+    #[ApiProperty(description: 'the end hour of a vet\'s work day', example: '18:00')]
     private ?\DateTimeInterface $endHour = null;
 
     public function __construct()
