@@ -47,7 +47,8 @@ use Symfony\Component\Validator\Constraints\LessThan;
     new Post(
         normalizationContext: ['groups' => ['agenda:read']],
         denormalizationContext: ['groups' => ['agenda:write']],
-        security: 'is_granted("IS_AUTHENTICATED_FULLY")',
+        security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto() and user.agenda == null',
+        securityMessage: 'You must be a vet to create an agenda, and if so you need to not already have an agenda.',
     ),
     new Put(
         normalizationContext: ['groups' => ['agenda:read']],
