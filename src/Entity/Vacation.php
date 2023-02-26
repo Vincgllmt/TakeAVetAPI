@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use App\Repository\VacationRepository;
@@ -16,14 +17,33 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => ['vacation:read']]),
+        new Get(
+            openapiContext: [
+                'summary' => 'Get a vacation ressource by its id.',
+                'responses' => [
+                    '200' => [
+                        'description' => 'The vacation has been retrieved.',
+                    ],
+                    '404' => [
+                        'description' => 'The vacation does not exist.',
+                    ],
+                ],
+            ],
+            normalizationContext: ['groups' => ['vacation:read']]
+        ),
         new Post(
             openapiContext: [
                 'summary' => 'Create a new vacation on your agenda (vet only).',
                 'responses' => [
-                    '201' => 'The vacation has been created.',
-                    '400' => 'The vacation is invalid.',
-                    '401' => 'You need to be authenticated as veto to create a vacation.',
+                    '201' => [
+                        'description' => 'The vacation has been created.',
+                    ],
+                    '400' => [
+                        'description' => 'The vacation is invalid.',
+                    ],
+                    '401' => [
+                        'description' => 'You need to be authenticated as a veto to create a vacation.',
+                    ],
                 ],
             ],
             normalizationContext: ['groups' => ['vacation:read', 'agenda:read']],
@@ -32,6 +52,21 @@ use Symfony\Component\Validator\Constraints\NotBlank;
             securityMessage: 'You need to be a Veto to access this resource.',
             securityPostValidation: 'user.agenda !== null',
             securityPostValidationMessage: 'You don\'t have an agenda yet.',
+        ),
+        new Delete(
+            openapiContext: [
+                'summary' => 'Delete a vacation on your agenda (vet only).',
+                'responses' => [
+                    '204' => [
+                        'description' => 'The vacation has been deleted.',
+                    ],
+                    '401' => [
+                        'description' => 'You need to be authenticated as a veto and the owner to delete a vacation.',
+                    ],
+                ],
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto() and user.agenda === object.agenda',
+            securityMessage: 'You need to be a Veto and the owner of the agenda to access this resource.'
         ),
     ]
 )]
@@ -62,7 +97,7 @@ class Vacation
     #[ORM\ManyToOne(inversedBy: 'vacations')]
     #[Groups(['vacation:read'])]
     #[ApiProperty(readableLink: false)]
-    private ?Agenda $agenda = null;
+    public ?Agenda $agenda = null;
 
     public function getId(): ?int
     {
