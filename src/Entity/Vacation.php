@@ -29,7 +29,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
             normalizationContext: ['groups' => ['vacation:read', 'agenda:read']],
             denormalizationContext: ['groups' => ['vacation:write', 'agenda:write']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()',
-            securityMessage: 'You need to be a Veto to access this resource.'
+            securityMessage: 'You need to be a Veto to access this resource.',
+            securityPostValidation: 'user.agenda !== null',
+            securityPostValidationMessage: 'You don\'t have an agenda yet.',
         ),
     ]
 )]
