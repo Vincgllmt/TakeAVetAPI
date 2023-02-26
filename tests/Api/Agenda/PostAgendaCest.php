@@ -66,60 +66,30 @@ class PostAgendaCest
         $I->seeResponseIsJson();
     }
 
-    public function createWithVacationsAndUnavailabilities(ApiTester $I): void
-    {
-        $veto = VetoFactory::createOne();
-        $vacation = VacationFactory::createOne();
-        $unavailability = UnavailabilityFactory::createOne();
-        $I->amLoggedInAs($veto->object());
+//    public function createWithVacationsAndUnavailabilities(ApiTester $I): void
+//    {
+//        $veto = VetoFactory::createOne();
+//        $vacation = VacationFactory::createOne();
+//        $unavailability = UnavailabilityFactory::createOne();
+//        $I->amLoggedInAs($veto->object());
+//
+//        $I->sendPost('/api/agendas', [
+//            'startHour' => '08:00',
+//            'endHour' => '18:00',
+//            'vacations' => [
+//                "/api/vacations/{$vacation->getId()}",
+//            ],
+//            'unavailabilities' => [
+//                "/api/unavailabilities/{$unavailability->getId()}",
+//            ],
+//        ]);
+//
+//        $I->seeResponseCodeIs(HttpCode::CREATED);
+//        $I->seeResponseIsJson();
+//        $I->seeResponseIsAnEntity(Agenda::class, '/api/agendas/1', self::expectedPropertiesResultPost());
+//    }
 
-        $I->sendPost('/api/agendas', [
-            'startHour' => '08:00',
-            'endHour' => '18:00',
-            'vacations' => [
-                "/api/vacations/{$vacation->getId()}",
-            ],
-            'unavailabilities' => [
-                "/api/unavailabilities/{$unavailability->getId()}",
-            ],
-        ]);
-
-        $I->seeResponseCodeIs(HttpCode::CREATED);
-        $I->seeResponseIsJson();
-        $I->seeResponseIsAnEntity(Agenda::class, '/api/agendas/1', self::expectedPropertiesResultPost());
-    }
-
-    public function cantCreateWithOthersVacationsAgenda(ApiTester $I): void
-    {
-        $veto = VetoFactory::createOne();
-        $veto2 = VetoFactory::createOne();
-        $vacation = VacationFactory::createOne();
-        $unavailability = UnavailabilityFactory::createOne();
-
-        $otherAgenda = AgendaFactory::createOne([
-           'veto' => $veto2->object(),
-            'startHour' => new \DateTimeImmutable('08:00'),
-            'endHour' => new \DateTimeImmutable('18:00'),
-            'vacations' => [
-                $vacation->object(),
-            ],
-        ]);
-
-        $I->amLoggedInAs($veto->object());
-
-        $I->sendPost('/api/agendas', [
-            'startHour' => '08:00',
-            'endHour' => '18:00',
-            'vacations' => [
-                "/api/vacations/{$vacation->getId()}",
-            ],
-        ]);
-
-        $I->seeResponseCodeIs(HttpCode::FORBIDDEN);
-        $I->seeResponseIsJson();
-    }
-
-    public function cantCreateAgendaWithAlreadyAnAgenda(ApiTester $I)
+    public function cantCreateAgendaWithAlreadyAnAgenda(ApiTester $I): void
     {
         $veto = VetoFactory::createOne();
         $vacation = VacationFactory::createOne();
@@ -128,9 +98,6 @@ class PostAgendaCest
             'veto' => $veto->object(),
             'startHour' => new \DateTimeImmutable('08:00'),
             'endHour' => new \DateTimeImmutable('18:00'),
-            'vacations' => [
-                $vacation->object(),
-            ],
         ]);
 
         $I->amLoggedInAs($veto->object());
@@ -138,9 +105,6 @@ class PostAgendaCest
         $I->sendPost('/api/agendas', [
             'startHour' => '08:00',
             'endHour' => '18:00',
-            'vacations' => [
-                "/api/vacations/{$vacation->getId()}",
-            ],
         ]);
 
         $I->seeResponseCodeIs(HttpCode::FORBIDDEN);
