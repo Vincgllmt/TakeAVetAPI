@@ -74,12 +74,12 @@ class Agenda
     private ?int $id = null;
 
     #[ORM\OneToMany(mappedBy: 'agenda', targetEntity: Unavailability::class, cascade: ['persist', 'remove'])]
-    #[Groups(['agenda:read', 'agenda:write'])]
+    #[Groups(['agenda:read'])]
     #[ApiProperty(readableLink: true)]
     private Collection $unavailabilities;
 
     #[ORM\OneToMany(mappedBy: 'agenda', targetEntity: Vacation::class, cascade: ['persist', 'remove'])]
-    #[Groups(['agenda:read', 'agenda:write'])]
+    #[Groups(['agenda:read'])]
     #[ApiProperty(readableLink: true)]
     private Collection $vacations;
 
