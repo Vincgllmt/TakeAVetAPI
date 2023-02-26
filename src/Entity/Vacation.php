@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Repository\VacationRepository;
 use Doctrine\DBAL\Types\Types;
@@ -65,6 +66,26 @@ use Symfony\Component\Validator\Constraints\NotBlank;
                     ],
                 ],
             ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto() and user.agenda === object.agenda',
+            securityMessage: 'You need to be a Veto and the owner of the agenda to access this resource.'
+        ),
+        new Patch(
+            openapiContext: [
+                'summary' => 'Update a vacation on your agenda (vet only).',
+                'responses' => [
+                    '200' => [
+                        'description' => 'The vacation has been updated.',
+                    ],
+                    '400' => [
+                        'description' => 'The vacation is invalid.',
+                    ],
+                    '401' => [
+                        'description' => 'You need to be authenticated as a veto and the owner to update a vacation.',
+                    ],
+                ],
+            ],
+            normalizationContext: ['groups' => ['vacation:read', 'agenda:read']],
+            denormalizationContext: ['groups' => ['vacation:write', 'agenda:write']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto() and user.agenda === object.agenda',
             securityMessage: 'You need to be a Veto and the owner of the agenda to access this resource.'
         ),
