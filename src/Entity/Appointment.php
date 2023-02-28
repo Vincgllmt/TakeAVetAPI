@@ -4,12 +4,28 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
 use App\Repository\AppointmentRepository;
+use App\Validator\IsVet;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(normalizationContext: ['groups' => ['appointment:read']])]
+#[ApiResource(
+    operations: [
+      new Post(
+          uriTemplate: '/appointments/make',
+          normalizationContext: ['groups' => ['appointment:read']],
+          denormalizationContext: ['groups' => ['appointment:create']],
+          security : 'is_granted("IS_AUTHENTICATED_FULLY") and user.isClient()',
+      ),
+    ],
+    normalizationContext: ['groups' => ['appointment:read']],
+    openapiContext: [
+        'summary' => "Create an appointment for a client in a vet's agenda in a specific date and time for a specific animal",
+    ]
+)]
 #[ORM\Entity(repositoryClass: AppointmentRepository::class)]
 class Appointment
 {
@@ -20,50 +36,61 @@ class Appointment
     private ?int $id = null;
 
     #[ORM\Column(length: 1024, nullable: true)]
+    #[Groups(['appointment:read', 'appointment:create'])]
     private ?string $note = null;
 
     #[ORM\Column]
+    #[Groups(['appointment:read'])]
     private ?bool $isValidated = null;
 
     #[ORM\Column]
+    #[Groups(['appointment:read', 'appointment:create'])]
+    #[ApiProperty(default: false)]
     private ?bool $isUrgent = null;
 
     #[ORM\Column]
+    #[Groups(['appointment:read', 'appointment:write'])]
+    #[IsVet]
+    #[ApiProperty(default: false)]
     private ?bool $isCompleted = null;
 
     #[ORM\OneToOne(inversedBy: 'appointment', cascade: ['persist', 'remove'])]
+    #[IsVet]
+    #[ApiProperty(default: null)]
     private ?Receipt $receipt = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['appointment:read'])]
+    #[Groups(['appointment:read', 'appointment:create'])]
     #[ApiProperty(readableLink: true)]
     private ?TypeAppointment $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
+    #[Groups(['appointment:read'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Client $client = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['appointment:read-all'])]
+    #[Groups(['appointment:read', 'appointment:create'])]
     private ?Veto $veto = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['appointment:read-all'])]
+    #[Groups(['appointment:read', 'appointment:create'])]
     private ?Animal $animal = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
-    #[Groups(['appointment:read-all'])]
+    #[Groups(['appointment:read', 'appointment:create'])]
+    #[ApiProperty(readableLink: true)]
     private ?Address $location = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(['appointment:read'])]
+    #[Groups(['appointment:read', 'appointment:create'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    #[Groups(['appointment:read'])]
+    #[Groups(['appointment:read', 'appointment:create'])]
     private ?\DateTimeInterface $startHour = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
