@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use App\Controller\GetAvatarController;
 use App\Controller\GetMeController;
 use App\Repository\UserRepository;
@@ -71,6 +72,13 @@ use Symfony\Component\Validator\Constraints\Length;
                 ],
             ]
         ),
+        new Patch(
+            openapiContext: [
+                'summary' => 'Update the current user.',
+            ],
+            denormalizationContext: ['groups' => ['user:update']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
+        ),
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -100,28 +108,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     #[Length(min: 6, minMessage: 'Your password should be at least 6 characters long')]
-    #[Groups(['user:create'])]
+    #[Groups(['user:create', 'user:update'])]
     protected ?string $password = null;
 
     /**
      * @var string|null the last name of this user
      */
     #[ORM\Column(length: 50)]
-    #[Groups(['user:create', 'user:read-me', 'user:read'])]
+    #[Groups(['user:create', 'user:read-me', 'user:read', 'user:update'])]
     protected ?string $lastName = null;
 
     /**
      * @var string|null the first name of this user
      */
     #[ORM\Column(length: 50)]
-    #[Groups(['user:create', 'user:read-me', 'user:read'])]
+    #[Groups(['user:create', 'user:read-me', 'user:read', 'user:update'])]
     protected ?string $firstName = null;
 
     /**
      * @var string|null the phone number of this user
      */
     #[ORM\Column(length: 20, nullable: true)]
-    #[Groups(['user:read-me'])]
+    #[Groups(['user:read-me', 'user:update'])]
     protected ?string $phone = null;
 
     /**
