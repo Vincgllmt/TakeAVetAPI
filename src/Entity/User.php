@@ -46,7 +46,7 @@ use Symfony\Component\Validator\Constraints\Length;
                 ],
             ],
             paginationEnabled: false,
-            normalizationContext: ['groups' => ['user:read-me']],
+            normalizationContext: ['groups' => ["skip_null_values" => false, 'user:read-me']],
             security: "is_granted('IS_AUTHENTICATED_FULLY')"
         ),
         new Get(normalizationContext: ['groups' => ['user:read']]),
@@ -77,6 +77,7 @@ use Symfony\Component\Validator\Constraints\Length;
             openapiContext: [
                 'summary' => 'Update the current user.',
             ],
+            normalizationContext: ['groups' => ["skip_null_values" => false, 'user:read-me']],
             denormalizationContext: ['groups' => ['user:update']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
         ),
