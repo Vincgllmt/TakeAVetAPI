@@ -78,15 +78,19 @@ class Animal
     private ?\DateTimeInterface $birthday = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('animal:read')]
     private ?string $imagePath = null;
 
     #[ORM\Column]
+    #[Groups('animal:read')]
     private ?bool $inFarm = null;
 
     #[ORM\Column]
+    #[Groups('animal:read')]
     private ?bool $isGroup = null;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: AnimalRecord::class)]
+    #[Groups('animal:read')]
     private Collection $records;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Appointment::class)]
@@ -98,9 +102,11 @@ class Animal
     private ?TypeAnimal $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
+    #[Groups('animal:read')]
     private ?Client $owner = null;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Vaccine::class)]
+    #[Groups('animal:read')]
     private Collection $vaccines;
 
     public function __construct()
