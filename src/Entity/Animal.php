@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
@@ -92,6 +93,7 @@ class Animal
     private Collection $appointments;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
+    #[ApiProperty(readableLink: true)]
     private ?TypeAnimal $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
