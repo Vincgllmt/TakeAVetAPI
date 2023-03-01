@@ -18,7 +18,13 @@ class GetAnimalCest
             'specificRace' => 'string|null',
             'gender' => 'string',
             'birthday' => 'string',
+            'imagePath' => 'string',
+            'infarm' => 'boolean',
+            'isGroups' => 'boolean',
+            'records' => 'array',
             'type' => 'array',
+            'owner' => 'string',
+            'vaccines' => 'array'
         ];
     }
     public function getAllAnimals(ApiTester $I): void
@@ -28,6 +34,11 @@ class GetAnimalCest
         $I->sendGet('/api/animals');
 
         $I->seeResponseCodeIs(HttpCode::OK);
+    }
+
+    public function getAllAnimalsOfUserById(ApiTester $I): void
+    {
+
     }
 
     public function getOneAnimal(ApiTester $I): void
