@@ -94,6 +94,7 @@ class Animal
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
     #[ApiProperty(readableLink: true)]
+    #[Groups('animal:read')]
     private ?TypeAnimal $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
