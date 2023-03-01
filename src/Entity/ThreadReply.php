@@ -16,6 +16,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new Get(
+            openapiContext: [
+                'summary' => 'Get one reply to a thread',
+            ],
             normalizationContext: ['groups' => ['threadReply:read']]
         ),
         new GetCollection(),
