@@ -8,8 +8,10 @@ use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[UniqueEntity(fields: 'email', message: 'Il y a déjà un compte avec cette adresse e-mail.')]
 #[ApiResource(operations: [
     new Post(
         uriTemplate: '/register',
@@ -26,7 +28,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             ],
         ],
         normalizationContext: ['groups' => ['user:read-me']],
-        denormalizationContext: ['groups' => ['user:create']]
+        denormalizationContext: ['groups' => ['user:create']],
     ),
 ], normalizationContext: ['groups' => ['user:read', 'user:create', 'user:read-me']])]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
@@ -36,7 +38,7 @@ class Client extends User
      * @var bool|null if the client is a husbandry or not
      */
     #[ORM\Column]
-    #[Groups(['user:read-me', 'user:read'])]
+    #[Groups(['user:read-me', 'user:read', 'user:create'])]
     private ?bool $isHusbandry = null;
 
     /**
