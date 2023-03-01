@@ -23,11 +23,11 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(fields: 'email', message: 'Il y a déjà un compte avec cette adresse e-mail.')]
 #[ORM\Table(name: '`user`')]
 #[InheritanceType('JOINED')]
 #[DiscriminatorColumn(name: 'discriminator', type: 'string')]
 #[DiscriminatorMap(['veto' => Veto::class, 'client' => Client::class])]
-#[UniqueEntity(fields: ['email'], message: 'Il y a déjà un compte avec cette adresse e-mail.')]
 #[ApiResource(
     operations: [
         new GetCollection(
@@ -47,7 +47,8 @@ use Symfony\Component\Validator\Constraints\Length;
             ],
             paginationEnabled: false,
             normalizationContext: ['groups' => ['user:read-me']],
-            security: "is_granted('IS_AUTHENTICATED_FULLY')"),
+            security: "is_granted('IS_AUTHENTICATED_FULLY')"
+        ),
         new Get(normalizationContext: ['groups' => ['user:read']]),
         new Get(
             uriTemplate: '/users/{id}/avatar',
@@ -79,7 +80,7 @@ use Symfony\Component\Validator\Constraints\Length;
             denormalizationContext: ['groups' => ['user:update']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
         ),
-    ]
+    ],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -148,7 +149,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string|null the path to the profile picture of this user
      */
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read-me', 'user:read'])]
     private ?string $avatarPath = null;
 
     public function __construct()
@@ -342,16 +342,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isVeto(): bool
-    {
-        return $this instanceof Veto;
-    }
-
-    public function isClient(): bool
-    {
-        return $this instanceof Client;
-    }
-
     public function getAvatarPath(): ?string
     {
         return $this->avatarPath;
@@ -360,7 +350,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatarPath(?string $avatarPath): self
     {
         $this->avatarPath = $avatarPath;
-
         return $this;
+    }
+
+    public function isVeto(): bool
+    {
+        return $this instanceof Veto;
+    }
+
+    public function isClient(): bool
+    {
+        return $this instanceof Client;
     }
 }
