@@ -5,6 +5,7 @@ namespace App\Tests\Api\Animal;
 use App\Entity\Animal;
 use App\Factory\AnimalFactory;
 use App\Tests\Support\ApiTester;
+use Codeception\Util\HttpCode;
 
 class GetAnimalCest
 {
@@ -17,22 +18,20 @@ class GetAnimalCest
             'specificRace' => 'string|null',
             'gender' => 'string',
             'birthday' => 'string',
-            'imagePath' =>'string',
-            'inFarm' => 'boolean',
-            'isGroup' => 'boolean',
-            'records' => 'Collection',
-            'appointments' => 'Collection',
-            'type' => 'TypeAnimal',
-            'owner' => 'Client',
-            'vaccines' => 'Collection'
+            'type' => 'array',
         ];
     }
     public function getAllAnimals(ApiTester $I): void
     {
         AnimalFactory::createMany(20);
+
+        $I->sendGet('/api/animals');
+
+        $I->seeResponseCodeIs(HttpCode::OK);
     }
 
     public function getOneAnimal(ApiTester $I): void
     {
+        AnimalFactory::createOne();
     }
 }
