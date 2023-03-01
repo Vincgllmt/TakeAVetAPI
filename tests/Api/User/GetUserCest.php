@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Tests\Api\User;
+
 use App\Entity\Client;
 use App\Factory\ClientFactory;
 use App\Tests\Support\ApiTester;
