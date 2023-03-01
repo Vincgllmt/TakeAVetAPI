@@ -19,6 +19,15 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-
+when@test:
+    services:
+        Psr\Log\NullLogger: ~
+        logger: '@Psr\Log\NullLogger'
+        # Fix wrong container being used
+        # https://github.com/Codeception/module-symfony/issues/34
+        security.helper:
+            class: Symfony\Component\Security\Core\Security
+            arguments:
+                - '@test.service_container'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
