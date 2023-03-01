@@ -23,6 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new GetCollection(openapiContext: ['summary' => 'Get all reply']),
         new Delete(
+            openapiContext: ['summary' => 'delete a reply in a thread'],
             security: "is_granted('IS_AUTHENTICATED_FULLY') and object.user == user"
         ),
          new Post(
