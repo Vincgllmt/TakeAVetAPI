@@ -6,7 +6,7 @@ use App\Tests\Support\ApiTester;
 
 class PostUserCest
 {
-    protected static function expectedPropertiesResultPost(bool $isClient): array
+    protected static function expectedPropertiesResultPost(bool $useClientProperties): array
     {
         $properties = [
             'id' => 'integer',
@@ -14,10 +14,9 @@ class PostUserCest
             'lastName' => 'string',
             'firstName' => 'string',
             'phone' => 'string|null',
-            'avatarPath' => 'string|null',
         ];
 
-        if ($isClient) {
+        if ($useClientProperties) {
             $properties['isHusbandry'] = 'boolean';
         }
 

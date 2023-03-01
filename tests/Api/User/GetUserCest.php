@@ -2,38 +2,56 @@
 
 use App\Entity\Client;
 use App\Factory\ClientFactory;
+use App\Factory\VetoFactory;
 use App\Tests\Support\ApiTester;
 
 class GetUserCest
 {
-    protected static function expectedPropertiesResultGet(): array
+    protected static function expectedPropertiesResultGet(bool $useClientProperties): array
     {
-        return [
+        $properties = [
             'id' => 'integer',
-            'isHusbandry' => 'boolean', // This property is in the Client entity.
             'lastName' => 'string',
             'firstName' => 'string',
-            'avatarPath' => 'string|null',
+// avatar can be get by the route /api/users/{id}/avatar
+//            'avatarPath' => 'string|null',
         ];
+
+        if ($useClientProperties) {
+            $properties['isHusbandry'] = 'boolean';
+        }
+
+        return $properties;
     }
 
-    protected static function expectedPropertiesResultGetMe(): array
+    protected static function expectedPropertiesResultGetMe(bool $useClientProperties): array
     {
-        return array_merge(self::expectedPropertiesResultGet(), [
+        return array_merge(self::expectedPropertiesResultGet($useClientProperties), [
             'email' => 'string',
             'phone' => 'string|null',
-            'avatarPath' => 'string|null',
         ]);
     }
 
-    public function testGetAClientWithThisProperties(ApiTester $I): void
+    public function testGetClientWithHisProperties(ApiTester $I): void
     {
         $client = ClientFactory::createOne();
+
         $I->sendGet("/api/users/{$client->getId()}");
 
         $I->seeResponseCodeIsSuccessful();
         $I->seeResponseIsJson();
-        $I->seeResponseIsAnItem(self::expectedPropertiesResultGet());
+        $I->seeResponseIsAnItem(self::expectedPropertiesResultGet(true));
+    }
+
+    public function testGetVetoWithHisProperties(ApiTester $I): void
+    {
+        $veto = VetoFactory::createOne();
+
+        $I->sendGet("/api/users/{$veto->getId()}");
+
+        $I->seeResponseCodeIsSuccessful();
+        $I->seeResponseIsJson();
+        $I->seeResponseIsAnItem(self::expectedPropertiesResultGet(false));
     }
 
     public function testGetMe(ApiTester $I): void
@@ -44,6 +62,6 @@ class GetUserCest
 
         $I->seeResponseCodeIsSuccessful();
         $I->seeResponseIsJson();
-        $I->seeResponseIsAnItem(self::expectedPropertiesResultGetMe());
+        $I->seeResponseIsAnItem(self::expectedPropertiesResultGetMe(true));
     }
 }
