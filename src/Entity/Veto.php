@@ -2,11 +2,29 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Post;
 use App\Repository\VetoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    operations: [
+        new Post(uriTemplate: 'vet/register', openapiContext: [
+            'summary' => 'Register a new vet',
+            'description' => 'Create a new account with a password and an email address and return the newly registered vet.',
+            'responses' => [
+                '201' => [
+                    'description' => 'The newly registered vet.',
+                ],
+                '400' => [
+                    'description' => 'The email address is already used by another account.',
+                ],
+            ],
+        ], normalizationContext: ['groups' => ['user:read', 'user:read-me']], denormalizationContext: ['groups' => ['veto:create', 'user:create']]),
+    ],
+)]
 #[ORM\Entity(repositoryClass: VetoRepository::class)]
 class Veto extends User
 {
