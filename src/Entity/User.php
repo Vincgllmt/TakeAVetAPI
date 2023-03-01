@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use App\Controller\GetAvatarController;
 use App\Controller\GetMeController;
 use App\Repository\UserRepository;
@@ -22,11 +23,11 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(fields: 'email', message: 'Il y a déjà un compte avec cette adresse e-mail.')]
 #[ORM\Table(name: '`user`')]
 #[InheritanceType('JOINED')]
 #[DiscriminatorColumn(name: 'discriminator', type: 'string')]
 #[DiscriminatorMap(['veto' => Veto::class, 'client' => Client::class])]
-#[UniqueEntity(fields: ['email'], message: 'Il y a déjà un compte avec cette adresse e-mail.')]
 #[ApiResource(
     operations: [
         new GetCollection(
@@ -45,8 +46,9 @@ use Symfony\Component\Validator\Constraints\Length;
                 ],
             ],
             paginationEnabled: false,
-            normalizationContext: ['groups' => ['user:read-me']],
-            security: "is_granted('IS_AUTHENTICATED_FULLY')"),
+            normalizationContext: ["skip_null_values" => false, 'groups' => ['user:read-me']],
+            security: "is_granted('IS_AUTHENTICATED_FULLY')"
+        ),
         new Get(normalizationContext: ['groups' => ['user:read']]),
         new Get(
             uriTemplate: '/users/{id}/avatar',
@@ -71,7 +73,15 @@ use Symfony\Component\Validator\Constraints\Length;
                 ],
             ]
         ),
-    ]
+        new Patch(
+            openapiContext: [
+                'summary' => 'Update the current user.',
+            ],
+            normalizationContext: ['groups' => ["skip_null_values" => false, 'user:read-me']],
+            denormalizationContext: ['groups' => ['user:update']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
+        ),
+    ],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -100,28 +110,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     #[Length(min: 6, minMessage: 'Your password should be at least 6 characters long')]
-    #[Groups(['user:create'])]
+    #[Groups(['user:create', 'user:update'])]
     protected ?string $password = null;
 
     /**
      * @var string|null the last name of this user
      */
     #[ORM\Column(length: 50)]
-    #[Groups(['user:create', 'user:read-me', 'user:read'])]
+    #[Groups(['user:create', 'user:read-me', 'user:read', 'user:update'])]
     protected ?string $lastName = null;
 
     /**
      * @var string|null the first name of this user
      */
     #[ORM\Column(length: 50)]
-    #[Groups(['user:create', 'user:read-me', 'user:read'])]
+    #[Groups(['user:create', 'user:read-me', 'user:read', 'user:update'])]
     protected ?string $firstName = null;
 
     /**
      * @var string|null the phone number of this user
      */
     #[ORM\Column(length: 20, nullable: true)]
-    #[Groups(['user:read-me'])]
+    #[Groups(['user:read-me', 'user:update'])]
     protected ?string $phone = null;
 
     /**
@@ -140,7 +150,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string|null the path to the profile picture of this user
      */
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read-me', 'user:read'])]
     private ?string $avatarPath = null;
 
     public function __construct()
@@ -334,16 +343,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isVeto(): bool
-    {
-        return $this instanceof Veto;
-    }
-
-    public function isClient(): bool
-    {
-        return $this instanceof Client;
-    }
-
     public function getAvatarPath(): ?string
     {
         return $this->avatarPath;
@@ -352,7 +351,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatarPath(?string $avatarPath): self
     {
         $this->avatarPath = $avatarPath;
-
         return $this;
+    }
+
+    public function isVeto(): bool
+    {
+        return $this instanceof Veto;
+    }
+
+    public function isClient(): bool
+    {
+        return $this instanceof Client;
     }
 }

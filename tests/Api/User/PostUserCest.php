@@ -6,20 +6,24 @@ use App\Tests\Support\ApiTester;
 
 class PostUserCest
 {
-    protected static function expectedPropertiesResultPost(): array
+    protected static function expectedPropertiesResultPost(bool $useClientProperties): array
     {
-        return [
+        $properties = [
             'id' => 'integer',
-            'isHusbandry' => 'boolean',
             'email' => 'string',
             'lastName' => 'string',
             'firstName' => 'string',
             'phone' => 'string|null',
-            'avatarPath' => 'string|null',
         ];
+
+        if ($useClientProperties) {
+            $properties['isHusbandry'] = 'boolean';
+        }
+
+        return $properties;
     }
 
-    public function testCreateUser(ApiTester $I): void
+    public function testCreateClient(ApiTester $I): void
     {
         $I->sendPost('/api/register', [
             'email' => 'test@test.test',
@@ -30,6 +34,20 @@ class PostUserCest
 
         $I->seeResponseCodeIsSuccessful();
         $I->seeResponseIsJson();
-        $I->seeResponseIsAnItem(self::expectedPropertiesResultPost());
+        $I->seeResponseIsAnItem(self::expectedPropertiesResultPost(true));
+    }
+
+    public function testCreateVeto(ApiTester $I): void
+    {
+        $I->sendPost('/api/vet/register', [
+            'email' => 'test@test.test',
+            'password' => 'password',
+            'lastName' => 'Doe',
+            'firstName' => 'John',
+        ]);
+
+        $I->seeResponseCodeIsSuccessful();
+        $I->seeResponseIsJson();
+        $I->seeResponseIsAnItem(self::expectedPropertiesResultPost(false));
     }
 }
