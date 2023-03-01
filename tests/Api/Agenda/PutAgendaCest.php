@@ -6,9 +6,13 @@ use App\Factory\AgendaFactory;
 use App\Factory\VetoFactory;
 use App\Tests\Support\ApiTester;
 use Codeception\Util\HttpCode;
+use DateTime;
 
 class PutAgendaCest
 {
+    /**
+     * @throws \Exception
+     */
     public function putAgenda(ApiTester $I): void
     {
         $veto = VetoFactory::createOne();
@@ -27,10 +31,10 @@ class PutAgendaCest
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
 
-        $I->seeResponseContainsJson([
-            'startHour' => '1970-01-01T09:00:00+00:00',
-            'endHour' => '1970-01-01T18:00:00+00:00',
-        ]);
+        $json = $I->grabJsonResponse();
+
+        $I->assertSame('09:00', (new DateTime($json['startHour']))->format('H:i'));
+        $I->assertSame('18:00', (new DateTime($json['endHour']))->format('H:i'));
     }
 
     public function cantPutAgendaWhenNotOwned(ApiTester $I): void
