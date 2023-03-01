@@ -21,7 +21,6 @@ services:
             - '../src/Kernel.php'
 when@test:
     services:
-        # Disable logger to avoid showing errors during tests
         Psr\Log\NullLogger: ~
         logger: '@Psr\Log\NullLogger'
         # Fix wrong container being used
@@ -30,3 +29,5 @@ when@test:
             class: Symfony\Component\Security\Core\Security
             arguments:
                 - '@test.service_container'
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
