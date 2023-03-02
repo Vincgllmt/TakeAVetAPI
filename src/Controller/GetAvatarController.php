@@ -2,18 +2,28 @@
 
 namespace App\Controller;
 
+use App\Entity\MediaObject;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Vich\UploaderBundle\Storage\StorageInterface;
 
 class GetAvatarController extends AbstractController
 {
+    private StorageInterface $storage;
+
+    public function __construct(StorageInterface $storage)
+    {
+        $this->storage = $storage;
+    }
+
     public function __invoke(User $data): Response
     {
-        $avatarPath = $data->getAvatarPath();
-        if ($avatarPath) {
-            $dir = $this->getParameter('app.upload_avatar_dir');
-            $avatar = file_get_contents($dir.'/'.$avatarPath);
+        $mediaObj = $data->getAvatar();
+
+        if ($mediaObj !== null) {
+            $avatarPath = $this->storage->resolvePath($mediaObj, 'file');
+            $avatar = file_get_contents($avatarPath);
 
             return new Response($avatar, 200, ['Content-Type' => 'image/png']);
         } else {
