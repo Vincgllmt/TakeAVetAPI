@@ -28,25 +28,25 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
         new Post(
             controller: CreateMediaObjectAction::class,
             openapiContext: [
-                "requestBody" => [
-                    "content" => [
-                        "multipart/form-data" => [
-                            "schema" => [
-                                "type" => "object",
-                                "properties" => [
-                                    "file" => [
-                                        "type" => "string",
-                                        "format" => "binary"
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                'requestBody' => [
+                    'content' => [
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'file' => [
+                                        'type' => 'string',
+                                        'format' => 'binary',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             validationContext: ['groups' => ['Default', 'media_object_create']],
             deserialize: false
-        )
+        ),
     ],
     normalizationContext: ['groups' => ['media_object:read']]
 )]
@@ -59,15 +59,32 @@ class MediaObject
     #[Groups(['media_object:read'])]
     public ?string $contentUrl = null;
 
-    #[UploadableField(mapping: "media_object", fileNameProperty: "filePath")]
+    #[UploadableField(mapping: 'media_object', fileNameProperty: 'filePath')]
     #[NotNull(groups: ['media_object_create'])]
     public ?File $file = null;
 
     #[ORM\Column(nullable: true)]
     public ?string $filePath = null;
 
+    #[ApiProperty]
+    #[Groups(['media_object:read'])]
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
     }
 }
