@@ -76,9 +76,6 @@ class Animal
     #[Groups(['animal:read', 'animal:create', 'animal:write'])]
     private ?\DateTimeInterface $birthday = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $imagePath = null;
-
     #[ORM\Column]
     private ?bool $inFarm = null;
 
@@ -100,11 +97,15 @@ class Animal
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Vaccine::class)]
     private Collection $vaccines;
 
+    #[ORM\OneToMany(mappedBy: 'animal', targetEntity: MediaObject::class)]
+    private Collection $images;
+
     public function __construct()
     {
         $this->records = new ArrayCollection();
         $this->appointments = new ArrayCollection();
         $this->vaccines = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -180,18 +181,6 @@ class Animal
     public function setOwner(?Client $owner): self
     {
         $this->owner = $owner;
-
-        return $this;
-    }
-
-    public function getImagePath(): ?string
-    {
-        return $this->imagePath;
-    }
-
-    public function setImagePath(?string $imagePath): self
-    {
-        $this->imagePath = $imagePath;
 
         return $this;
     }
@@ -348,6 +337,29 @@ class Animal
             }
         }
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MediaObject>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(MediaObject $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(MediaObject $image): self
+    {
+        $this->images->removeElement($image);
         return $this;
     }
 }
