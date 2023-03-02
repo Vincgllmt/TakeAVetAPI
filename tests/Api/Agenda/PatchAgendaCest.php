@@ -6,8 +6,6 @@ use App\Factory\AgendaFactory;
 use App\Factory\VetoFactory;
 use App\Tests\Support\ApiTester;
 use Codeception\Util\HttpCode;
-use DateTime;
-use DateTimeImmutable;
 
 class PatchAgendaCest
 {
@@ -19,8 +17,8 @@ class PatchAgendaCest
         $veto = VetoFactory::createOne();
         $agenda = AgendaFactory::createOne([
             'veto' => $veto,
-            'startHour' => new DateTimeImmutable('08:00'),
-            'endHour' => new DateTimeImmutable('18:00'),
+            'startHour' => new \DateTimeImmutable('08:00'),
+            'endHour' => new \DateTimeImmutable('18:00'),
         ]);
         $I->amLoggedInAs($veto->object());
 
@@ -34,8 +32,8 @@ class PatchAgendaCest
 
         $json = $I->grabJsonResponse();
 
-        $I->assertSame('09:00', (new DateTime($json['startHour']))->format('H:i'));
-        $I->assertSame('18:00', (new DateTime($json['endHour']))->format('H:i'));
+        $I->assertSame('09:00', (new \DateTime($json['startHour']))->format('H:i'));
+        $I->assertSame('18:00', (new \DateTime($json['endHour']))->format('H:i'));
     }
 
     public function cantPatchAgendaWhenNotOwned(ApiTester $I): void
