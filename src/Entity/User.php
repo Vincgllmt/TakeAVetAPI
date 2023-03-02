@@ -90,7 +90,7 @@ use Symfony\Component\Validator\Constraints\Length;
                 'summary' => 'Update the current user avatar.',
             ],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
-        )
+        ),
     ],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface

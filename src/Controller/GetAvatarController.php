@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\MediaObject;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +20,7 @@ class GetAvatarController extends AbstractController
     {
         $mediaObj = $data->getAvatar();
 
-        if ($mediaObj !== null) {
+        if (null !== $mediaObj) {
             $avatarPath = $this->storage->resolvePath($mediaObj, 'file');
             $avatar = file_get_contents($avatarPath);
 
