@@ -1,6 +1,5 @@
 <?php
 
-use App\Entity\Client;
 use App\Factory\ClientFactory;
 use App\Factory\VetoFactory;
 use App\Tests\Support\ApiTester;

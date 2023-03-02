@@ -41,11 +41,12 @@ class UserDenormalizer implements ContextAwareDenormalizerInterface, Denormalize
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         $user = $this->security->getUser();
-        if ($user !== null) {
+        if (null !== $user) {
             $data['password'] = $this->passwordHasher->hashPassword($this->security->getUser(), $data['password']);
 
             return $this->denormalizer->denormalize($data, $type, $format, $context + [self::ALREADY_CALLED => true]);
         }
+
         return $this->denormalizer->denormalize($data, $type, $format, $context + [self::ALREADY_CALLED => true]);
     }
 }

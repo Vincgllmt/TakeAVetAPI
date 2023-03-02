@@ -6,7 +6,6 @@ use App\Factory\AgendaFactory;
 use App\Factory\VetoFactory;
 use App\Tests\Support\ApiTester;
 use Codeception\Util\HttpCode;
-use DateTime;
 
 class PutAgendaCest
 {
@@ -33,8 +32,8 @@ class PutAgendaCest
 
         $json = $I->grabJsonResponse();
 
-        $I->assertSame('09:00', (new DateTime($json['startHour']))->format('H:i'));
-        $I->assertSame('18:00', (new DateTime($json['endHour']))->format('H:i'));
+        $I->assertSame('09:00', (new \DateTime($json['startHour']))->format('H:i'));
+        $I->assertSame('18:00', (new \DateTime($json['endHour']))->format('H:i'));
     }
 
     public function cantPutAgendaWhenNotOwned(ApiTester $I): void
