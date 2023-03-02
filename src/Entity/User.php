@@ -6,8 +6,10 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Controller\GetAvatarController;
 use App\Controller\GetMeController;
+use App\Controller\PostAvatarController;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -81,6 +83,14 @@ use Symfony\Component\Validator\Constraints\Length;
             denormalizationContext: ['groups' => ['user:update']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
         ),
+        new Post(
+            uriTemplate: '/users/{id}/avatar',
+            controller: PostAvatarController::class,
+            openapiContext: [
+                'summary' => 'Update the current user avatar.',
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
+        )
     ],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -146,11 +156,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: ThreadReply::class)]
     protected Collection $author;
 
-    /**
-     * @var string|null the path to the profile picture of this user
-     */
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $avatarPath = null;
+    #[ORM\ManyToOne]
+    private ?MediaObject $avatar = null;
 
     public function __construct()
     {
@@ -343,18 +350,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAvatarPath(): ?string
-    {
-        return $this->avatarPath;
-    }
-
-    public function setAvatarPath(?string $avatarPath): self
-    {
-        $this->avatarPath = $avatarPath;
-
-        return $this;
-    }
-
     public function isVeto(): bool
     {
         return $this instanceof Veto;
@@ -363,5 +358,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function isClient(): bool
     {
         return $this instanceof Client;
+    }
+
+    public function getAvatar(): ?MediaObject
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?MediaObject $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
     }
 }
