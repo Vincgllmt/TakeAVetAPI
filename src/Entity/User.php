@@ -9,7 +9,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\GetAvatarController;
 use App\Controller\GetMeController;
-use App\Controller\PostAvatarController;
+use App\Controller\UploadAvatarAction;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -86,11 +86,29 @@ use Symfony\Component\Validator\Constraints\Length;
         ),
         new Post(
             uriTemplate: '/users/{id}/avatar',
-            controller: PostAvatarController::class,
+            controller: UploadAvatarAction::class,
             openapiContext: [
                 'summary' => 'Update the current user avatar.',
+                'description' => 'Upload a new avatar for the current user.',
+                'requestBody' => [
+                    'content' => [
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'file' => [
+                                        'type' => 'string',
+                                        'format' => 'binary',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
+            normalizationContext: ['groups' => ['user:read-me', 'user:read']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
+            deserialize: false,
         ),
     ],
 )]
@@ -157,7 +175,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: ThreadReply::class)]
     protected Collection $author;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(cascade: ['persist'])]
     private ?MediaObject $avatar = null;
 
     public function __construct()
