@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Tests\Api\User;
+
 use App\Factory\ClientFactory;
 use App\Factory\VetoFactory;
 use App\Tests\Support\ApiTester;
@@ -15,6 +17,7 @@ class GetUserCest
 // avatar can be get by the route /api/users/{id}/avatar
 //            'avatarPath' => 'string|null',
             'isAdmin' => 'boolean',
+            'avatar' => 'string|null',
         ];
 
         if ($useClientProperties) {
