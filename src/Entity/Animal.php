@@ -360,6 +360,7 @@ class Animal
     public function removeImage(MediaObject $image): self
     {
         $this->images->removeElement($image);
+
         return $this;
     }
 }
