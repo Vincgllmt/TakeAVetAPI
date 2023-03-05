@@ -9,7 +9,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\GetAvatarController;
 use App\Controller\GetMeController;
-use App\Controller\PostAvatarController;
+use App\Controller\UploadAvatarAction;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,6 +21,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 
@@ -51,7 +52,7 @@ use Symfony\Component\Validator\Constraints\Length;
             normalizationContext: ['skip_null_values' => false, 'groups' => ['user:read-me']],
             security: "is_granted('IS_AUTHENTICATED_FULLY')"
         ),
-        new Get(normalizationContext: ['groups' => ['user:read']]),
+        new Get(normalizationContext: ['skip_null_values' => false, 'groups' => ['user:read']]),
         new Get(
             uriTemplate: '/users/{id}/avatar',
             formats: [
@@ -85,11 +86,29 @@ use Symfony\Component\Validator\Constraints\Length;
         ),
         new Post(
             uriTemplate: '/users/{id}/avatar',
-            controller: PostAvatarController::class,
+            controller: UploadAvatarAction::class,
             openapiContext: [
                 'summary' => 'Update the current user avatar.',
+                'description' => 'Upload a new avatar for the current user.',
+                'requestBody' => [
+                    'content' => [
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'file' => [
+                                        'type' => 'string',
+                                        'format' => 'binary',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
+            normalizationContext: ['groups' => ['skip_null_values' => false, 'user:read-me', 'user:read']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
+            deserialize: false,
         ),
     ],
 )]
@@ -156,7 +175,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: ThreadReply::class)]
     protected Collection $author;
 
-    #[ORM\ManyToOne]
+    #[Groups(['user:read-me', 'user:read'])]
+    #[ORM\ManyToOne(cascade: ['persist'])]
     private ?MediaObject $avatar = null;
 
     public function __construct()
@@ -358,6 +378,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function isClient(): bool
     {
         return $this instanceof Client;
+    }
+
+    #[Groups(['user:read-me', 'user:read'])]
+    #[SerializedName('isAdmin')]
+    public function isAdmin(): bool
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles());
     }
 
     public function getAvatar(): ?MediaObject
