@@ -14,6 +14,7 @@ class GetUserCest
             'firstName' => 'string',
 // avatar can be get by the route /api/users/{id}/avatar
 //            'avatarPath' => 'string|null',
+            'isAdmin' => 'boolean',
         ];
 
         if ($useClientProperties) {

@@ -14,6 +14,7 @@ class PostUserCest
             'lastName' => 'string',
             'firstName' => 'string',
             'phone' => 'string|null',
+            'isAdmin' => 'boolean',
         ];
 
         if ($useClientProperties) {
