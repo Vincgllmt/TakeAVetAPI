@@ -12,6 +12,14 @@ class ClientFixtures extends Fixture
     {
         ClientFactory::createOne([
             'lastName' => 'Doe',
+            'firstName' => 'Jane',
+            'email' => 'admin@takea.vet',
+            'password' => 'test',
+            'roles' => ['ROLE_ADMIN'],
+        ]);
+
+        ClientFactory::createOne([
+            'lastName' => 'Doe',
             'firstName' => 'John',
             'email' => 'client@takea.vet',
             'password' => 'test',
