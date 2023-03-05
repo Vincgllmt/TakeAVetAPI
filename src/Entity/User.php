@@ -360,6 +360,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this instanceof Client;
     }
 
+    #[Groups(['user:read-me', 'user:read'])]
+    public function isAdmin(): bool
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles());
+    }
+
     public function getAvatar(): ?MediaObject
     {
         return $this->avatar;
