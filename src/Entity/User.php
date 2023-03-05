@@ -52,7 +52,7 @@ use Symfony\Component\Validator\Constraints\Length;
             normalizationContext: ['skip_null_values' => false, 'groups' => ['user:read-me']],
             security: "is_granted('IS_AUTHENTICATED_FULLY')"
         ),
-        new Get(normalizationContext: ['groups' => ['user:read']]),
+        new Get(normalizationContext: ['skip_null_values' => false, 'groups' => ['user:read']]),
         new Get(
             uriTemplate: '/users/{id}/avatar',
             formats: [
@@ -106,7 +106,7 @@ use Symfony\Component\Validator\Constraints\Length;
                     ],
                 ],
             ],
-            normalizationContext: ['groups' => ['user:read-me', 'user:read']],
+            normalizationContext: ['groups' => ['skip_null_values' => false, 'user:read-me', 'user:read']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
             deserialize: false,
         ),
@@ -175,6 +175,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: ThreadReply::class)]
     protected Collection $author;
 
+    #[Groups(['user:read-me', 'user:read'])]
     #[ORM\ManyToOne(cascade: ['persist'])]
     private ?MediaObject $avatar = null;
 
