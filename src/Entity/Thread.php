@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -18,7 +21,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: ThreadRepository::class)]
 #[UniqueEntity(fields: ['subject'], message: 'Il y a déjà un sujet avec ce titre.')]
 #[UniqueEntity(fields: ['id'], message: 'Il y a déjà un sujet avec cet identifiant.')]
-#[ApiResource(operations: [
+#[ApiFilter(SearchFilter::class, properties: ['author' => 'exact', 'subject' => 'partial', 'description' => 'partial'])]
+#[ApiFilter(BooleanFilter::class, properties: ['resolved'])]
+#[ApiResource(
+    operations: [
     new GetCollection(
         openapiContext: [
             'summary' => 'Get all threads',
@@ -52,7 +58,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
         denormalizationContext: ['groups' => ['thread:create', 'thread:write']],
     ),
-])]
+],
+    order: ['createdAt' => 'DESC']
+)]
 class Thread
 {
     /**
