@@ -6,6 +6,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
@@ -25,40 +26,46 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiFilter(BooleanFilter::class, properties: ['resolved'])]
 #[ApiResource(
     operations: [
-    new GetCollection(
-        openapiContext: [
-            'summary' => 'Get all threads',
-        ],
-        normalizationContext: ['groups' => ['thread:read', 'user:read']],
-    ),
-    new Get(
-        openapiContext: [
-            'summary' => 'Get a thread',
-        ],
-        normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
-    ),
-    new Post(
-        openapiContext: [
-            'summary' => 'Create a thread',
-        ],
-        normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
-        denormalizationContext: ['groups' => ['thread:create']],
-    ),
-    new Patch(
-        openapiContext: [
-            'summary' => 'Update a thread',
-        ],
-        normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
-        denormalizationContext: ['groups' => ['thread:write']],
-    ),
-    new Put(
-        openapiContext: [
-            'summary' => 'Replace a thread',
-        ],
-        normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
-        denormalizationContext: ['groups' => ['thread:create', 'thread:write']],
-    ),
-],
+        new GetCollection(
+            openapiContext: [
+                'summary' => 'Get all threads',
+            ],
+            normalizationContext: ['groups' => ['thread:read', 'user:read']],
+        ),
+        new Get(
+            openapiContext: [
+                'summary' => 'Get a thread',
+            ],
+            normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
+        ),
+        new Post(
+            openapiContext: [
+                'summary' => 'Create a thread',
+            ],
+            normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
+            denormalizationContext: ['groups' => ['thread:create']],
+        ),
+        new Patch(
+            openapiContext: [
+                'summary' => 'Update a thread',
+            ],
+            normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
+            denormalizationContext: ['groups' => ['thread:write']],
+        ),
+        new Put(
+            openapiContext: [
+                'summary' => 'Replace a thread',
+            ],
+            normalizationContext: ['groups' => ['user:read', 'thread:read-all', 'thread:read']],
+            denormalizationContext: ['groups' => ['thread:create', 'thread:write']],
+        ),
+        new Delete(
+            openapiContext: [
+                'summary' => 'Delete a thread (admin only)',
+            ],
+            security: 'is_granted("ROLE_ADMIN")',
+        ),
+    ],
     order: ['createdAt' => 'DESC']
 )]
 class Thread
