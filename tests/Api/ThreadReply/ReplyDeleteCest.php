@@ -12,7 +12,7 @@ use Codeception\Util\HttpCode;
 
 class ReplyDeleteCest
 {
-    public function anonymousClientForbiddenToDelete(ApiTester $I): void
+    public function anonymousClientAreForbiddenToDelete(ApiTester $I): void
     {
         $user = ClientFactory::createOne();
         $thread = ThreadFactory::createOne();
@@ -21,33 +21,57 @@ class ReplyDeleteCest
             'thread' => $thread,
         ]);
         $I->sendDelete("/api/thread_replies/{$reply->getId()}");
-        $I->seeResponseCodeIs(401);
+        $I->seeResponseCodeIs(HttpCode::FORBIDDEN);
     }
 
-    public function UserForbiddenToDeleteOtherReply(ApiTester $I): void
+    public function cantUserDeleteOtherUserReply(ApiTester $I): void
     {
-        $user = ClientFactory::createOne();
-        $test = ClientFactory::createOne();
-        $thread = ThreadFactory::createOne();
-        $I->amLoggedInAs($user->object());
+        $creator = ClientFactory::createOne();
+        $thread = ThreadFactory::createOne([
+            'author' => $creator,
+        ]);
         $reply = ThreadReplyFactory::createOne([
-            'user' => $test,
+            'user' => $creator,
             'thread' => $thread,
         ]);
+        $user = ClientFactory::createOne();
+
+        $I->amLoggedInAs($user->object());
         $I->sendDelete("/api/thread_replies/{$reply->getId()}");
         $I->seeResponseCodeIs(httpCode::FORBIDDEN);
     }
 
-    public function UserCanDeleteOwnReply(ApiTester $I): void
+    public function userCanDeleteHisOwnReplyToAThread(ApiTester $I): void
     {
+        $threadCreator = ClientFactory::createOne();
         $user = ClientFactory::createOne();
-        $thread = ThreadFactory::createOne();
+        $thread = ThreadFactory::createOne([
+            'author' => $threadCreator,
+        ]);
         $reply = ThreadReplyFactory::createOne([
             'user' => $user,
             'thread' => $thread,
         ]);
         $I->amLoggedInAs($user->object());
         $I->sendDelete("/api/thread_replies/{$reply->getId()}");
-        $I->seeResponseCodeIs(204);
+        $I->seeResponseCodeIs(HttpCode::NO_CONTENT);
+    }
+
+    public function adminCanDeleteNonOwnedReply(ApiTester $I): void
+    {
+        $user = ClientFactory::createOne();
+        $admin = ClientFactory::createOne([
+            'roles' => ['ROLE_ADMIN'],
+        ]);
+
+        $thread = ThreadFactory::createOne();
+        $reply = ThreadReplyFactory::createOne([
+            'user' => $user,
+            'thread' => $thread,
+        ]);
+
+        $I->amLoggedInAs($admin->object());
+        $I->sendDelete("/api/thread_replies/{$reply->getId()}");
+        $I->seeResponseCodeIs(HttpCode::NO_CONTENT);
     }
 }
