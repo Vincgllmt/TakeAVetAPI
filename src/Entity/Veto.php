@@ -2,15 +2,23 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Repository\VetoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiFilter(SearchFilter::class, properties: ['lastName' => 'partial', 'firstName' => 'partial'])]
 #[ApiResource(
     operations: [
+        new GetCollection(
+            order: ['lastName' => 'ASC', 'firstName' => 'ASC'],
+            normalizationContext: ['groups' => ['user:read', 'user:read-me']],
+        ),
         new Post(uriTemplate: 'vet/register', openapiContext: [
             'summary' => 'Register a new vet',
             'description' => 'Create a new account with a password and an email address and return the newly registered vet.',
