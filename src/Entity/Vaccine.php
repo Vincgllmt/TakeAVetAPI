@@ -26,20 +26,23 @@ use Doctrine\ORM\Mapping as ORM;
             openapiContext: [
                 'summary' => 'create a vaccine'
             ],
-            normalizationContext: ['groups' => ['vaccine:create']]
+            normalizationContext: ['groups' => ['vaccine:create']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
         new Delete(
             openapiContext: [
                 'summary' => 'delete a vaccine'
-            ]
+            ],security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
         new Put(
             openapiContext: ['summary' => 'replace a vaccine'],
-            normalizationContext: ['groups' => ['vaccine:replace']]
+            normalizationContext: ['groups' => ['vaccine:replace']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
         new Patch(
             openapiContext: ['summary' => 'Update a vaccine'],
-            normalizationContext: ['groups' => ['vaccine:update']]
+            normalizationContext: ['groups' => ['vaccine:update']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
     ]
 )]
