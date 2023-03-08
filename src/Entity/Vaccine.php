@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\VaccineRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,7 +31,10 @@ use Doctrine\ORM\Mapping as ORM;
             openapiContext: [
                 'summary' => 'delete a vaccine'
             ]
-        )
+        ),
+        new Put(
+            openapiContext: ['summary' => 'replace a vaccine'],
+            normalizationContext: ['groups' => ['vaccine:replace']])
     ]
 )]
 class Vaccine
