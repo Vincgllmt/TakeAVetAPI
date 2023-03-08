@@ -24,25 +24,25 @@ use Doctrine\ORM\Mapping as ORM;
         new GetCollection(openapiContext: ['summary' => 'Get all vaccine']),
         new Post(
             openapiContext: [
-                'summary' => 'create a vaccine'
+                'summary' => 'create a vaccine',
             ],
             normalizationContext: ['groups' => ['vaccine:create']],
-            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
         ),
         new Delete(
             openapiContext: [
-                'summary' => 'delete a vaccine'
-            ],security: 'is_granted("IS_AUTHENTICATED_FULLY")'
+                'summary' => 'delete a vaccine',
+            ], security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
         ),
         new Put(
             openapiContext: ['summary' => 'replace a vaccine'],
             normalizationContext: ['groups' => ['vaccine:replace']],
-            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
         ),
         new Patch(
             openapiContext: ['summary' => 'Update a vaccine'],
             normalizationContext: ['groups' => ['vaccine:update']],
-            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
         ),
     ]
 )]
