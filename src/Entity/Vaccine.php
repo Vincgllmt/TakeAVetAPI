@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
@@ -24,6 +25,11 @@ use Doctrine\ORM\Mapping as ORM;
                 'summary' => 'create a vaccine'
             ],
             normalizationContext: ['groups' => ['vaccine:create']]
+        ),
+        new Delete(
+            openapiContext: [
+                'summary' => 'delete a vaccine'
+            ]
         )
     ]
 )]
