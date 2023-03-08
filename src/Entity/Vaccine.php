@@ -3,12 +3,22 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use App\Repository\VaccineRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: VaccineRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(
+            openapiContext: [
+                'summary' => 'Get one vaccine',
+            ],
+            normalizationContext: ['groups' => ['threadReply:read']]),
+
+    ]
+)]
 class Vaccine
 {
     #[ORM\Id]
