@@ -2,11 +2,50 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\VaccineRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: VaccineRepository::class)]
+#[ApiResource(
+    operations: [
+        new Get(
+            openapiContext: [
+                'summary' => 'Get one vaccine',
+            ],
+            normalizationContext: ['groups' => ['vaccine:read']]),
+        new GetCollection(openapiContext: ['summary' => 'Get all vaccine']),
+        new Post(
+            openapiContext: [
+                'summary' => 'create a vaccine',
+            ],
+            normalizationContext: ['groups' => ['vaccine:create']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
+        ),
+        new Delete(
+            openapiContext: [
+                'summary' => 'delete a vaccine',
+            ], security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
+        ),
+        new Put(
+            openapiContext: ['summary' => 'replace a vaccine'],
+            normalizationContext: ['groups' => ['vaccine:replace']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
+        ),
+        new Patch(
+            openapiContext: ['summary' => 'Update a vaccine'],
+            normalizationContext: ['groups' => ['vaccine:update']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
+        ),
+    ]
+)]
 class Vaccine
 {
     #[ORM\Id]
