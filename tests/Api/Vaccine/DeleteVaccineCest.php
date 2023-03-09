@@ -2,9 +2,11 @@
 
 namespace App\Tests\Api\Vaccine;
 
+use App\Factory\ClientFactory;
 use App\Factory\VaccineFactory;
 use App\Factory\VetoFactory;
 use App\Tests\Support\ApiTester;
+use Codeception\Util\HttpCode;
 
 class DeleteVaccineCest
 {
@@ -22,5 +24,13 @@ class DeleteVaccineCest
         $I->amLoggedInAs($user->object());
         $I->sendDelete("/api/vaccines/{$vaccine->getId()}");
         $I->seeResponseCodeIs(204);
+    }
+    public function ClientForbiddenToDeleteVaccine(ApiTester $I): void
+    {
+        $user = ClientFactory::createOne();
+        $vaccine = VaccineFactory::createOne();
+        $I->amLoggedInAs($user->object());
+        $I->sendDelete("/api/vaccines/{$vaccine->getId()}");
+        $I->seeResponseCodeIs(httpCode::FORBIDDEN);
     }
 }
