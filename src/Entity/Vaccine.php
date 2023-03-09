@@ -34,11 +34,6 @@ use Doctrine\ORM\Mapping as ORM;
                 'summary' => 'delete a vaccine',
             ], security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
         ),
-        new Put(
-            openapiContext: ['summary' => 'replace a vaccine'],
-            normalizationContext: ['groups' => ['vaccine:replace']],
-            security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
-        ),
         new Patch(
             openapiContext: ['summary' => 'Update a vaccine'],
             normalizationContext: ['groups' => ['vaccine:update']],
