@@ -19,4 +19,13 @@ class GetVaccineCest
             'hydra:totalItems' => 'integer',
         ]);
     }
+    public function getOneVaccine(ApiTester $I): void
+    {
+        $vaccine = VaccineFactory::createOne();
+
+        $I->sendGet("/api/threads/{$vaccine->getId()}");
+
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+    }
 }
