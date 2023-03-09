@@ -11,7 +11,7 @@ class GetVaccineCest
     {
         VaccineFactory::createMany(2);
 
-        $I->sendGet('/api/threads');
+        $I->sendGet('/api/vaccines');
 
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
@@ -23,7 +23,7 @@ class GetVaccineCest
     {
         $vaccine = VaccineFactory::createOne();
 
-        $I->sendGet("/api/threads/{$vaccine->getId()}");
+        $I->sendGet("/api/vaccines/{$vaccine->getId()}");
 
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
