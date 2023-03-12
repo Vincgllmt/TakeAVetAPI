@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
@@ -11,13 +12,14 @@ use App\Repository\VetoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiFilter(SearchFilter::class, properties: ['lastName' => 'partial', 'firstName' => 'partial'])]
 #[ApiResource(
     operations: [
         new GetCollection(
             order: ['lastName' => 'ASC', 'firstName' => 'ASC'],
-            normalizationContext: ['groups' => ['user:read', 'user:read-me']],
+            normalizationContext: ['groups' => ['user:read', 'user:read-me', 'veto:read']],
         ),
         new Post(uriTemplate: 'vet/register', openapiContext: [
             'summary' => 'Register a new vet',
@@ -39,9 +41,12 @@ class Veto extends User
     #[ORM\OneToMany(mappedBy: 'veto', targetEntity: Appointment::class)]
     private Collection $appointments;
 
+    #[Groups('veto:read')]
     #[ORM\OneToOne(inversedBy: 'veto', cascade: ['persist', 'remove'])]
     public ?Agenda $agenda = null;
 
+    #[Groups('veto:read')]
+    #[ApiProperty(readableLink: true)]
     #[ORM\ManyToMany(targetEntity: TypeAnimal::class, inversedBy: 'vetos')]
     private Collection $accepting;
 
