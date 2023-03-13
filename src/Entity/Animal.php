@@ -24,7 +24,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'summary' => 'Get one animal',
             ],
             normalizationContext: ['groups' => ['animal:read']],
-            security: 'object.owner == user'
         ),
         new GetCollection(
             openapiContext: [
@@ -35,21 +34,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
             openapiContext: [
                 'summary' => 'Create a new animal',
             ],
-            denormalizationContext: ['groups' => ['animal:create']]
+            denormalizationContext: ['groups' => ['animal:create']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
         new Patch(
             openapiContext: [
                 'summary' => 'Update an animal',
             ],
-            denormalizationContext: ['groups' => ['animal:write']],
-            security: 'object.owner == user'
-        ),
-        new Put(
-            openapiContext: [
-                'summary' => 'Replace an animal',
-            ],
-            denormalizationContext: ['groups' => ['animal:create', 'animal:write']],
-            security: 'object.owner == user'
+            denormalizationContext: ['groups' => ['animal:update']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.owner == user'
         ),
     ]
 )]
@@ -71,15 +64,15 @@ class Animal
     private ?string $note = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
+    #[Groups(['animal:read', 'animal:create', 'animal:update'])]
     private ?string $specificRace = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
+    #[Groups(['animal:read', 'animal:create', 'animal:update'])]
     private ?string $gender = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
+    #[Groups(['animal:read', 'animal:create', 'animal:update'])]
     private ?\DateTimeInterface $birthday = null;
 
     #[ORM\Column]
@@ -98,7 +91,7 @@ class Animal
     private ?TypeAnimal $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
-    private ?Client $owner = null;
+    public ?Client $owner = null;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Vaccine::class)]
     private Collection $vaccines;
