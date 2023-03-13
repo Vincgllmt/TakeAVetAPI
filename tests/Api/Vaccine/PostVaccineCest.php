@@ -13,6 +13,7 @@ class PostVaccineCest
     {
         $veto = VetoFactory::createOne();
         $animal = AnimalFactory::createOne();
+        $I->amLoggedInAs($veto->object());
         $I->sendPost('/api/vaccines', [
             'name' => 'test',
             'next' => '2023-03-09T16:24:03.030Z',
