@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
@@ -25,25 +26,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
             normalizationContext: ['groups' => ['animal:read']],
             security: 'object.owner == user'
         ),
+        new GetCollection(
+            openapiContext: [
+                'summary' => 'Get all animals',
+            ]
+        ),
         new Post(
             openapiContext: [
                 'summary' => 'Create a new animal',
             ],
-            denormalizationContext: ['groups' => ['animal:create']]
+            denormalizationContext: ['groups' => ['animal:create']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
         new Patch(
             openapiContext: [
                 'summary' => 'Update an animal',
             ],
             denormalizationContext: ['groups' => ['animal:write']],
-            security: 'object.owner == user'
-        ),
-        new Put(
-            openapiContext: [
-                'summary' => 'Replace an animal',
-            ],
-            denormalizationContext: ['groups' => ['animal:create', 'animal:write']],
-            security: 'object.owner == user'
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.owner == user'
         ),
     ]
 )]
@@ -92,7 +92,7 @@ class Animal
     private ?TypeAnimal $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
-    private ?Client $owner = null;
+    public ?Client $owner = null;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Vaccine::class)]
     private Collection $vaccines;

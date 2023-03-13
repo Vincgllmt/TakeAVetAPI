@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\Put;
 use App\Repository\VaccineRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: VaccineRepository::class)]
 #[ApiResource(
@@ -27,22 +28,22 @@ use Doctrine\ORM\Mapping as ORM;
                 'summary' => 'create a vaccine',
             ],
             normalizationContext: ['groups' => ['vaccine:create']],
-            security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
         ),
         new Delete(
             openapiContext: [
                 'summary' => 'delete a vaccine',
-            ], security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
+            ], security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
         ),
         new Put(
             openapiContext: ['summary' => 'replace a vaccine'],
             normalizationContext: ['groups' => ['vaccine:replace']],
-            security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
         ),
         new Patch(
             openapiContext: ['summary' => 'Update a vaccine'],
             normalizationContext: ['groups' => ['vaccine:update']],
-            security: 'is_granted("IS_AUTHENTICATED_FULLY") and animal.owner.isVeto()'
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
         ),
     ]
 )]
@@ -51,9 +52,11 @@ class Vaccine
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('vaccine:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups('vaccine:read')]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
