@@ -92,7 +92,7 @@ class Animal
     private ?TypeAnimal $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
-    private ?Client $owner = null;
+    public ?Client $owner = null;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Vaccine::class)]
     private Collection $vaccines;
