@@ -21,7 +21,7 @@ class ReplyDeleteCest
             'thread' => $thread,
         ]);
         $I->sendDelete("/api/thread_replies/{$reply->getId()}");
-        $I->seeResponseCodeIs(HttpCode::FORBIDDEN);
+        $I->seeResponseCodeIs(HttpCode::UNAUTHORIZED);
     }
 
     public function cantUserDeleteOtherUserReply(ApiTester $I): void
