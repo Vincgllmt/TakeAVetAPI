@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Vaccine;
 
 use App\Entity\Vaccine;
+use App\Factory\AnimalFactory;
 use App\Factory\ClientFactory;
 use App\Factory\VaccineFactory;
 use App\Factory\VetoFactory;
@@ -13,7 +14,8 @@ class PatchVaccineCest
 {
     public function cantPatchVaccineUnauthenticated(ApiTester $I): void
     {
-        $vaccine = VaccineFactory::createOne();
+        $animal = AnimalFactory::createOne();
+        $vaccine = VaccineFactory::createOne(['animal' => $animal]);
         $I->sendPatch("/api/vaccines/{$vaccine->getId()}", [
             'name' => 'test',
         ]);
@@ -23,7 +25,8 @@ class PatchVaccineCest
     public function cantPatchIfNotVet(ApiTester $I): void
     {
         $client = ClientFactory::createOne();
-        $vaccine = VaccineFactory::createOne();
+        $animal = AnimalFactory::createOne();
+        $vaccine = VaccineFactory::createOne(['animal' => $animal]);
         $I->amLoggedInAs($client->object());
         $I->sendPatch("/api/vaccines/{$vaccine->getId()}", [
             'name' => 'test',
@@ -34,7 +37,8 @@ class PatchVaccineCest
     public function patchVaccine(ApiTester $I): void
     {
         $veto = VetoFactory::createOne();
-        $vaccine = VaccineFactory::createOne();
+        $animal = AnimalFactory::createOne();
+        $vaccine = VaccineFactory::createOne(['animal' => $animal]);
         $I->amLoggedInAs($veto->object());
         $I->sendPatch("/api/vaccines/{$vaccine->getId()}", [
             'name' => 'test',
