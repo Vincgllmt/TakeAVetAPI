@@ -2,6 +2,7 @@
 
 namespace App\Tests\Api\Vaccine;
 
+use App\Factory\AnimalFactory;
 use App\Factory\ClientFactory;
 use App\Factory\VaccineFactory;
 use App\Factory\VetoFactory;
@@ -12,7 +13,8 @@ class DeleteVaccineCest
 {
     public function anonymousVetoForbiddenToDelete(ApiTester $I): void
     {
-        $vaccine = VaccineFactory::createOne();
+        $animal = AnimalFactory::createOne();
+        $vaccine = VaccineFactory::createOne(['animal' => $animal]);
         $I->sendDelete("/api/vaccines/{$vaccine->getId()}");
         $I->seeResponseCodeIs(401);
     }
@@ -20,7 +22,8 @@ class DeleteVaccineCest
     public function VetoCanDeleteVaccine(ApiTester $I): void
     {
         $user = VetoFactory::createOne();
-        $vaccine = VaccineFactory::createOne();
+        $animal = AnimalFactory::createOne();
+        $vaccine = VaccineFactory::createOne(['animal' => $animal]);
         $I->amLoggedInAs($user->object());
         $I->sendDelete("/api/vaccines/{$vaccine->getId()}");
         $I->seeResponseCodeIs(204);
@@ -28,7 +31,8 @@ class DeleteVaccineCest
     public function ClientForbiddenToDeleteVaccine(ApiTester $I): void
     {
         $user = ClientFactory::createOne();
-        $vaccine = VaccineFactory::createOne();
+        $animal = AnimalFactory::createOne();
+        $vaccine = VaccineFactory::createOne(['animal' => $animal]);
         $I->amLoggedInAs($user->object());
         $I->sendDelete("/api/vaccines/{$vaccine->getId()}");
         $I->seeResponseCodeIs(httpCode::FORBIDDEN);
