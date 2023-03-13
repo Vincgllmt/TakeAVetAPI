@@ -2,6 +2,7 @@
 
 namespace App\Tests\Api\Vaccine;
 
+use App\Factory\AnimalFactory;
 use App\Factory\VaccineFactory;
 use App\Tests\Support\ApiTester;
 
@@ -9,7 +10,10 @@ class GetVaccineCest
 {
     public function getAllVaccine(ApiTester $I): void
     {
-        VaccineFactory::createMany(2);
+        $animal = AnimalFactory::createOne();
+        $vaccine = VaccineFactory::createOne(['animal' => $animal]);
+        $animal2 = AnimalFactory::createOne();
+        $vaccine2 = VaccineFactory::createOne(['animal' => $animal2]);
 
         $I->sendGet('/api/vaccines');
 
@@ -21,7 +25,8 @@ class GetVaccineCest
     }
     public function getOneVaccine(ApiTester $I): void
     {
-        $vaccine = VaccineFactory::createOne();
+        $animal = AnimalFactory::createOne();
+        $vaccine = VaccineFactory::createOne(['animal' => $animal]);
 
         $I->sendGet("/api/vaccines/{$vaccine->getId()}");
 
