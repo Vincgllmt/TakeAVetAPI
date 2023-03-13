@@ -2,50 +2,35 @@
 
 namespace Api\Vaccine;
 
-use App\Entity\Vaccine;
 use App\Factory\AnimalFactory;
-use App\Factory\ClientFactory;
 use App\Factory\VaccineFactory;
-use App\Factory\VetoFactory;
 use App\Tests\Support\ApiTester;
-use Codeception\Util\HttpCode;
 
 class GetVaccineCest
 {
-    public function cantPatchVaccineUnauthenticated(ApiTester $I): void
+    public function getAllVaccine(ApiTester $I): void
     {
         $animal = AnimalFactory::createOne();
         $vaccine = VaccineFactory::createOne(['animal' => $animal]);
-        $I->sendPatch("/api/vaccines/{$vaccine->getId()}", [
-            'name' => 'test',
-        ]);
-        $I->seeResponseCodeIs(HttpCode::UNAUTHORIZED);
+        $animal2 = AnimalFactory::createOne();
+        $vaccine2 = VaccineFactory::createOne(['animal' => $animal2]);
+
+        $I->sendGet('/api/vaccines');
+
+        $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
+        $I->seeResponseMatchesJsonType([
+            'hydra:totalItems' => 'integer',
+        ]);
     }
-    public function cantPatchIfNotVet(ApiTester $I): void
+    public function getOneVaccine(ApiTester $I): void
     {
-        $client = ClientFactory::createOne();
         $animal = AnimalFactory::createOne();
         $vaccine = VaccineFactory::createOne(['animal' => $animal]);
-        $I->amLoggedInAs($client->object());
-        $I->sendPatch("/api/vaccines/{$vaccine->getId()}", [
-            'name' => 'test',
-        ]);
-        $I->seeResponseCodeIs(HttpCode::FORBIDDEN);
+
+        $I->sendGet("/api/vaccines/{$vaccine->getId()}");
+
+        $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
-    }
-    public function patchVaccine(ApiTester $I): void
-    {
-        $veto = VetoFactory::createOne();
-        $animal = AnimalFactory::createOne();
-        $vaccine = VaccineFactory::createOne(['animal' => $animal]);
-        $I->amLoggedInAs($veto->object());
-        $I->sendPatch("/api/vaccines/{$vaccine->getId()}", [
-            'name' => 'test',
-        ]);
-        $I->seeResponseCodeIs(HttpCode::OK);
-        $I->seeResponseIsJson();
-        $I->seeResponseIsAnEntity(Vaccine::class, "/api/vaccines/{$vaccine->getId()}");
-        $I->assertEquals('test', $vaccine->getName());
     }
 }
