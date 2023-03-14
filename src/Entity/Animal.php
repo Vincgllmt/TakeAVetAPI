@@ -24,7 +24,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'summary' => 'Get one animal',
             ],
             normalizationContext: ['groups' => ['animal:read']],
-            security: 'object.owner == user'
         ),
         new GetCollection(
             openapiContext: [
