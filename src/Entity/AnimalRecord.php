@@ -3,9 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Put;
 use App\Repository\AnimalRecordRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,12 +17,28 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new Get(
-            normalizationContext: ['groups' => ['animalRecord:read']],
+            openapiContext: [
+                'summary' => 'Get on record for an animal',
+            ],
+            normalizationContext: ['groups' => ['animalRecord:read']]
+        ),
+        new GetCollection(
+            openapiContext: [
+                'summary' => 'Get all record for an animal',
+            ]
         ),
         new Patch(
+            openapiContext: [
+                'summary' => 'Update a record for an animal',
+            ],
             normalizationContext: ['groups' => ['animalRecord:write']],
         ),
-    ], normalizationContext: ['groups' => ['animalRecord:read']],
+        new Delete(
+            openapiContext: [
+                'summary' => 'Delete a record for an animal',
+            ]
+        ),
+    ]
 )]
 class AnimalRecord
 {
