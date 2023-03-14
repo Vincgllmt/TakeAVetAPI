@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\AnimalRecordRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -37,6 +38,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Delete(
             openapiContext: [
                 'summary' => 'Delete a record for an animal',
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
+        ),
+        new Post(
+            openapiContext: [
+                'summary' => 'Create a record for an animal',
             ],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
         ),
