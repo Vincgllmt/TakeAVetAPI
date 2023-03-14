@@ -18,9 +18,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(
             normalizationContext: ['groups' => ['animalRecord:read']],
         ),
-        new Put(
-            normalizationContext: ['groups' => ['animalRecord:write']],
-        ),
         new Patch(
             normalizationContext: ['groups' => ['animalRecord:write']],
         ),
