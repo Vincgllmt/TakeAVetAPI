@@ -20,11 +20,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Put(
             normalizationContext: ['groups' => ['animalRecord:write']],
-            security: 'object.owner == user'
         ),
         new Patch(
             normalizationContext: ['groups' => ['animalRecord:write']],
-            security: 'object.owner == user'
         ),
     ], normalizationContext: ['groups' => ['animalRecord:read']],
 )]
