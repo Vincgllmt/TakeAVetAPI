@@ -21,6 +21,7 @@ class GetAnimalRecordCest
             'hydra:totalItems' => 'integer',
         ]);
     }
+
     public function getOneAnimalRecord(ApiTester $I): void
     {
         $animal = AnimalFactory::createOne();

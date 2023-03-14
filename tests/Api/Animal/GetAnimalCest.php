@@ -17,6 +17,7 @@ class GetAnimalCest
             'hydra:totalItems' => 'integer',
         ]);
     }
+
     public function getOneAnimal(ApiTester $I): void
     {
         $animal = AnimalFactory::createOne();
@@ -24,5 +25,4 @@ class GetAnimalCest
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
     }
-
 }

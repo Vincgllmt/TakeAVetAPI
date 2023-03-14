@@ -28,6 +28,7 @@ class DeleteVaccineCest
         $I->sendDelete("/api/vaccines/{$vaccine->getId()}");
         $I->seeResponseCodeIs(204);
     }
+
     public function ClientForbiddenToDeleteVaccine(ApiTester $I): void
     {
         $user = ClientFactory::createOne();

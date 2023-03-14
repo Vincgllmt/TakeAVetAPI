@@ -5,23 +5,29 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Core\Security;
 
 class SecurityController extends AbstractController
 {
-    #[Route(path: '/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    private Security $security;
+
+    public function __construct(Security $security)
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
+        $this->security = $security;
+    }
 
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
+    #[Route(path: '/login', name: 'app_login', methods: ['POST'])]
+    public function login(): Response
+    {
+        return $this->json([
+            'user' => $this->security->getUser()?->getId(),
+        ]);
+    }
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+    #[Route(path: '/login', name: 'app_login_web', methods: ['GET'])]
+    public function login_web(): Response
+    {
+        return $this->render('security/login.html.twig');
     }
 
     #[Route(path: '/logout', name: 'app_logout')]

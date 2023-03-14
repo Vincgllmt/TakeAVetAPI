@@ -22,6 +22,7 @@ class PatchVaccineCest
         $I->seeResponseCodeIs(HttpCode::UNAUTHORIZED);
         $I->seeResponseIsJson();
     }
+
     public function cantPatchIfNotVet(ApiTester $I): void
     {
         $client = ClientFactory::createOne();
@@ -34,6 +35,7 @@ class PatchVaccineCest
         $I->seeResponseCodeIs(HttpCode::FORBIDDEN);
         $I->seeResponseIsJson();
     }
+
     public function patchVaccine(ApiTester $I): void
     {
         $veto = VetoFactory::createOne();
