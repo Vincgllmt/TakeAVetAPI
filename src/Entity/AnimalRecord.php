@@ -32,11 +32,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'summary' => 'Update a record for an animal',
             ],
             normalizationContext: ['groups' => ['animalRecord:write']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
         ),
         new Delete(
             openapiContext: [
                 'summary' => 'Delete a record for an animal',
-            ]
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
         ),
     ]
 )]
