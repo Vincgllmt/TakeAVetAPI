@@ -28,6 +28,7 @@ class DeleteAnimalRecordCest
         $I->sendDelete("/api/animal_records/{$animalRecord->getId()}");
         $I->seeResponseCodeIs(204);
     }
+
     public function ClientForbiddenToDeleteRecord(ApiTester $I): void
     {
         $user = ClientFactory::createOne();

@@ -23,6 +23,7 @@ class GetVaccineCest
             'hydra:totalItems' => 'integer',
         ]);
     }
+
     public function getOneVaccine(ApiTester $I): void
     {
         $animal = AnimalFactory::createOne();
