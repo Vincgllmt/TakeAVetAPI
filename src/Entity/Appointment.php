@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Repository\AppointmentRepository;
 use Doctrine\DBAL\Types\Types;
@@ -29,6 +30,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'summary' => 'Create an appointment',
             ]
         ),
+        new Patch(
+            openapiContext: [
+                'summary' => 'Update an appointment',
+            ]
+        ),
+
     ]
 )]
 #[ORM\Entity(repositoryClass: AppointmentRepository::class)]
