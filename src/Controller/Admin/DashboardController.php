@@ -8,6 +8,7 @@ use App\Entity\Animal;
 use App\Entity\AnimalRecord;
 use App\Entity\Appointment;
 use App\Entity\MediaObject;
+use App\Entity\NewsletterEntry;
 use App\Entity\Receipt;
 use App\Entity\Thread;
 use App\Entity\ThreadReply;
@@ -71,8 +72,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Tout les utilisateurs', 'fa fa-database', User::class);
         yield MenuItem::linkToCrud('Adresses', 'fa fa-database', Address::class);
         yield MenuItem::linkToCrud('Receipt', 'fa fa-database', Receipt::class);
-        yield MenuItem::section('Media');
+        yield MenuItem::section('Media & Autres');
         yield MenuItem::linkToCrud('Media', 'fa fa-photo-film', MediaObject::class);
+        yield MenuItem::linkToCrud('Newsletter', 'fa fa-newspaper', NewsletterEntry::class);
         yield MenuItem::section('Admin');
 
         yield MenuItem::linkToLogout('Logout', 'fa fa-exit');
