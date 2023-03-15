@@ -9,7 +9,6 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Repository\AppointmentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,17 +29,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(
             openapiContext: [
                 'summary' => 'Create an appointment',
-            ]
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
         new Patch(
             openapiContext: [
                 'summary' => 'Update an appointment',
-            ]
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
         ),
         new Delete(
             openapiContext: [
                 'summary' => 'Delete an appointment',
-            ]
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.client = user or user.isVeto()'
         ),
     ]
 )]
