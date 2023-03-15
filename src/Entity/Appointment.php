@@ -18,7 +18,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'summary' => 'Get one Appointment',
             ]
         ),
-
+        new GetCollection(
+            openapiContext: [
+                'summary' => 'Get all Appointment',
+            ]
+        ),
     ]
 )]
 #[ORM\Entity(repositoryClass: AppointmentRepository::class)]
