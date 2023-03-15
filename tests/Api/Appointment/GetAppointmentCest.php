@@ -8,7 +8,6 @@ use App\Factory\ClientFactory;
 use App\Factory\TypeAppointmentFactory;
 use App\Factory\VetoFactory;
 use App\Tests\Support\ApiTester;
-use Faker\Core\DateTime;
 
 class GetAppointmentCest
 {
@@ -20,6 +19,8 @@ class GetAppointmentCest
             'client' => ClientFactory::createOne(),
             'veto' => VetoFactory::createOne(),
             'animal' => AnimalFactory::createOne(),
+            'startHour' => new \DateTime('now'),
+            'endHour' => new \DateTime('now'),
         ]);
         $I->sendGet('/api/appointments');
         $I->seeResponseCodeIs(200);
@@ -37,6 +38,8 @@ class GetAppointmentCest
             'client' => ClientFactory::createOne(),
             'veto' => VetoFactory::createOne(),
             'animal' => AnimalFactory::createOne(),
+            'startHour' => new \DateTime('now'),
+            'endHour' => new \DateTime('now'),
         ]);
         $I->sendGet("/api/appointments/{$rdv->getId()}");
         $I->seeResponseCodeIs(200);
