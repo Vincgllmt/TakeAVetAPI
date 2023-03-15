@@ -4,19 +4,29 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\AppointmentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(normalizationContext: ['groups' => ['appointment:read']])]
+#[ApiResource(
+    operations: [
+        new Get(
+            openapiContext: [
+                'summary' => 'Get one Appointment',
+            ]
+        ),
+
+    ]
+)]
 #[ORM\Entity(repositoryClass: AppointmentRepository::class)]
 class Appointment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['appointment:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 1024, nullable: true)]
@@ -36,7 +46,6 @@ class Appointment
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['appointment:read'])]
     #[ApiProperty(readableLink: true)]
     private ?TypeAppointment $type = null;
 
