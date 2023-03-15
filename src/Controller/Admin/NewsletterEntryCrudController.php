@@ -15,7 +15,6 @@ class NewsletterEntryCrudController extends AbstractCrudController
         return NewsletterEntry::class;
     }
 
-
     public function configureFields(string $pageName): iterable
     {
         return [

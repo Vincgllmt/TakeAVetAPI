@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\EntityListener;
 
-use App\Entity\MediaObject;
 use App\Entity\NewsletterEntry;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Events;
