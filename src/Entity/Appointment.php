@@ -4,44 +4,89 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\AppointmentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(normalizationContext: ['groups' => ['appointment:read']])]
+#[ApiResource(
+    operations: [
+        new Get(
+            openapiContext: [
+                'summary' => 'Get one Appointment',
+            ],
+            normalizationContext: ['groups' => ['appointment:read-all']]
+        ),
+        new GetCollection(
+            openapiContext: [
+                'summary' => 'Get all Appointment',
+            ],
+            normalizationContext: ['groups' => ['appointment:read']]
+        ),
+        new Post(
+            openapiContext: [
+                'summary' => 'Create an appointment',
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
+        ),
+        new Patch(
+            openapiContext: [
+                'summary' => 'Update an appointment',
+            ],
+            normalizationContext: ['groups' => ['appointment:update']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
+        ),
+        new Delete(
+            openapiContext: [
+                'summary' => 'Delete an appointment',
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.client = user or user.isVeto()'
+        ),
+    ]
+)]
 #[ORM\Entity(repositoryClass: AppointmentRepository::class)]
 class Appointment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['appointment:read'])]
+    #[Groups(['appointment:read-all'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 1024, nullable: true)]
+    #[Groups(['appointment:read-all', 'appointment:update'])]
     private ?string $note = null;
 
     #[ORM\Column]
+    #[Groups(['appointment:read-all', 'appointment:update'])]
     private ?bool $isValidated = null;
 
     #[ORM\Column]
+    #[Groups(['appointment:read-all', 'appointment:update'])]
     private ?bool $isUrgent = null;
 
     #[ORM\Column]
+    #[Groups(['appointment:read-all', 'appointment:update'])]
     private ?bool $isCompleted = null;
 
     #[ORM\OneToOne(inversedBy: 'appointment', cascade: ['persist', 'remove'])]
+    #[Groups(['appointment:read-all'])]
     private ?Receipt $receipt = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['appointment:read'])]
     #[ApiProperty(readableLink: true)]
+    #[Groups(['appointment:read-all', 'appointment:update'])]
     private ?TypeAppointment $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['appointment:read-all'])]
     private ?Client $client = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
@@ -55,19 +100,19 @@ class Appointment
     private ?Animal $animal = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
-    #[Groups(['appointment:read-all'])]
+    #[Groups(['appointment:read-all', 'appointment:update'])]
     private ?Address $location = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(['appointment:read'])]
+    #[Groups(['appointment:read', 'appointment:update'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    #[Groups(['appointment:read'])]
+    #[Groups(['appointment:read', 'appointment:update'])]
     private ?\DateTimeInterface $startHour = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    #[Groups(['appointment:read'])]
+    #[Groups(['appointment:read', 'appointment:update'])]
     private ?\DateTimeInterface $endHour = null;
 
     public function getId(): ?int
