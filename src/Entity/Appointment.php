@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Repository\AppointmentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,6 +22,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new GetCollection(
             openapiContext: [
                 'summary' => 'Get all Appointment',
+            ]
+        ),
+        new Post(
+            openapiContext: [
+                'summary' => 'Create an appointment',
             ]
         ),
     ]
