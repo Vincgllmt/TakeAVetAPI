@@ -20,25 +20,28 @@ use Symfony\Component\Serializer\Annotation\Groups;
             openapiContext: [
                 'summary' => 'Get one Appointment',
             ],
-            normalizationContext: ['groups' => ['appointment:read-all']]
+            normalizationContext: ['groups' => ['appointment:read']]
         ),
         new GetCollection(
             openapiContext: [
                 'summary' => 'Get all Appointment',
             ],
-            normalizationContext: ['groups' => ['appointment:read']]
+            normalizationContext: ['groups' => ['appointment:read-all']]
         ),
         new Post(
             openapiContext: [
                 'summary' => 'Create an appointment',
             ],
+            normalizationContext: ['groups' => ['appointment:read']],
+            denormalizationContext: ['groups' => ['appointment:create']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
         new Patch(
             openapiContext: [
                 'summary' => 'Update an appointment',
             ],
-            normalizationContext: ['groups' => ['appointment:update']],
+            normalizationContext: ['groups' => ['appointment:read']],
+            denormalizationContext: ['groups' => ['appointment:write']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
         ),
         new Delete(
@@ -55,64 +58,64 @@ class Appointment
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['appointment:read-all'])]
+    #[Groups(['appointment:read-all', 'appointment:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 1024, nullable: true)]
-    #[Groups(['appointment:read-all', 'appointment:update'])]
+    #[Groups(['appointment:read', 'appointment:write', 'appointment:create'])]
     private ?string $note = null;
 
     #[ORM\Column]
-    #[Groups(['appointment:read-all', 'appointment:update'])]
+    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write'])]
     private ?bool $isValidated = null;
 
     #[ORM\Column]
-    #[Groups(['appointment:read-all', 'appointment:update'])]
+    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:update'])]
     private ?bool $isUrgent = null;
 
     #[ORM\Column]
-    #[Groups(['appointment:read-all', 'appointment:update'])]
+    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:update'])]
     private ?bool $isCompleted = null;
 
     #[ORM\OneToOne(inversedBy: 'appointment', cascade: ['persist', 'remove'])]
-    #[Groups(['appointment:read-all'])]
+    #[Groups(['appointment:read'])]
     private ?Receipt $receipt = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     #[ApiProperty(readableLink: true)]
-    #[Groups(['appointment:read-all', 'appointment:update'])]
+    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:create'])]
     private ?TypeAppointment $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['appointment:read-all'])]
+    #[Groups(['appointment:read'])]
     private ?Client $client = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['appointment:read-all'])]
+    #[Groups(['appointment:read-all', 'appointment:read', 'appointment:create'])]
     private ?Veto $veto = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['appointment:read-all'])]
+    #[Groups(['appointment:read', 'appointment:read-all'])]
     private ?Animal $animal = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
-    #[Groups(['appointment:read-all', 'appointment:update'])]
+    #[Groups(['appointment:create', 'appointment:read'])]
     private ?Address $location = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(['appointment:read', 'appointment:update'])]
+    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    #[Groups(['appointment:read', 'appointment:update'])]
+    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write'])]
     private ?\DateTimeInterface $startHour = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    #[Groups(['appointment:read', 'appointment:update'])]
+    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write'])]
     private ?\DateTimeInterface $endHour = null;
 
     public function getId(): ?int
