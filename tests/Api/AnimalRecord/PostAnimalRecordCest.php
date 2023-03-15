@@ -9,7 +9,7 @@ use Codeception\Util\HttpCode;
 
 class PostAnimalRecordCest
 {
-    public function testVaccinePost(ApiTester $I): void
+    public function testAnimalRecordPost(ApiTester $I): void
     {
         $veto = VetoFactory::createOne();
         $animal = AnimalFactory::createOne();
