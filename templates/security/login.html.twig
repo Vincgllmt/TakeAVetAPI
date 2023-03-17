@@ -3,91 +3,40 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
+    <form id="login_form" method="post" action="?{{ app.request.queryString }}">
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
 
+        {% if app.user %}
+            <div class="mb-3">
+                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+            </div>
+        {% endif %}
 
-    <h3 class="text-warning text-center">Cette page n'est que pour le development de l'application et ne devra pas être accessible en
-        production</h3>
+        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+        <label for="inputEmail">Email</label>
+        <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+        <label for="inputPassword">Password</label>
+        <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
 
-    <div class="d-flex flex-column justify-content-center m-5 gap-2">
-        <p>Status: <span id="loginStatus"></span></p>
-        <label for="jsonResult">JSON</label><textarea disabled id="jsonResult">
-        </textarea>
-        <label for="email">
-            <input type="email" id="email" placeholder="Email" class="form-control" required autofocus/>
-        </label>
-        <label for="password">Password
-            <input type="password" id="password" placeholder="Password" class="form-control" required/>
-        </label>
-        <button class="btn btn-lg btn-primary" type="button" onclick="login(document.getElementById('email').value, document.getElementById('password').value)">
+        <input type="hidden" name="_csrf_token"
+               value="{{ csrf_token('authenticate') }}"
+        >
+
+        {#
+        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+        See https://symfony.com/doc/current/security/remember_me.html
+
+        <div class="checkbox mb-3">
+            <label>
+                <input type="checkbox" name="_remember_me"> Remember me
+            </label>
+        </div>
+        #}
+
+        <button class="btn btn-lg btn-primary" type="submit">
             Sign in
         </button>
-    </div>
-    <p class="text-center"><a href="{{ path('app_logout') }}">Logout</a></p>
-
-    <script>
-
-        function setResult(jsonResponse) {
-            document.getElementById('jsonResult').innerText = JSON.stringify(jsonResponse);
-        }
-
-        function isLogged(){
-            const statusText = document.getElementById('loginStatus');
-
-            statusText.innerText = 'Checking...';
-
-            fetch('/api/me')
-                .catch(error => {
-                    statusText.innerText = 'Oops! Something went wrong!';
-                    console.error(error);
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Something went wrong on api server!');
-                    }
-                })
-                .catch(error => {
-                    statusText.innerText = 'You are not logged in!';
-                    console.error(error);
-                })
-                .then(jsonResponse => {
-                    statusText.innerText = `You are logged in with user #${jsonResponse.id}!`;
-                    setResult(jsonResponse);
-                })
-        }
-
-        function login(email, password) {
-            const statusText = document.getElementById('loginStatus');
-
-            fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                }),
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        response.json().then(jsonResponse => {
-                            statusText.innerText = `[ERROR] ${jsonResponse.detail}`;
-                            setResult(jsonResponse);
-                            console.error(JSON.stringify(jsonResponse));
-                        });
-                        throw new Error('Something went wrong on api server!');
-                    }
-                })
-                .then(jsonResponse => {
-                    statusText.innerText = `You are logged in with user #${jsonResponse.user}!`;
-                    setResult(jsonResponse);
-                })
-        }
-
-        isLogged();
-    </script>
+    </form>
 {% endblock %}
