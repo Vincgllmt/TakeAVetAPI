@@ -48,6 +48,11 @@ class UserAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
+        // return new RedirectResponse($this->urlGenerator->generate('api_doc'));
+        $redirectUrl = $request->query->get('redirect');
+        if ($redirectUrl !== null) {
+            return new RedirectResponse($redirectUrl);
+        }
         return new RedirectResponse($this->urlGenerator->generate('api_doc'));
     }
 
