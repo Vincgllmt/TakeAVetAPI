@@ -1,93 +1,45 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}CAS - Take'A'Vet{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('auth/index.css') }}">
+{% endblock %}
 
 {% block body %}
-
-
-    <h3 class="text-warning text-center">Cette page n'est que pour le development de l'application et ne devra pas être accessible en
-        production</h3>
-
-    <div class="d-flex flex-column justify-content-center m-5 gap-2">
-        <p>Status: <span id="loginStatus"></span></p>
-        <label for="jsonResult">JSON</label><textarea disabled id="jsonResult">
-        </textarea>
-        <label for="email">
-            <input type="email" id="email" placeholder="Email" class="form-control" required autofocus/>
-        </label>
-        <label for="password">Password
-            <input type="password" id="password" placeholder="Password" class="form-control" required/>
-        </label>
-        <button class="btn btn-lg btn-primary" type="button" onclick="login(document.getElementById('email').value, document.getElementById('password').value)">
-            Sign in
-        </button>
+    <div class="login-page">
+        <div class="d-flex flex-column justify-content-center align-items-center h-100">
+            <form class="login-form" method="post">
+                <h1 class="text-center">Connexion</h1>
+                <p class="text-center">Connectez-vous pour accéder à votre espace personnel.</p>
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+                {% if app.user %}
+                    <div class="mb-3 text-center">
+                        Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Déconnexion</a>
+                    </div>
+                {% endif %}
+                <div class="mb-3">
+                    <label for="email" class="form-label w-100">
+                        Email
+                        <input type="email" name="email" value="{{ last_username }}" class="form-control" id="email" autocomplete="username" required autofocus/>
+                    </label>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label w-100">
+                        Mot de passe
+                        <input type="password" name="password" class="form-control" id="password" autocomplete="current-password"/>
+                    </label>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-dog"></i> Se connecter</button>
+                    <a class="btn btn-primary"><i class="fa-solid fa-cat"></i> S'inscrire</a>
+                </div>
+                <input type="hidden" name="_csrf_token"
+                       value="{{ csrf_token('authenticate') }}"
+                >
+            </form>
+        </div>
     </div>
-    <p class="text-center"><a href="{{ path('app_logout') }}">Logout</a></p>
-
-    <script>
-
-        function setResult(jsonResponse) {
-            document.getElementById('jsonResult').innerText = JSON.stringify(jsonResponse);
-        }
-
-        function isLogged(){
-            const statusText = document.getElementById('loginStatus');
-
-            statusText.innerText = 'Checking...';
-
-            fetch('/api/me')
-                .catch(error => {
-                    statusText.innerText = 'Oops! Something went wrong!';
-                    console.error(error);
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Something went wrong on api server!');
-                    }
-                })
-                .catch(error => {
-                    statusText.innerText = 'You are not logged in!';
-                    console.error(error);
-                })
-                .then(jsonResponse => {
-                    statusText.innerText = `You are logged in with user #${jsonResponse.id}!`;
-                    setResult(jsonResponse);
-                })
-        }
-
-        function login(email, password) {
-            const statusText = document.getElementById('loginStatus');
-
-            fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                }),
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        response.json().then(jsonResponse => {
-                            statusText.innerText = `[ERROR] ${jsonResponse.detail}`;
-                            setResult(jsonResponse);
-                            console.error(JSON.stringify(jsonResponse));
-                        });
-                        throw new Error('Something went wrong on api server!');
-                    }
-                })
-                .then(jsonResponse => {
-                    statusText.innerText = `You are logged in with user #${jsonResponse.user}!`;
-                    setResult(jsonResponse);
-                })
-        }
-
-        isLogged();
-    </script>
 {% endblock %}
