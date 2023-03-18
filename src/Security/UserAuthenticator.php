@@ -65,7 +65,8 @@ class UserAuthenticator extends AbstractLoginFormAuthenticator
 
         // If the request has a redirect parameter, we add it to the login url
         if ($request->query->has('redirect')) {
-            $url .= "?redirect={$request->query->get('redirect')}";
+            $redirectUriString = urlencode($request->query->get('redirect'));
+            $url .= "?redirect={$redirectUriString}";
         }
 
         return new RedirectResponse($url);
