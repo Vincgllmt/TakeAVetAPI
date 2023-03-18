@@ -34,7 +34,7 @@
                 </div>
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary"><i class="fa-solid fa-dog"></i> Se connecter</button>
-                    <a class="btn btn-primary"><i class="fa-solid fa-cat"></i> S'inscrire</a>
+                    <a class="btn btn-primary" href="{{ path('app_register') }}"><i class="fa-solid fa-cat"></i> S'inscrire</a>
                 </div>
                 <input type="hidden" name="_csrf_token"
                        value="{{ csrf_token('authenticate') }}"
