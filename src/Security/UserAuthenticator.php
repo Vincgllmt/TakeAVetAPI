@@ -48,7 +48,28 @@ class UserAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
+        if ($request->query->has('redirect')) {
+            return new RedirectResponse($request->query->get('redirect'));
+        }
+
         return new RedirectResponse($this->urlGenerator->generate('api_doc'));
+    }
+
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
+    {
+        if ($request->hasSession()) {
+            $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+        }
+
+        $url = $this->getLoginUrl($request);
+
+        // If the request has a redirect parameter, we add it to the login url
+        if ($request->query->has('redirect')) {
+            $redirectUriString = urlencode($request->query->get('redirect'));
+            $url .= "?redirect={$redirectUriString}";
+        }
+
+        return new RedirectResponse($url);
     }
 
     protected function getLoginUrl(Request $request): string
