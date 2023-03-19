@@ -26,7 +26,7 @@ class GetAvatarController extends AbstractController
 
             return new Response($avatar, 200, ['Content-Type' => 'image/png']);
         } else {
-            return new Response(file_get_contents('media/default-avatar.png'), 200);
+            return new Response(file_get_contents('default/default-avatar.png'), 200);
         }
     }
 }
