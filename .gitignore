@@ -21,5 +21,4 @@
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
 
-/public/uploads
-/public/media
+/public/uploads/
