@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Entity\MediaObject;
 use App\Entity\User;
 use App\Repository\MediaObjectRepository;
+use App\Repository\UserRepository;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ManipulatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -17,7 +19,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[AsController]
-final class UploadAvatarAction extends AbstractController
+final class CreateMediaAvatarAction extends AbstractController
 {
     private Imagine $imagine;
     private Security $security;
@@ -28,7 +30,7 @@ final class UploadAvatarAction extends AbstractController
         $this->security = $security;
     }
 
-    public function __invoke(Request $request, MediaObjectRepository $mediaObjectRepository): User
+    public function __invoke(Request $request, MediaObjectRepository $mediaObjectRepository, UserRepository $userRepository, User $user): MediaObject
     {
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
@@ -37,7 +39,7 @@ final class UploadAvatarAction extends AbstractController
         }
 
         if (UPLOAD_ERR_OK != $uploadedFile->getError()) {
-            throw new \RuntimeException("File upload error: {$uploadedFile->getError()} ({$uploadedFile->getErrorMessage()})");
+            throw new UploadException("File upload error: {$uploadedFile->getError()} ({$uploadedFile->getErrorMessage()})");
         }
 
         $tempFilePath = $uploadedFile->getRealPath();
@@ -49,19 +51,15 @@ final class UploadAvatarAction extends AbstractController
             'format' => 'webp',
         ]);
 
-        // create a new MediaObject
+        $transformedAvatarFile = new UploadedFile($tempFilePath.'.webp', $uploadedFile->getClientOriginalName(), 'image/webp', $uploadedFile->getError(), true);
+
         $mediaObject = new MediaObject();
-        $mediaObject->file = new UploadedFile($tempFilePath.'.webp', $uploadedFile->getClientOriginalName(), 'image/webp', $uploadedFile->getError(), true);
+        $mediaObject->file = $transformedAvatarFile;
 
-        // set the avatar for the current user
-        $user = $this->security->getUser();
-        if ($user instanceof User) {
-            $user->setAvatar($mediaObject);
-        }
+        // save the media object and avoid $file serialization on the avatar setter
+        $mediaObjectRepository->save($mediaObject, true);
+        $userRepository->updateAvatar($user, $mediaObject);
 
-        // ugly hack to clean up the media object from upload.
-        $mediaObject->file = null;
-
-        return $user;
+        return $mediaObject;
     }
 }
