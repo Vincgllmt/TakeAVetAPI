@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\MediaObject;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -54,6 +55,26 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
 
         $this->save($user, true);
+    }
+
+    /**
+     * Update the avatar for the given user (this is a workaround for the serializer not being able to handle the $file).
+     *
+     * @param User        $user        The user to update
+     * @param MediaObject $mediaObject The media object to set as avatar
+     *
+     * @return void No return value
+     */
+    public function updateAvatar(User $user, MediaObject $mediaObject): void
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->update(User::class, 'user')
+            ->set('user.avatar', ':media')
+            ->where('user.id = :user')
+            ->getQuery()
+            ->setParameter('media', $mediaObject->getId())
+            ->setParameter('user', $user->getId())
+            ->execute();
     }
 
 //    /**

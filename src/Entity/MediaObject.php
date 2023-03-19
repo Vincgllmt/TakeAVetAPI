@@ -6,7 +6,9 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Post;
+use App\Controller\CreateMediaAvatarAction;
 use App\Controller\CreateMediaObjectAction;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
@@ -27,6 +29,32 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
         new GetCollection(),
         new Post(
             controller: CreateMediaObjectAction::class,
+            openapiContext: [
+                'requestBody' => [
+                    'content' => [
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'file' => [
+                                        'type' => 'string',
+                                        'format' => 'binary',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            validationContext: ['groups' => ['Default', 'media_object_create']],
+            deserialize: false
+        ),
+        new Post(
+            uriTemplate: '/users/{user}/avatar',
+            uriVariables: [
+                'user' => new Link(fromProperty: 'avatar', fromClass: User::class),
+            ],
+            controller: CreateMediaAvatarAction::class,
             openapiContext: [
                 'requestBody' => [
                     'content' => [

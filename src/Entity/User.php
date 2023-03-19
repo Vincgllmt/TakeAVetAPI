@@ -6,10 +6,8 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Post;
 use App\Controller\GetAvatarController;
 use App\Controller\GetMeController;
-use App\Controller\UploadAvatarAction;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -84,32 +82,6 @@ use Symfony\Component\Validator\Constraints\Length;
             denormalizationContext: ['groups' => ['user:update']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
         ),
-        new Post(
-            uriTemplate: '/users/{id}/avatar',
-            controller: UploadAvatarAction::class,
-            openapiContext: [
-                'summary' => 'Update the current user avatar.',
-                'description' => 'Upload a new avatar for the current user.',
-                'requestBody' => [
-                    'content' => [
-                        'multipart/form-data' => [
-                            'schema' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'file' => [
-                                        'type' => 'string',
-                                        'format' => 'binary',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            normalizationContext: ['groups' => ['skip_null_values' => false, 'user:read-me', 'user:read']],
-            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
-            deserialize: false,
-        ),
     ],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -121,7 +93,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['user:read', 'user:read-me'])]
-    protected ?int $id = null;
+    public ?int $id = null;
 
     /**
      * @var string|null the email of this user
