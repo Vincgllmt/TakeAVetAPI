@@ -81,7 +81,7 @@
         ],
         "start" : [
             "Composer\\Config::disableProcessTimeout",
-            "symfony serve"
+            "symfony serve --no-tls"
         ],
         "db": [
             "php bin/console doctrine:database:drop --force --if-exists",
