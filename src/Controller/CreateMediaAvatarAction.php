@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\MediaObject;
-use App\Entity\User;
 use App\Repository\MediaObjectRepository;
 use App\Repository\UserRepository;
 use Imagine\Gd\Imagine;
