@@ -30,8 +30,10 @@ final class CreateMediaAvatarAction extends AbstractController
         $this->security = $security;
     }
 
-    public function __invoke(Request $request, MediaObjectRepository $mediaObjectRepository, UserRepository $userRepository, User $user): MediaObject
+    public function __invoke(Request $request, MediaObjectRepository $mediaObjectRepository, UserRepository $userRepository): MediaObject
     {
+        $user = $this->security->getUser();
+
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
         if (!$uploadedFile) {
