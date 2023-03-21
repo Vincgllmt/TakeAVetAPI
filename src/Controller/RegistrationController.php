@@ -19,7 +19,15 @@ class RegistrationController extends AbstractController
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, UserAuthenticator $authenticator, EntityManagerInterface $entityManager): Response
     {
         $user = new Client();
-        $form = $this->createForm(RegistrationFormClientType::class, $user);
+
+        $redirectQuery = '';
+        if ($request->query->has('redirect')) {
+            $redirectQuery = '?redirect=' . urldecode($request->query->get('redirect'));
+        }
+
+        $form = $this->createForm(RegistrationFormClientType::class, $user, [
+            'action' => $redirectQuery,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

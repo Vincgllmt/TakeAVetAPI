@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\MediaObject;
-use App\Entity\User;
 use App\Repository\MediaObjectRepository;
 use App\Repository\UserRepository;
 use Imagine\Gd\Imagine;
@@ -30,8 +29,10 @@ final class CreateMediaAvatarAction extends AbstractController
         $this->security = $security;
     }
 
-    public function __invoke(Request $request, MediaObjectRepository $mediaObjectRepository, UserRepository $userRepository, User $user): MediaObject
+    public function __invoke(Request $request, MediaObjectRepository $mediaObjectRepository, UserRepository $userRepository): MediaObject
     {
+        $user = $this->security->getUser();
+
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
         if (!$uploadedFile) {
