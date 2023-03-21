@@ -49,32 +49,6 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
             validationContext: ['groups' => ['Default', 'media_object_create']],
             deserialize: false
         ),
-        new Post(
-            uriTemplate: '/users/{user}/avatar',
-            uriVariables: [
-                'user' => new Link(fromProperty: 'avatar', fromClass: User::class),
-            ],
-            controller: CreateMediaAvatarAction::class,
-            openapiContext: [
-                'requestBody' => [
-                    'content' => [
-                        'multipart/form-data' => [
-                            'schema' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'file' => [
-                                        'type' => 'string',
-                                        'format' => 'binary',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            validationContext: ['groups' => ['Default', 'media_object_create']],
-            deserialize: false
-        ),
     ],
     normalizationContext: ['groups' => ['media_object:read']]
 )]

@@ -6,6 +6,8 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use App\Controller\CreateMediaAvatarAction;
 use App\Controller\GetAvatarController;
 use App\Controller\GetMeController;
 use App\Repository\UserRepository;
@@ -81,6 +83,31 @@ use Symfony\Component\Validator\Constraints\Length;
             normalizationContext: ['groups' => ['skip_null_values' => false, 'user:read-me']],
             denormalizationContext: ['groups' => ['user:update']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
+        ),
+        new Post(
+            uriTemplate: '/users/{id}/avatar',
+            controller: CreateMediaAvatarAction::class,
+            openapiContext: [
+                'requestBody' => [
+                    'content' => [
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'file' => [
+                                        'type' => 'string',
+                                        'format' => 'binary',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'summary' => 'Upload a new avatar for the given user.',
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
+            validationContext: ['groups' => ['Default', 'media_object_create']],
+            deserialize: false
         ),
     ],
 )]
