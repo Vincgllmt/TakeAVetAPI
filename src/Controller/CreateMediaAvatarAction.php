@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\MediaObject;
+use App\Entity\User;
 use App\Repository\MediaObjectRepository;
 use App\Repository\UserRepository;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ManipulatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +34,10 @@ final class CreateMediaAvatarAction extends AbstractController
     public function __invoke(Request $request, MediaObjectRepository $mediaObjectRepository, UserRepository $userRepository): MediaObject
     {
         $user = $this->security->getUser();
+
+        if (!($user instanceof User)) {
+            throw new AccessDeniedException('Invalid user');
+        }
 
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
