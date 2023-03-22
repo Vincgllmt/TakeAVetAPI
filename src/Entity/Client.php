@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use App\Controller\GetMeAddressesActionController;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,6 +15,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[UniqueEntity(fields: 'email', message: 'Il y a déjà un compte avec cette adresse e-mail.')]
 #[ApiResource(operations: [
+    new GetCollection(
+        uriTemplate: '/me/addresses',
+        controller: GetMeAddressesActionController::class,
+        openapiContext: [
+            'summary' => 'Get the addresses of the current client.',
+            'description' => 'Get the addresses of the current client.',
+            'responses' => [
+                '200' => [
+                    'description' => 'The addresses of the current client.',
+                ],
+                '401' => [
+                    'description' => 'The user is not authenticated or not a client.',
+                ],
+            ],
+        ],
+        normalizationContext: ['groups' => ['address:read']],
+        security: 'is_granted("IS_AUTHENTICATED_FULLY")'
+    ),
     new Post(
         uriTemplate: '/register',
         openapiContext: [
