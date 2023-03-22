@@ -22,7 +22,7 @@ class RegistrationController extends AbstractController
 
         $redirectQuery = '';
         if ($request->query->has('redirect')) {
-            $redirectQuery = '?redirect=' . urldecode($request->query->get('redirect'));
+            $redirectQuery = '?redirect='.urldecode($request->query->get('redirect'));
         }
 
         $form = $this->createForm(RegistrationFormClientType::class, $user, [

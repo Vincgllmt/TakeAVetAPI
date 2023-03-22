@@ -16,6 +16,7 @@ class CreateAddressForClient extends AbstractController
             throw $this->createAccessDeniedException('Only clients can create addresses.');
         }
         $data->setClient($user);
+
         return $data;
     }
 }

@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Client;
 use App\Repository\AddressRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
 
 class GetMeAddressesActionController extends AbstractController
 {
