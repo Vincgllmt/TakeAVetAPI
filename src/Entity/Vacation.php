@@ -6,6 +6,8 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
@@ -19,6 +21,26 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ApiResource(
     operations: [
+        new GetCollection(
+            uriTemplate: '/vacations/from/{agendaId}/',
+            uriVariables: [
+                'agendaId' => new Link(fromProperty: 'id', toProperty: 'agenda', fromClass: Agenda::class),
+            ],
+            openapiContext: [
+                'summary' => 'Get all vacations of a given agenda.',
+                'description' => 'Return all vacations of a given agenda.',
+                'responses' => [
+                    '200' => [
+                        'description' => 'All vacations of a given agenda.',
+                    ],
+                    '404' => [
+                        'description' => 'The agenda does not exist.',
+                    ],
+                ],
+            ],
+            paginationEnabled: false,
+            normalizationContext: ['groups' => ['vacation:read']],
+        ),
         new Get(
             openapiContext: [
                 'summary' => 'Get a vacation ressource by its id.',
