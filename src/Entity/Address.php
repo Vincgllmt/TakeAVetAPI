@@ -37,6 +37,21 @@ use Symfony\Component\Validator\Constraints\Regex;
         ),
         new Post(
             controller: CreateAddressForClient::class,
+            openapiContext: [
+                'summary' => 'Create a new address for the current client.',
+                'description' => 'Create a new address for the current client.',
+                'responses' => [
+                    '201' => [
+                        'description' => 'The newly created address.',
+                    ],
+                    '400' => [
+                        'description' => 'The address is invalid.',
+                    ],
+                    '401' => [
+                        'description' => 'The user is not authenticated or not a client.',
+                    ],
+                ],
+            ],
             normalizationContext: ['groups' => ['address:read']],
             denormalizationContext: ['groups' => ['address:create']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isClient()',
