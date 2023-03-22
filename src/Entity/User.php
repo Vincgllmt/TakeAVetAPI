@@ -85,7 +85,7 @@ use Symfony\Component\Validator\Constraints\Length;
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
         ),
         new Post(
-            uriTemplate: '/users/{id}/avatar',
+            uriTemplate: '/me/avatar',
             controller: CreateMediaAvatarAction::class,
             openapiContext: [
                 'requestBody' => [
@@ -105,7 +105,7 @@ use Symfony\Component\Validator\Constraints\Length;
                 ],
                 'summary' => 'Upload a new avatar for the given user.',
             ],
-            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object === user',
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")',
             validationContext: ['groups' => ['Default', 'media_object_create']],
             deserialize: false
         ),
