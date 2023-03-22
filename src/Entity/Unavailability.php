@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use App\Repository\UnavailabilityRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,6 +13,26 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     operations: [
+        new GetCollection(
+            uriTemplate: '/unavailabilities/from/{agendaId}/',
+            uriVariables: [
+                'agendaId' => new Link(fromProperty: 'id', toProperty: 'agenda', fromClass: Agenda::class),
+            ],
+            openapiContext: [
+                'summary' => 'Get all unavailabilities of a given agenda.',
+                'description' => 'Return all unavailabilities of a given agenda.',
+                'responses' => [
+                    '200' => [
+                        'description' => 'All unavailabilities of a given agenda.',
+                    ],
+                    '404' => [
+                        'description' => 'The agenda does not exist.',
+                    ],
+                ],
+            ],
+            paginationEnabled: false,
+            normalizationContext: ['groups' => ['unavailability:read']],
+        ),
         new Get(normalizationContext: ['groups' => ['unavailability:read']]),
     ]
 )]
