@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Post;
 use App\Repository\ThreadReplyRepository;
 use App\Validator\IsAuthenticatedUser;
@@ -21,7 +22,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
             ],
             normalizationContext: ['groups' => ['threadReply:read']]
         ),
-        new GetCollection(openapiContext: ['summary' => 'Get all reply']),
+        new GetCollection(
+            uriTemplate: '/thread_replies/from/{threadId}',
+            uriVariables: [
+                'threadId' => new Link(fromProperty: 'id', toProperty: 'thread', fromClass: Thread::class)
+            ],
+            openapiContext: ['summary' => 'Get all replies from a thread'],
+        ),
         new Delete(
             openapiContext: ['summary' => 'delete your reply in a thread (admin can delete any reply)'],
             security: "is_granted('IS_AUTHENTICATED_FULLY') and (object.user === user or is_granted('ROLE_ADMIN'))"
