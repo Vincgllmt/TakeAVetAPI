@@ -22,6 +22,7 @@ class Time extends FunctionNode
 
     /**
      * @override
+     *
      * @throws QueryException
      */
     public function parse(Parser $parser)

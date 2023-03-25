@@ -14,6 +14,7 @@ class GetAppointmentOnCurrentDayForVetoAction extends AbstractController
         if (!$user instanceof Veto) {
             throw $this->createAccessDeniedException('Only vetos can get his appointments');
         }
+
         return $appointmentRepository->findAllAppointmentOnDay($user, new \DateTime(), false);
     }
 }

@@ -25,7 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new GetCollection(
             uriTemplate: '/thread_replies/from/{threadId}',
             uriVariables: [
-                'threadId' => new Link(fromProperty: 'id', toProperty: 'thread', fromClass: Thread::class)
+                'threadId' => new Link(fromProperty: 'id', toProperty: 'thread', fromClass: Thread::class),
             ],
             openapiContext: ['summary' => 'Get all replies from a thread'],
         ),

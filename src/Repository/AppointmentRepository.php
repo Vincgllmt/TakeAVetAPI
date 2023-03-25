@@ -99,7 +99,6 @@ class AppointmentRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
-
     /**
      * @throws NonUniqueResultException
      */
