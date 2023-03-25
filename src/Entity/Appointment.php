@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\GetAppointmentOnCurrentDayForVetoAction;
 use App\Controller\GetAppointmentOnCurrentHourForVetoAction;
+use App\Controller\GetMeAppointmentsAction;
 use App\Repository\AppointmentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -33,6 +34,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
             ],
             normalizationContext: ['groups' => ['appointment:read', 'typeAppointment:read']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
+        ),
+        new GetCollection(
+            uriTemplate: '/me/appointments',
+            controller: GetMeAppointmentsAction::class,
+            openapiContext: [
+                'summary' => 'Get all Appointment for current user',
+            ],
+            normalizationContext: ['groups' => ['appointment:read-all', 'typeAppointment:read']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
 //        new GetCollection(
 //            openapiContext: [
