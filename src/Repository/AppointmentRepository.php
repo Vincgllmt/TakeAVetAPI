@@ -2,13 +2,11 @@
 
 namespace App\Repository;
 
-use App\Entity\Animal;
 use App\Entity\Appointment;
-use App\Entity\Client;
-use App\Entity\TypeAnimal;
 use App\Entity\TypeAppointment;
 use App\Entity\Veto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -82,50 +80,55 @@ class AppointmentRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find all appointment on a given date and if it's completed.
+     * Find all appointment on a day for a specific vet.
      */
-    public function findAllOnDate(Veto $veto, \DateTime $date, bool $getCompleted): array
+    public function findAllAppointmentOnDay(Veto $veto, \DateTime $date, bool $getCompleted): array
     {
         $queryBuilder = $this->createQueryBuilder('a')
-            ->select('a as appointment')
-            ->addSelect('ctg.name as animal_type')
-            ->addSelect('ta.name as appointment_type')
-            ->addSelect('an.id as animal_id')
-            ->addSelect('cli.id as client_id')
-            ->innerJoin(Animal::class, 'an')
-            ->innerJoin(TypeAnimal::class, 'ctg')
-            ->innerJoin(Client::class, 'cli')
-            ->innerJoin(TypeAppointment::class, 'ta')
-            ->where('a.veto = :veto')
-            ->andWhere('ctg = an.type')
-            ->andWhere('an = a.animal')
-            ->andWhere('cli = a.client')
-            ->andWhere('ta = a.type')
-            ->andWhere('DATE(a.startDatetime) = :date');
+            ->where('a.veto = :vet_id')
+            ->andWhere('DATE(a.date) = :date')
+            ->orderBy('a.startHour', 'ASC');
 
         if ($getCompleted) {
             $queryBuilder->andWhere('a.isCompleted = TRUE');
         }
 
         return $queryBuilder->getQuery()
-            ->setParameter('veto', $veto)
+            ->setParameter('vet_id', $veto->getId())
             ->setParameter('date', $date->format('Y-m-d'))
             ->getArrayResult();
     }
 
+
     /**
      * @throws NonUniqueResultException
-     * @throws NoResultException
      */
-    public function updateNote(int $appointmentId, string $note): int
+    public function findAppointmentOnHour(Veto $veto, \DateTime $dateTime): ?Appointment
     {
         return $this->createQueryBuilder('a')
-            ->update()
-            ->set('a.note', ':note')
-            ->where('a.id = :id')
+            ->where('a.veto = :vet_id')
+            ->andWhere('DATE(a.date) = :date')
+            ->andWhere('TIME(:time) BETWEEN TIME(a.startHour) AND TIME(a.endHour)')
             ->getQuery()
-            ->setParameter('id', $appointmentId)
-            ->setParameter('note', $note)
-            ->getSingleScalarResult();
+            ->setParameter('vet_id', $veto->getId())
+            ->setParameter('time', $dateTime->format('H:i:s'))
+            ->setParameter('date', $dateTime->format('Y-m-d'))
+            ->getOneOrNullResult(AbstractQuery::HYDRATE_OBJECT);
     }
+
+//    /**
+//     * @throws NonUniqueResultException
+//     * @throws NoResultException
+//     */
+//    public function updateNote(int $appointmentId, string $note): int
+//    {
+//        return $this->createQueryBuilder('a')
+//            ->update()
+//            ->set('a.note', ':note')
+//            ->where('a.id = :id')
+//            ->getQuery()
+//            ->setParameter('id', $appointmentId)
+//            ->setParameter('note', $note)
+//            ->getSingleScalarResult();
+//    }
 }
