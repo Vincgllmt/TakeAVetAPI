@@ -19,6 +19,7 @@ doctrine:
             datetime_functions:
                 dayofweek: App\DoctrineExtension\DayOfWeek
                 date: App\DoctrineExtension\Date
+                time: App\DoctrineExtension\Time
 
 
 
