@@ -9,6 +9,9 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Controller\GetAppointmentOnCurrentDayForVetoAction;
+use App\Controller\GetAppointmentOnCurrentHourForVetoAction;
+use App\Controller\GetMeAppointmentsAction;
 use App\Repository\AppointmentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,13 +23,41 @@ use Symfony\Component\Serializer\Annotation\Groups;
             openapiContext: [
                 'summary' => 'Get one Appointment',
             ],
-            normalizationContext: ['groups' => ['appointment:read']]
+            normalizationContext: ['groups' => ['appointment:read', 'typeAppointment:read']]
         ),
         new GetCollection(
+            uriTemplate: '/appointments/current/hour',
+            controller: GetAppointmentOnCurrentHourForVetoAction::class,
             openapiContext: [
-                'summary' => 'Get all Appointment',
+                'summary' => 'Get one appointment if there are any on current hour',
+                'description' => 'If there are no appointment on current hour, return null',
             ],
-            normalizationContext: ['groups' => ['appointment:read-all']]
+            normalizationContext: ['groups' => ['appointment:read', 'typeAppointment:read']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
+        ),
+        new GetCollection(
+            uriTemplate: '/me/appointments',
+            controller: GetMeAppointmentsAction::class,
+            openapiContext: [
+                'summary' => 'Get all Appointment for current user',
+            ],
+            normalizationContext: ['groups' => ['appointment:read-all', 'typeAppointment:read']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
+        ),
+//        new GetCollection(
+//            openapiContext: [
+//                'summary' => 'Get all Appointment',
+//            ],
+//            normalizationContext: ['groups' => ['appointment:read-all']]
+//        ),
+        new GetCollection(
+            uriTemplate: '/appointments/current/day',
+            controller: GetAppointmentOnCurrentDayForVetoAction::class,
+            openapiContext: [
+                'summary' => 'Get all Appointment on current day (including completed)',
+            ],
+            normalizationContext: ['groups' => ['appointment:read-all', 'typeAppointment:read']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
         ),
         new Post(
             openapiContext: [

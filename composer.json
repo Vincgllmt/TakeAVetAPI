@@ -81,7 +81,7 @@
         ],
         "start" : [
             "Composer\\Config::disableProcessTimeout",
-            "symfony serve --no-tls"
+            "set APP_ENV=dev&symfony serve--no-tls"
         ],
         "db": [
             "php bin/console doctrine:database:drop --force --if-exists",
@@ -133,6 +133,8 @@
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "friendsofphp/php-cs-fixer": "^3.13",
         "symfony/maker-bundle": "^1.48",
+        "symfony/stopwatch": "5.4.*",
+        "symfony/web-profiler-bundle": "5.4.*",
         "zenstruck/foundry": "^1.28"
     }
 }

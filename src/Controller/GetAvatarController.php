@@ -20,13 +20,17 @@ class GetAvatarController extends AbstractController
     {
         $mediaObj = $data->getAvatar();
 
-        if (null !== $mediaObj) {
-            $avatarPath = $this->storage->resolvePath($mediaObj, 'file');
-            $avatar = file_get_contents($avatarPath);
+        try {
+            if (null !== $mediaObj) {
+                $avatarPath = $this->storage->resolvePath($mediaObj, 'file');
+                $avatar = file_get_contents($avatarPath);
 
-            return new Response($avatar, 200, ['Content-Type' => 'image/png']);
-        } else {
-            return new Response(file_get_contents('default/default-avatar.png'), 200);
+                return new Response($avatar, 200, ['Content-Type' => 'image/png']);
+            }
+        } catch (\Exception $e) {
+            // ignore
         }
+
+        return new Response(file_get_contents('default/default-avatar.png'), 200);
     }
 }

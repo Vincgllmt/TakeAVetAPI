@@ -221,4 +221,10 @@ class Thread
 
         return $this;
     }
+
+    #[Groups(['thread:read'])]
+    public function getReplyCount(): int
+    {
+        return $this->replies->count();
+    }
 }
