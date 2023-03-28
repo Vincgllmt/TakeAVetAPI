@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints\Regex;
     operations: [
         new Get(
             normalizationContext: ['groups' => ['address:read']],
-            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.client === user',
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and (object.client === user or user.isVeto())',
         ),
         new Put(
             normalizationContext: ['groups' => ['address:read']],
