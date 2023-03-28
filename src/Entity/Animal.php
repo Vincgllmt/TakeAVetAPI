@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\GetMeAnimalsController;
@@ -21,10 +23,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(
             openapiContext: [
-                'summary' => 'Get one animal',
+                'summary' => 'Get an animal by its id',
             ],
             normalizationContext: ['groups' => ['animal:read']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and (object.owner == user or user.isVeto())',
+        ),
+        new GetCollection(
+            uriTemplate: '/animals/from/{userId}',
+            uriVariables: [
+                'userId' => new Link(fromProperty: 'id', toProperty: 'owner', fromClass: User::class),
+            ],
+            openapiContext: [
+                'summary' => 'Get all animals of a user (veto only)',
+            ],
+            normalizationContext: ['groups' => ['animal:read']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()',
         ),
         new GetCollection(
             uriTemplate: '/me/animals',
@@ -98,6 +111,7 @@ class Animal
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
     #[Groups(['animal:read', 'animal:create', 'animal:write'])]
+    #[ApiProperty(readableLink: true)]
     private ?TypeAnimal $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
