@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new GetCollection(
             normalizationContext: ['groups' => ['typeAppointment:read']],
-        )
+        ),
     ]
 )]
 #[ORM\Entity(repositoryClass: TypeAppointmentRepository::class)]

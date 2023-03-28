@@ -199,7 +199,7 @@ class Animal
     {
         $category = $this->type?->getName();
 
-        return "$this->name" . ' ' . "$category";
+        return "$this->name".' '."$category";
     }
 
     /**

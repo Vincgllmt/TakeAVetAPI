@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(normalizationContext: ['groups' => ['typeAnimal:read']]),
         new GetCollection(
             normalizationContext: ['groups' => ['typeAnimal:read']],
-        )
+        ),
     ]
 )]
 #[ORM\Entity(repositoryClass: TypeAnimalRepository::class)]

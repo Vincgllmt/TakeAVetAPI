@@ -19,9 +19,10 @@ class GetImagesFromAnimalController extends AbstractController
         }
 
         $animal = $animalRepository->find($animalId);
-        if ($animal === null || ($user instanceof Client && $user !== $animal->getOwner())) {
+        if (null === $animal || ($user instanceof Client && $user !== $animal->getOwner())) {
             throw $this->createAccessDeniedException('Your are not allowed to access to this animal.');
         }
+
         return $animal->getImages()->getValues();
     }
 }
