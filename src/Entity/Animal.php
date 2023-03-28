@@ -59,7 +59,7 @@ class Animal
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['animal:read'])]
-    private ?int $id = null;
+    public ?int $id = null;
 
     #[ORM\Column(length: 50)]
     #[Groups(['animal:read', 'animal:create', 'animal:write'])]
@@ -108,7 +108,6 @@ class Animal
     private Collection $vaccines;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: MediaObject::class)]
-//    #[Groups(['animal:read'])] are not working
     private Collection $images;
 
     public function __construct()
@@ -200,7 +199,7 @@ class Animal
     {
         $category = $this->type?->getName();
 
-        return "$this->name".' '."$category";
+        return "$this->name" . ' ' . "$category";
     }
 
     /**
@@ -363,6 +362,7 @@ class Animal
     {
         if (!$this->images->contains($image)) {
             $this->images->add($image);
+            $image->setAnimal($this);
         }
 
         return $this;
@@ -370,7 +370,12 @@ class Animal
 
     public function removeImage(MediaObject $image): self
     {
-        $this->images->removeElement($image);
+        if ($this->images->removeElement($image)) {
+            // set the owning side to null (unless already changed)
+            if ($image->getAnimal() === $this) {
+                $image->setAnimal(null);
+            }
+        }
 
         return $this;
     }
