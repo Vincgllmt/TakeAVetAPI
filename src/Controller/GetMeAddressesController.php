@@ -6,7 +6,7 @@ use App\Entity\Client;
 use App\Repository\AddressRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class GetMeAddressesActionController extends AbstractController
+class GetMeAddressesController extends AbstractController
 {
     public function __invoke(AddressRepository $addressRepository): array
     {
