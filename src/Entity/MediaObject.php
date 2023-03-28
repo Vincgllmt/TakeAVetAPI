@@ -6,8 +6,10 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Post;
 use App\Controller\CreateMediaObjectAction;
+use App\Controller\GetImagesFromAnimalController;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -25,6 +27,17 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
     operations: [
         new Get(),
         new GetCollection(),
+        new GetCollection(
+            uriTemplate: '/animals/{animalId}/images',
+            uriVariables: [
+                'animalId' => new Link(fromProperty: 'id', toProperty: 'animal', fromClass: Animal::class, toClass: MediaObject::class),
+            ],
+            controller: GetImagesFromAnimalController::class,
+            openapiContext: [
+                'summary' => 'Get all images of an animal',
+            ],
+            normalizationContext: ['groups' => ['media_object:read']],
+        ),
         new Post(
             controller: CreateMediaObjectAction::class,
             openapiContext: [
@@ -71,6 +84,9 @@ class MediaObject
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'images')]
+    private ?Animal $animal = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -84,6 +100,18 @@ class MediaObject
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getAnimal(): ?Animal
+    {
+        return $this->animal;
+    }
+
+    public function setAnimal(?Animal $animal): self
+    {
+        $this->animal = $animal;
 
         return $this;
     }

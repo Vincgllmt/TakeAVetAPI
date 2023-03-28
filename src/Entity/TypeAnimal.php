@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\TypeAnimalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,25 +14,28 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['typeAnimal:read']]),
+        new GetCollection(
+            normalizationContext: ['groups' => ['typeAnimal:read']],
+        ),
     ]
 )]
 #[ORM\Entity(repositoryClass: TypeAnimalRepository::class)]
 class TypeAnimal
 {
-    #[Groups(['typeAnimal:read'])]
+    #[Groups(['typeAnimal:read', 'animal:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['typeAnimal:read', 'veto:read'])]
+    #[Groups(['typeAnimal:read', 'veto:read', 'animal:read'])]
     #[ORM\Column(length: 50)]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'type', targetEntity: Animal::class)]
     private Collection $animals;
 
-    #[Groups(['typeAnimal:read', 'veto:read'])]
+    #[Groups(['typeAnimal:read', 'veto:read', 'animal:read'])]
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $icon = null;
 

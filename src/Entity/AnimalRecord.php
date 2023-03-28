@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Repository\AnimalRecordRepository;
@@ -24,9 +25,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
             normalizationContext: ['groups' => ['animalRecord:read']]
         ),
         new GetCollection(
+            uriTemplate: '/animal_records/from/{animalId}',
+            uriVariables: [
+                'animalId' => new Link(fromProperty: 'id', toProperty: 'Animal', fromClass: Animal::class),
+            ],
             openapiContext: [
-                'summary' => 'Get all record for an animal',
-            ]
+                'summary' => 'Get all records for an animal',
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and (user.isClient() or user.isVeto())',
         ),
         new Patch(
             openapiContext: [

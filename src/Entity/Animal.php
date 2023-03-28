@@ -2,11 +2,14 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Controller\GetMeAnimalsController;
 use App\Repository\AnimalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,14 +23,31 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(
             openapiContext: [
-                'summary' => 'Get one animal',
+                'summary' => 'Get an animal by its id',
             ],
             normalizationContext: ['groups' => ['animal:read']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and (object.owner == user or user.isVeto())',
         ),
         new GetCollection(
+            uriTemplate: '/animals/from/{userId}',
+            uriVariables: [
+                'userId' => new Link(fromProperty: 'id', toProperty: 'owner', fromClass: User::class),
+            ],
             openapiContext: [
-                'summary' => 'Get all animals',
-            ]
+                'summary' => 'Get all animals of a user (veto only)',
+            ],
+            normalizationContext: ['groups' => ['animal:read']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()',
+        ),
+        new GetCollection(
+            uriTemplate: '/me/animals',
+            controller: GetMeAnimalsController::class,
+            openapiContext: [
+                'summary' => 'Get all animals of the current user',
+            ],
+            paginationEnabled: false,
+            normalizationContext: ['groups' => ['animal:read']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")',
         ),
         new Post(
             openapiContext: [
@@ -52,7 +72,7 @@ class Animal
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['animal:read'])]
-    private ?int $id = null;
+    public ?int $id = null;
 
     #[ORM\Column(length: 50)]
     #[Groups(['animal:read', 'animal:create', 'animal:write'])]
@@ -75,24 +95,30 @@ class Animal
     private ?\DateTimeInterface $birthday = null;
 
     #[ORM\Column]
+    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
     private ?bool $inFarm = null;
 
     #[ORM\Column]
+    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
     private ?bool $isGroup = null;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: AnimalRecord::class)]
+//    #[Groups(['animal:read'])] are not working
     private Collection $records;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Appointment::class)]
     private Collection $appointments;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
+    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
+    #[ApiProperty(readableLink: true)]
     private ?TypeAnimal $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
     public ?Client $owner = null;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Vaccine::class)]
+    #[Groups(['animal:read'])]
     private Collection $vaccines;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: MediaObject::class)]
@@ -350,6 +376,7 @@ class Animal
     {
         if (!$this->images->contains($image)) {
             $this->images->add($image);
+            $image->setAnimal($this);
         }
 
         return $this;
@@ -357,7 +384,12 @@ class Animal
 
     public function removeImage(MediaObject $image): self
     {
-        $this->images->removeElement($image);
+        if ($this->images->removeElement($image)) {
+            // set the owning side to null (unless already changed)
+            if ($image->getAnimal() === $this) {
+                $image->setAnimal(null);
+            }
+        }
 
         return $this;
     }

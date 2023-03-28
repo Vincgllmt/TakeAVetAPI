@@ -42,8 +42,7 @@ class AnimalRecordRepository extends ServiceEntityRepository
     public function findByAnimal(int $id)
     {
         $qb = $this->createQueryBuilder('record')
-            ->leftJoin('record.animal', 'animal')
-            ->where('animal.id = :id')
+            ->where('record.Animal = :id')
             ->setParameter(':id', $id)
             ->orderBy('record.id', 'ASC');
         $query = $qb->getQuery();
