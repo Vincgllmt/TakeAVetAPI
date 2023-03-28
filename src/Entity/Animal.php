@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Controller\GetMeAnimalsController;
 use App\Repository\AnimalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -23,11 +24,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'summary' => 'Get one animal',
             ],
             normalizationContext: ['groups' => ['animal:read']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and (object.owner == user or user.isVeto())',
         ),
         new GetCollection(
+            uriTemplate: '/me/animals',
+            controller: GetMeAnimalsController::class,
             openapiContext: [
-                'summary' => 'Get all animals',
-            ]
+                'summary' => 'Get all animals of the current user',
+            ],
+            paginationEnabled: false,
+            normalizationContext: ['groups' => ['animal:read']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")',
         ),
         new Post(
             openapiContext: [
@@ -75,27 +82,33 @@ class Animal
     private ?\DateTimeInterface $birthday = null;
 
     #[ORM\Column]
+    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
     private ?bool $inFarm = null;
 
     #[ORM\Column]
+    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
     private ?bool $isGroup = null;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: AnimalRecord::class)]
+//    #[Groups(['animal:read'])] are not working
     private Collection $records;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Appointment::class)]
     private Collection $appointments;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
+    #[Groups(['animal:read', 'animal:create', 'animal:write'])]
     private ?TypeAnimal $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
     public ?Client $owner = null;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: Vaccine::class)]
+    #[Groups(['animal:read'])]
     private Collection $vaccines;
 
     #[ORM\OneToMany(mappedBy: 'animal', targetEntity: MediaObject::class)]
+//    #[Groups(['animal:read'])] are not working
     private Collection $images;
 
     public function __construct()
