@@ -30,7 +30,7 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
         new GetCollection(
             uriTemplate: '/animals/{animalId}/images',
             uriVariables: [
-                'animalId' => new Link(toProperty: 'id', toClass: Animal::class, identifiers: ['id']),
+                'animalId' => new Link(fromProperty: 'id', toProperty: 'animal', fromClass: Animal::class, toClass: MediaObject::class),
             ],
             controller: GetImagesFromAnimalController::class,
             openapiContext: [
