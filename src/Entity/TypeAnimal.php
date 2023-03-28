@@ -22,20 +22,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: TypeAnimalRepository::class)]
 class TypeAnimal
 {
-    #[Groups(['typeAnimal:read'])]
+    #[Groups(['typeAnimal:read', 'animal:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['typeAnimal:read', 'veto:read'])]
+    #[Groups(['typeAnimal:read', 'veto:read', 'animal:read'])]
     #[ORM\Column(length: 50)]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'type', targetEntity: Animal::class)]
     private Collection $animals;
 
-    #[Groups(['typeAnimal:read', 'veto:read'])]
+    #[Groups(['typeAnimal:read', 'veto:read', 'animal:read'])]
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $icon = null;
 
