@@ -30,12 +30,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
             uriVariables: [
                 'animalId' => new Link(fromProperty: 'id', toProperty: 'Animal', fromClass: Animal::class),
             ],
-            controller: GetAnimalRecordsFromAnimalController::class,
             openapiContext: [
                 'summary' => 'Get all records for an animal',
             ],
-            paginationEnabled: false,
-            security: 'is_granted("IS_AUTHENTICATED_FULLY")',
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and (user.isClient() or user.isVeto())',
         ),
         new Patch(
             openapiContext: [
