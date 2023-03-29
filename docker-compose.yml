@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  db:
+    image: mariadb:10.2.25
+    environment:
+      MYSQL_USER: 'tav_user'
+      MYSQL_PASSWORD: 'tav_password'
+      MYSQL_ROOT_PASSWORD: 'tav_root_password'
+      MYSQL_DATABASE: 'tav_db'
+    volumes:
+      - db_data:/var/lib/mysql:rw
+  php:
+    depends_on:
+      - db
+    build:
+      context: .
+      target: takeavet_php
+    environment:
+      - PHP_INI_DIR=/usr/local/etc/php
+    volumes:
+      - ./:/srv/api:rw
+      - ./docker/php/conf.d/dev.ini:/usr/local/etc/php/api.ini:rw
+  api:
+    build: 
+      context: .
+      target: takeavet_nginx
+    depends_on:
+      - php
+    volumes:
+      - ./public:/srv/api/public:rw
+    ports:
+      - 8082:80
+volumes:
+  db_data:
