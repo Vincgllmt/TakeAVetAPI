@@ -50,7 +50,19 @@ Autres tests :
 - `composer test:cs` : Exécute les tests de style de code
 
 ### Installation avec Docker
-TODO
+
+- Pour le lancer avec le docker compose :
+```sh
+docker-compose up
+```
+
+## Troubleshooting
+Si vous n'avez pas les permissions executez le fichier `droits.sh`
+Dans le cas de l'IUT vous pouvez executer : 
+```sh
+docker exec -ti sae4-01-api-php-1 /bin/sh
+chmod -R o+rwx public vendor
+```
 
 ## Informations
 
