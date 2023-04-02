@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Animal;
 use App\Entity\MediaObject;
-use App\Entity\User;
 use App\Repository\AnimalRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +24,7 @@ class DeleteMediaAnimalImageAction extends AbstractController
         $this->storage->remove($imageId, new PropertyMapping('file', 'contentUrl'));
         $animal->removeImage($imageId);
         $animalRepository->save($animal, true);
+
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 }

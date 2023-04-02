@@ -4,15 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Animal;
 use App\Entity\MediaObject;
-use App\Entity\User;
 use App\Repository\AnimalRepository;
 use App\Repository\MediaObjectRepository;
-use App\Repository\UserRepository;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ManipulatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
