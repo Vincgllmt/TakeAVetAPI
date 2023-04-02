@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Put;
 use App\Controller\CreateAddressForClient;
 use App\Repository\AddressRepository;
@@ -32,6 +33,10 @@ use Symfony\Component\Validator\Constraints\Regex;
         ),
         new Patch(
             normalizationContext: ['groups' => ['address:read']],
+            denormalizationContext: ['groups' => ['address:write']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.client === user',
+        ),
+        new Delete(
             denormalizationContext: ['groups' => ['address:write']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.client === user',
         ),
