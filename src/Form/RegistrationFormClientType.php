@@ -15,7 +15,10 @@ class RegistrationFormClientType extends RegistrationFormUserType
 
         $builder->add('isHusbandry', CheckboxType::class, [
             'required' => false,
-            'label' => 'Éleveur (ferme, etc...)',
+            'label' => 'Je suis un éleveur',
+            'attr' => [
+                'class' => 'form-check-input',
+            ],
         ]);
     }
 
