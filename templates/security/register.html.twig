@@ -11,7 +11,11 @@
 
 <div class="login-page">
     <div class="d-flex flex-column justify-content-center align-items-center h-100">
-        {{ form_start(registrationForm) }}
+        {{ form_start(registrationForm, {
+            'attr': {
+                'action': app.request.queryString ? '?' ~ app.request.queryString : null,
+            }
+        }) }}
 
         <h1 class="text-center">S'inscrire</h1>
         <p class="text-center">Incroyable ! Vous êtes sur le point de rejoindre la communauté Take'A'Vet !</p>
