@@ -35,7 +35,9 @@
 
         {% if registrationForm.isHusbandry is defined %}
             <p>
-                <a href="#">Vous êtes vétérinaire, c'est ici !</a>
+                <a href="{{ path('app_register_vet', {
+                    redirect: app.request.query.get('redirect', null)
+                }) }}">Vous êtes vétérinaire, c'est ici !</a>
             </p>
         {% endif %}
 
