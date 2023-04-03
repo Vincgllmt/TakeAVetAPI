@@ -4,11 +4,14 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Controller\CreateMediaAnimalImageAction;
+use App\Controller\DeleteMediaAnimalImageAction;
 use App\Controller\GetMeAnimalsController;
 use App\Repository\AnimalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -48,6 +51,41 @@ use Symfony\Component\Serializer\Annotation\Groups;
             paginationEnabled: false,
             normalizationContext: ['groups' => ['animal:read']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY")',
+        ),
+        new Delete(
+            uriTemplate: '/animals/{id}/image/{imageId}',
+            uriVariables: [
+                'imageId' => new Link(fromProperty: 'id', toProperty: 'images', fromClass: Animal::class, toClass: MediaObject::class),
+            ],
+            controller: DeleteMediaAnimalImageAction::class,
+            openapiContext: [
+                'summary' => 'Delete an image of an animal',
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.owner == user',
+        ),
+        new Post(
+            uriTemplate: '/animals/{id}/image',
+            controller: CreateMediaAnimalImageAction::class,
+            openapiContext: [
+                'requestBody' => [
+                    'content' => [
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'file' => [
+                                        'type' => 'string',
+                                        'format' => 'binary',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'summary' => 'Upload an image for an animal',
+            ],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and object.owner == user',
+            deserialize: false
         ),
         new Post(
             openapiContext: [
