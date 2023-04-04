@@ -17,7 +17,9 @@
                 {% endif %}
                 {% if app.user %}
                     <div class="mb-3 text-center">
-                        Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Déconnexion</a>
+                        Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout', {
+                            redirect: app.request.query.get('redirect', null)
+                        }) }}">Déconnexion</a>
                     </div>
                 {% endif %}
                 <div class="mb-3">
@@ -34,7 +36,9 @@
                 </div>
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary"><i class="fa-solid fa-dog"></i> Se connecter</button>
-                    <a class="btn btn-primary" href="{{ path('app_register') }}"><i class="fa-solid fa-cat"></i> S'inscrire</a>
+                    <a class="btn btn-primary" href="{{ path('app_register', {
+                        redirect: app.request.query.get('redirect', null)
+                    }) }}"><i class="fa-solid fa-cat"></i> S'inscrire</a>
                 </div>
                 <input type="hidden" name="_csrf_token"
                        value="{{ csrf_token('authenticate') }}"
