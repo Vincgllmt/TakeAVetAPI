@@ -16,5 +16,5 @@ class NoAppointmentAtTheSameTime extends Constraint
      * Any public properties become valid options for the annotation.
      * Then, use these in your validator class.
      */
-    public $message = 'There is already an appointment at this time.';
+    public $message = 'There is already an appointment at this time ({{ value }}).';
 }
