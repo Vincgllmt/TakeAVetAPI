@@ -135,24 +135,23 @@ class AppointmentRepository extends ServiceEntityRepository
      *
      * @throws NonUniqueResultException
      */
-    public function hasAppointmentOverlapping(Appointment $value): bool
+    public function getFirstAppointmentOverlapping(Appointment $value): ?Appointment
     {
         // calculate the end hour of the appointment (because the endHour is calculated in the entity prePersist (and this can be before))
         $endHour = (clone $value->getStartHour())->add(new \DateInterval("PT{$value->getType()->getDuration()}M"));
 
         $result = $this->createQueryBuilder('a')
-            ->select('1')
             ->where('DATE(a.date) = DATE(:date)')
-//            ->andWhere('(TIME(:startHour) BETWEEN TIME(a.startHour) AND (a.endHour)) OR (TIME(:endHour) BETWEEN TIME(a.startHour) AND TIME(a.endHour))')
-            ->andWhere('(TIME(:startHour) > TIME(a.startHour) AND TIME(:startHour) < TIME(a.endHour)) OR (TIME(:endHour) > TIME(a.startHour) AND TIME(:endHour) < TIME(a.endHour))')
+            ->andWhere('(TIME(:startHour) BETWEEN TIME(a.startHour) AND (a.endHour)) OR (TIME(:endHour) BETWEEN TIME(a.startHour) AND TIME(a.endHour)) OR (TIME(a.startHour) > TIME(:startHour) AND TIME(a.endHour) < TIME(:endHour))')
+            ->andWhere('TIME(:startHour) = TIME(a.startHour)')
             ->andWhere('a.veto = :veto')
             ->getQuery()
             ->setParameter('startHour', $value->getStartHour())
             ->setParameter('endHour', $endHour)
             ->setParameter('date', $value->getDate())
             ->setParameter('veto', $value->getVeto())
-            ->getOneOrNullResult();
+            ->execute(hydrationMode: AbstractQuery::HYDRATE_OBJECT);
 
-        return null !== $result;
+        return count($result) > 0 ? $result[0] : null;
     }
 }
