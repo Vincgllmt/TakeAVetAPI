@@ -30,7 +30,7 @@ class NoVacationOnThisDateValidator extends ConstraintValidator
         $veto = $this->context->getObject()->getVeto();
 
         $vacationOrNull = $this->vacationRepository->getVacationOn($value, $veto->getAgenda());
-        if ($vacationOrNull === null) {
+        if (null === $vacationOrNull) {
             return;
         }
 

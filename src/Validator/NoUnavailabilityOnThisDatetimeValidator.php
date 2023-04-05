@@ -29,7 +29,7 @@ class NoUnavailabilityOnThisDatetimeValidator extends ConstraintValidator
         $datetime = (clone $value)->setTime($startTime->format('H'), $startTime->format('i'));
 
         $unavailability = $this->unavailabilityRepository->getUnavailabilityAt($datetime, $type, $veto->getAgenda());
-        if ($unavailability === null) {
+        if (null === $unavailability) {
             return;
         }
 

@@ -14,6 +14,8 @@ use App\Controller\GetAppointmentOnCurrentHourForVetoAction;
 use App\Controller\GetMeAppointmentsAction;
 use App\Repository\AppointmentRepository;
 use App\Validator\NoAppointmentAtTheSameTime;
+use App\Validator\NoUnavailabilityOnThisDatetime;
+use App\Validator\NoVacationOnThisDate;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -143,6 +145,8 @@ class Appointment
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[NoAppointmentAtTheSameTime]
+    #[NoVacationOnThisDate]
+    #[NoUnavailabilityOnThisDatetime]
     #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write', 'appointment:create'])]
     private ?\DateTimeInterface $date = null;
 

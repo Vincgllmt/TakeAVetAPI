@@ -153,6 +153,6 @@ class AppointmentRepository extends ServiceEntityRepository
             ->setParameter('veto', $value->getVeto())
             ->getOneOrNullResult();
 
-        return $result !== null;
+        return null !== $result;
     }
 }
