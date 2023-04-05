@@ -13,9 +13,12 @@ use App\Controller\GetAppointmentOnCurrentDayForVetoAction;
 use App\Controller\GetAppointmentOnCurrentHourForVetoAction;
 use App\Controller\GetMeAppointmentsAction;
 use App\Repository\AppointmentRepository;
+use App\Validator\NoAppointmentAtTheSameTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Length;
 
 #[ApiResource(
     operations: [
@@ -46,7 +49,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
 //        new GetCollection(
 //            openapiContext: [
-//                'summary' => 'Get all Appointment',
+//                'summary' => 'Get all Appointment for a client',
 //            ],
 //            normalizationContext: ['groups' => ['appointment:read-all']]
 //        ),
@@ -61,11 +64,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Post(
             openapiContext: [
-                'summary' => 'Create an appointment',
+                'summary' => 'Take an appointment (for a client)',
             ],
-            normalizationContext: ['groups' => ['appointment:read']],
+            normalizationContext: ['groups' => ['appointment:read', 'typeAppointment:read']],
             denormalizationContext: ['groups' => ['appointment:create']],
-            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isClient()',
         ),
         new Patch(
             openapiContext: [
@@ -93,6 +96,7 @@ class Appointment
     private ?int $id = null;
 
     #[ORM\Column(length: 1024, nullable: true)]
+    #[Length(max: 1024)]
     #[Groups(['appointment:read', 'appointment:write', 'appointment:create'])]
     private ?string $note = null;
 
@@ -101,7 +105,7 @@ class Appointment
     private ?bool $isValidated = null;
 
     #[ORM\Column]
-    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:update'])]
+    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:update', 'appointment:create'])]
     private ?bool $isUrgent = null;
 
     #[ORM\Column]
@@ -130,7 +134,7 @@ class Appointment
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['appointment:read', 'appointment:read-all'])]
+    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:create'])]
     private ?Animal $animal = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
@@ -138,11 +142,13 @@ class Appointment
     private ?Address $location = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write'])]
+    #[NoAppointmentAtTheSameTime]
+    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write', 'appointment:create'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write'])]
+    #[Assert\LessThan(propertyPath: 'endHour', message: 'The start hour must be before the end hour')]
+    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write', 'appointment:create'])]
     private ?\DateTimeInterface $startHour = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
