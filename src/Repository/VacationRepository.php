@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Agenda;
 use App\Entity\Vacation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -76,14 +77,18 @@ class VacationRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-    public function getVacationAt(\DateTime $appointmentDate, Agenda $agenda): Vacation|null
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function getVacationOn(\DateTimeInterface $value, Agenda $agenda): ?Vacation
     {
         return $this->createQueryBuilder('v')
             ->where('v.agenda = :agenda')
-            ->andWhere(':startDatetime BETWEEN v.dateStart AND v.dateEnd')
+            ->andWhere('DATE(:date) BETWEEN DATE(v.startDate) AND DATE(v.endDate)')
             ->getQuery()
-            ->setParameter('agenda', $agenda)
-            ->setParameter('startDatetime', $appointmentDate)
+            ->setParameter('agenda', $agenda->getId())
+            ->setParameter('date', $value)
             ->getOneOrNullResult();
     }
 }

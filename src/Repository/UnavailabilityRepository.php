@@ -77,18 +77,21 @@ class UnavailabilityRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-    public function getUnavailabilityAt(\DateTime $start, TypeAppointment $type, Agenda $agenda): Unavailability|null
+    public function getUnavailabilityAt(\DateTime $value, TypeAppointment $type, Agenda $agenda): Unavailability|null
     {
-        $end = (clone $start)->add(new \DateInterval("PT{$type->getDuration()}M"));
+        $endHour = (clone $value)->add(new \DateInterval("PT{$type->getDuration()}M"));
 
-        return $this->createQueryBuilder('u')
-            ->where('u.agenda = :agenda')
-            ->andWhere('(:start BETWEEN u.dateDeb AND u.dateEnd) OR (:end BETWEEN u.dateDeb AND u.dateEnd)')
+        $results = $this->createQueryBuilder('u')
+            ->select('u')
+            ->where(':date BETWEEN u.startDate AND u.endDate OR :endHour BETWEEN u.startDate AND u.endDate')
+            ->andWhere('u.agenda = :agenda')
             ->getQuery()
+            ->setParameter('date', $value)
             ->setParameter('agenda', $agenda)
-            ->setParameter('start', $start)
-            ->setParameter('end', $end)
-            ->getOneOrNullResult();
+            ->setParameter('endHour', $endHour)
+            ->getResult();
+
+        return count($results) > 0 ? $results[0] : null;
     }
 
     /**
