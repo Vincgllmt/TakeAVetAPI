@@ -135,114 +135,120 @@ class Agenda
 //        return 0 == $dayNumber ? 7 : $dayNumber;
 //    }
 
-public function getId(): ?int
-{
-    return $this->id;
-}
-
-public function getStartHour(): ?\DateTimeInterface
-{
-    return $this->startHour;
-}
-
-public function setStartHour(\DateTimeInterface $startHour): self
-{
-    $this->startHour = $startHour;
-
-    return $this;
-}
-
-public function getEndHour(): ?\DateTimeInterface
-{
-    return $this->endHour;
-}
-
-public function setEndHour(\DateTimeInterface $endHour): self
-{
-    $this->endHour = $endHour;
-
-    return $this;
-}
-
-/**
- * @return Collection<int, Unavailability>
- */
-public function getUnavailabilities(): Collection
-{
-    return $this->unavailabilities;
-}
-
-public function addUnavailability(Unavailability $unavailability): self
-{
-    if (!$this->unavailabilities->contains($unavailability)) {
-        $this->unavailabilities->add($unavailability);
-        $unavailability->setAgenda($this);
+    public function getId(): ?int
+    {
+        return $this->id;
     }
 
-    return $this;
-}
+    public function getStartHour(): ?\DateTimeInterface
+    {
+        return $this->startHour;
+    }
 
-public function removeUnavailability(Unavailability $unavailability): self
-{
-    if ($this->unavailabilities->removeElement($unavailability)) {
-        // set the owning side to null (unless already changed)
-        if ($unavailability->getAgenda() === $this) {
-            $unavailability->setAgenda(null);
+    public function setStartHour(\DateTimeInterface $startHour): self
+    {
+        $this->startHour = $startHour;
+
+        return $this;
+    }
+
+    public function getEndHour(): ?\DateTimeInterface
+    {
+        return $this->endHour;
+    }
+
+    public function setEndHour(\DateTimeInterface $endHour): self
+    {
+        $this->endHour = $endHour;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Unavailability>
+     */
+    public function getUnavailabilities(): Collection
+    {
+        return $this->unavailabilities;
+    }
+
+    public function addUnavailability(Unavailability $unavailability): self
+    {
+        if (!$this->unavailabilities->contains($unavailability)) {
+            $this->unavailabilities->add($unavailability);
+            $unavailability->setAgenda($this);
         }
+
+        return $this;
     }
 
-    return $this;
-}
-
-/**
- * @return Collection<int, Vacation>
- */
-public function getVacations(): Collection
-{
-    return $this->vacations;
-}
-
-public function addVacation(Vacation $vacation): self
-{
-    if (!$this->vacations->contains($vacation)) {
-        $this->vacations->add($vacation);
-        $vacation->setAgenda($this);
-    }
-
-    return $this;
-}
-
-public function removeVacation(Vacation $vacation): self
-{
-    if ($this->vacations->removeElement($vacation)) {
-        // set the owning side to null (unless already changed)
-        if ($vacation->getAgenda() === $this) {
-            $vacation->setAgenda(null);
+    public function removeUnavailability(Unavailability $unavailability): self
+    {
+        if ($this->unavailabilities->removeElement($unavailability)) {
+            // set the owning side to null (unless already changed)
+            if ($unavailability->getAgenda() === $this) {
+                $unavailability->setAgenda(null);
+            }
         }
+
+        return $this;
     }
 
-    return $this;
-}
-
-public function getVeto(): ?Veto
-{
-    return $this->veto;
-}
-
-public function setVeto(?Veto $veto): self
-{
-    // unset the owning side of the relation if necessary
-    if (null === $veto && null !== $this->veto) {
-        $this->veto->setAgenda(null);
+    /**
+     * @return Collection<int, Vacation>
+     */
+    public function getVacations(): Collection
+    {
+        return $this->vacations;
     }
 
-    // set the owning side of the relation if necessary
-    if (null !== $veto && $veto->getAgenda() !== $this) {
-        $veto->setAgenda($this);
+    public function addVacation(Vacation $vacation): self
+    {
+        if (!$this->vacations->contains($vacation)) {
+            $this->vacations->add($vacation);
+            $vacation->setAgenda($this);
+        }
+
+        return $this;
     }
 
-    $this->veto = $veto;
+    public function removeVacation(Vacation $vacation): self
+    {
+        if ($this->vacations->removeElement($vacation)) {
+            // set the owning side to null (unless already changed)
+            if ($vacation->getAgenda() === $this) {
+                $vacation->setAgenda(null);
+            }
+        }
 
-    return $this;
-}
+        return $this;
+    }
+
+    public function getVeto(): ?Veto
+    {
+        return $this->veto;
+    }
+
+    public function setVeto(?Veto $veto): self
+    {
+        // unset the owning side of the relation if necessary
+        if (null === $veto && null !== $this->veto) {
+            $this->veto->setAgenda(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if (null !== $veto && $veto->getAgenda() !== $this) {
+            $veto->setAgenda($this);
+        }
+
+        $this->veto = $veto;
+
+        return $this;
+    }
+
+    #[Groups(['agenda:read'])]
+    public function getTimezone(): ?string
+    {
+        return date_default_timezone_get();
+    }
 }

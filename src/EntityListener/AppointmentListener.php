@@ -31,6 +31,8 @@ class AppointmentListener
         }
         $appointment->setIsValidated(false);
         $appointment->setIsCompleted(false);
-        $appointment->setEndHour($appointment->getStartHour()->add(new \DateInterval("PT{$appointment->getType()->getDuration()}M")));
+        if (null === $appointment->getEndHour()) {
+            $appointment->setEndHour((clone $appointment->getStartHour())->add(new \DateInterval("PT{$appointment->getType()->getDuration()}M")));
+        }
     }
 }

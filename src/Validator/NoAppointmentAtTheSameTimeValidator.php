@@ -37,12 +37,15 @@ class NoAppointmentAtTheSameTimeValidator extends ConstraintValidator
             throw new \Exception('This validator can only be used on Appointment entity');
         }
 
-        if (!$this->appointmentRepository->hasAppointmentOverlapping($object)) {
+        $appointmentOrNull = $this->appointmentRepository->getFirstAppointmentOverlapping($object);
+
+        if (null === $appointmentOrNull) {
             return;
         }
 
         // TODO: implement the validation here
         $this->context->buildViolation($constraint->message)
+            ->setParameter('{{ value }}', "Appointment at {$appointmentOrNull->getStartHour()->format('H:i:s')} - {$appointmentOrNull->getEndHour()->format('H:i:s')}")
             ->addViolation();
     }
 }
