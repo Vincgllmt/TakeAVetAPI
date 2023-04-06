@@ -18,6 +18,6 @@ class AgendaUpcomingAppointmentController extends AbstractController
     {
         $veto = $data[0]->getVeto();
 
-        return $this->appointmentRepository->findBy(['veto' => $veto, 'isCompleted' => false]);
+        return $this->appointmentRepository->findBy(['veto' => $veto, 'isCompleted' => false, 'isValidated' => true]);
     }
 }
