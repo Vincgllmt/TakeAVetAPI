@@ -25,7 +25,7 @@ class UnavailabilityListener
     {
         $user = $this->security->getUser();
 
-        if ($user instanceof Veto && $user->getAgenda() === null) {
+        if ($user instanceof Veto && null === $user->getAgenda()) {
             $unavailability->setAgenda($user->getAgenda());
         }
     }
