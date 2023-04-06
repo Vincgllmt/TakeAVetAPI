@@ -37,7 +37,7 @@ use Symfony\Component\Validator\Constraints\Length;
                 'summary' => 'Get one appointment if there are any on current hour',
                 'description' => 'If there are no appointment on current hour, return null',
             ],
-            normalizationContext: ['groups' => ['appointment:read', 'typeAppointment:read']],
+            normalizationContext: ['groups' => ['appointment:read', 'typeAppointment:read', 'user:read', 'animal:read']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
         ),
         new GetCollection(
@@ -45,8 +45,20 @@ use Symfony\Component\Validator\Constraints\Length;
             controller: GetMeAppointmentsAction::class,
             openapiContext: [
                 'summary' => 'Get all Appointment for current user',
+                'parameters' => [
+                    [
+                        'name' => 'show_validated',
+                        'in' => 'query',
+                        'description' => 'Show validated appointments',
+                        'required' => false,
+                        'schema' => [
+                            'type' => 'boolean',
+                            'format' => 'boolean',
+                        ],
+                    ],
+                ],
             ],
-            normalizationContext: ['groups' => ['appointment:read-all', 'typeAppointment:read']],
+            normalizationContext: ['groups' => ['typeAppointment:read', 'user:read', 'appointment:read', 'animal:read']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
 //        new GetCollection(
@@ -61,7 +73,7 @@ use Symfony\Component\Validator\Constraints\Length;
             openapiContext: [
                 'summary' => 'Get all Appointment on current day (including completed)',
             ],
-            normalizationContext: ['groups' => ['appointment:read-all', 'typeAppointment:read']],
+            normalizationContext: ['groups' => ['appointment:read', 'typeAppointment:read', 'user:read', 'animal:read']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
         ),
         new Post(
@@ -78,7 +90,8 @@ use Symfony\Component\Validator\Constraints\Length;
             ],
             normalizationContext: ['groups' => ['appointment:read']],
             denormalizationContext: ['groups' => ['appointment:write']],
-            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto()'
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto() and object.veto === user',
+            validate: false,
         ),
         new Delete(
             openapiContext: [
@@ -94,7 +107,7 @@ class Appointment
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['appointment:read-all', 'appointment:read'])]
+    #[Groups(['appointment:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 1024, nullable: true)]
@@ -103,15 +116,15 @@ class Appointment
     private ?string $note = null;
 
     #[ORM\Column]
-    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write'])]
+    #[Groups(['appointment:read', 'appointment:write'])]
     private ?bool $isValidated = null;
 
     #[ORM\Column]
-    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:update', 'appointment:create'])]
+    #[Groups(['appointment:read', 'appointment:update', 'appointment:create'])]
     private ?bool $isUrgent = null;
 
     #[ORM\Column]
-    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:update'])]
+    #[Groups(['appointment:read', 'appointment:update'])]
     private ?bool $isCompleted = null;
 
     #[ORM\OneToOne(inversedBy: 'appointment', cascade: ['persist', 'remove'])]
@@ -121,22 +134,23 @@ class Appointment
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     #[ApiProperty(readableLink: true)]
-    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:create'])]
+    #[Groups(['appointment:read', 'appointment:create'])]
     private ?TypeAppointment $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['appointment:read'])]
-    private ?Client $client = null;
+    public ?Client $client = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['appointment:read-all', 'appointment:read', 'appointment:create'])]
-    private ?Veto $veto = null;
+    #[Groups(['appointment:create'])]
+    public ?Veto $veto = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:create'])]
+    #[Groups(['appointment:read', 'appointment:create'])]
+    #[ApiProperty(readableLink: true)]
     private ?Animal $animal = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
@@ -147,16 +161,16 @@ class Appointment
     #[NoAppointmentAtTheSameTime]
     #[NoVacationOnThisDate]
     #[NoUnavailabilityOnThisDatetime]
-    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write', 'appointment:create'])]
+    #[Groups(['appointment:read', 'appointment:write', 'appointment:create'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     #[Assert\LessThan(propertyPath: 'endHour', message: 'The start hour must be before the end hour')]
-    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write', 'appointment:create'])]
+    #[Groups(['appointment:read', 'appointment:write', 'appointment:create'])]
     private ?\DateTimeInterface $startHour = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    #[Groups(['appointment:read', 'appointment:read-all', 'appointment:write'])]
+    #[Groups(['appointment:read', 'appointment:write'])]
     private ?\DateTimeInterface $endHour = null;
 
     public function getId(): ?int
