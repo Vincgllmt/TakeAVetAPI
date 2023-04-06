@@ -49,7 +49,7 @@ use Symfony\Component\Validator\Constraints\Length;
                 ],
             ],
             paginationEnabled: false,
-            normalizationContext: ['skip_null_values' => false, 'groups' => ['user:read-me']],
+            normalizationContext: ['skip_null_values' => false, 'groups' => ['user:read-me', 'veto:read-me']],
             security: "is_granted('IS_AUTHENTICATED_FULLY')"
         ),
         new Get(normalizationContext: ['skip_null_values' => false, 'groups' => ['user:read']]),

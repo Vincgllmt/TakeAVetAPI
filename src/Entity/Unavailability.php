@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Post;
 use App\Repository\UnavailabilityRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -34,6 +35,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
             normalizationContext: ['groups' => ['unavailability:read']],
         ),
         new Get(normalizationContext: ['groups' => ['unavailability:read']]),
+        new Post(
+            normalizationContext: ['groups' => ['unavailability:read']],
+            denormalizationContext: ['groups' => ['unavailability:create']],
+            security: 'is_granted("IS_AUTHENTICATED_FULLY") and user.isVeto() and user.agenda !== null',
+            securityMessage: 'You must be a vet to create an unavailability and you must have an agenda.',
+        ),
     ]
 )]
 #[ORM\Entity(repositoryClass: UnavailabilityRepository::class)]
@@ -53,15 +60,15 @@ class Unavailability
     private ?Agenda $agenda = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(['unavailability:read'])]
+    #[Groups(['unavailability:read', 'unavailability:create'])]
     private ?string $lib = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['unavailability:read'])]
+    #[Groups(['unavailability:read', 'unavailability:create'])]
     private ?\DateTimeInterface $startDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['unavailability:read'])]
+    #[Groups(['unavailability:read', 'unavailability:create'])]
     private ?\DateTimeInterface $endDate = null;
 
     public function getId(): ?int
