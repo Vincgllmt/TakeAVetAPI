@@ -71,7 +71,7 @@ class Address
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['address:read'])]
+    #[Groups(['address:read', 'address:info'])]
     private ?int $id = null;
 
     /**
@@ -86,7 +86,7 @@ class Address
      * @var string|null The entire address
      */
     #[ORM\Column(length: 255)]
-    #[Groups(['address:read', 'address:write', 'address:create'])]
+    #[Groups(['address:read', 'address:write', 'address:create', 'address:info'])]
     #[Length(max: 255, maxMessage: 'L\'adresse ne peut pas dépasser 255 caractères.')]
     private ?string $ad = null;
 
@@ -94,7 +94,7 @@ class Address
      * @var string|null The postal code
      */
     #[ORM\Column(length: 5)]
-    #[Groups(['address:read', 'address:write', 'address:create'])]
+    #[Groups(['address:read', 'address:write', 'address:create', 'address:info'])]
     #[Length(max: 5, maxMessage: 'Le code postal ne peut pas dépasser 5 caractères.')]
     #[Regex('/[A-Z0-9]{5}/', message: 'Le code postal doit être composé de 5 chiffres ou lettres majuscules.')]
     private ?string $pc = null;
@@ -103,7 +103,7 @@ class Address
      * @var string|null The city of the address
      */
     #[ORM\Column(length: 50)]
-    #[Groups(['address:read', 'address:write', 'address:create'])]
+    #[Groups(['address:read', 'address:write', 'address:create', 'address:info'])]
     #[Length(max: 50, maxMessage: 'Le nom de la ville ne peut pas dépasser 50 caractères.')]
     private ?string $city = null;
 
