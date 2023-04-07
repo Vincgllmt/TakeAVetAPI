@@ -9,7 +9,7 @@
 {% block body %}
     <div class="login-page">
         <div class="d-flex flex-column justify-content-center align-items-center h-100">
-            <form class="login-form" method="post">
+            <form class="login-form" method="post" action="{{ app.request.queryString ? '?' ~ app.request.queryString : '' }}">
                 <h1 class="text-center">Connexion</h1>
                 <p class="text-center">Connectez-vous pour accéder à votre espace personnel.</p>
                 {% if error %}
