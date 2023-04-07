@@ -49,7 +49,7 @@ final class AppointmentFactory extends ModelFactory
             'date' => self::faker()->dateTime(),
             'isCompleted' => false,
             'isUrgent' => self::faker()->boolean(30),
-            'isValidated' => false,
+            'isValidated' => self::faker()->boolean(80),
         ];
     }
 
@@ -121,6 +121,7 @@ final class AppointmentFactory extends ModelFactory
                     'date' => $currentHourAndDay, // it also copies the date.
                     'startHour' => $currentHourAndDay,
                     'endHour' => (clone $currentHourAndDay)->modify("+{$typeOfAppointment->getDuration()} minutes"),
+                    'isValidated' => self::faker()->boolean(80),
                 ];
 
                 // increment the hour for the next appointment
