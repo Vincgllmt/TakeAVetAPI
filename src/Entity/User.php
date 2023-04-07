@@ -159,7 +159,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string|null the phone number of this user
      */
     #[ORM\Column(length: 20, nullable: true)]
-    #[Groups(['user:read-me', 'user:update'])]
+    #[Groups(['user:read-me', 'user:phone', 'user:update'])]
     protected ?string $phone = null;
 
     /**

@@ -58,7 +58,7 @@ use Symfony\Component\Validator\Constraints\Length;
                     ],
                 ],
             ],
-            normalizationContext: ['groups' => ['typeAppointment:read', 'user:read', 'appointment:read', 'animal:read']],
+            normalizationContext: ['groups' => ['typeAppointment:read', 'user:read', 'user:phone', 'appointment:read', 'animal:read', 'address:info']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
 //        new GetCollection(
@@ -144,7 +144,8 @@ class Appointment
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['appointment:create'])]
+    #[ApiProperty(readableLink: true)]
+    #[Groups(['appointment:create', 'appointment:read'])]
     public ?Veto $veto = null;
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
@@ -155,6 +156,7 @@ class Appointment
 
     #[ORM\ManyToOne(inversedBy: 'appointments')]
     #[Groups(['appointment:create', 'appointment:read'])]
+    #[ApiProperty(readableLink: true)]
     private ?Address $location = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]

@@ -29,8 +29,14 @@ class AppointmentListener
         if ($user instanceof Client) {
             $appointment->setClient($user);
         }
-        $appointment->setIsValidated(false);
-        $appointment->setIsCompleted(false);
+
+        if (null === $appointment->isIsValidated()) {
+            $appointment->setIsValidated(false);
+        }
+        if (null === $appointment->isIsCompleted()) {
+            $appointment->setIsCompleted(false);
+        }
+
         if (null === $appointment->getEndHour()) {
             $appointment->setEndHour((clone $appointment->getStartHour())->add(new \DateInterval("PT{$appointment->getType()->getDuration()}M")));
         }

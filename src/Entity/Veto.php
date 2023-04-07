@@ -8,7 +8,6 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
 use App\Repository\VetoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,25 +19,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new GetCollection(
             order: ['lastName' => 'ASC', 'firstName' => 'ASC'],
-            normalizationContext: ['groups' => ['user:read', 'user:read-me', 'veto:read']],
+            normalizationContext: ['skip_null_values' => false, 'groups' => ['user:read', 'user:read-me', 'veto:read']],
         ),
         new Get(
             normalizationContext: ['groups' => ['user:read', 'user:read-me', 'veto:read']],
             security: 'is_granted("IS_AUTHENTICATED_FULLY") and object == user',
             securityMessage: 'You can only access your own account.',
         ),
-        new Post(uriTemplate: 'vet/register', openapiContext: [
-            'summary' => 'Register a new vet',
-            'description' => 'Create a new account with a password and an email address and return the newly registered vet.',
-            'responses' => [
-                '201' => [
-                    'description' => 'The newly registered vet.',
-                ],
-                '400' => [
-                    'description' => 'The email address is already used by another account.',
-                ],
-            ],
-        ]),
     ],
 )]
 #[ORM\Entity(repositoryClass: VetoRepository::class)]
@@ -47,7 +34,7 @@ class Veto extends User
     #[ORM\OneToMany(mappedBy: 'veto', targetEntity: Appointment::class)]
     private Collection $appointments;
 
-    #[Groups('veto:read-me', 'veto:read')]
+    #[Groups('veto:read')]
     #[ORM\OneToOne(inversedBy: 'veto', cascade: ['persist', 'remove'])]
     public ?Agenda $agenda = null;
 
