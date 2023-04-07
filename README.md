@@ -74,6 +74,20 @@ chmod -R o+rwx public vendor
 
 
 ### Fonctionnalités
-TODO
+- [x] gérer les adresses
+- [x] gérer les agendas, les indisponibilités et les vacances
+- [x] gérer les recap des animaux
+- [x] gérer les animaux et les vaccins
+- [x] gérer les mediaObject tel que les images des animaux etc..
+- [x] gérer les rendez-vous
+- [x] gérer les utilisateurs comme les clients et les vétérinaires
+- [x] gérer les threads et les réponses 
+- [x] gérer les types d'animaux et les types de rendez-vous
 ## Utilisation
-TODO
+Pour utiliser l'api il suffit de se rendre sur :
+``
+localhost:8000/
+``
+Il faut le lancer le serveur avant ``composer start``
+
+Certaine action nécessite un utilisateur spécifique ou simplement connecté. 
